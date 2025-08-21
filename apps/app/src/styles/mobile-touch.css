@@ -1,0 +1,78 @@
+/* Mobile Touch Transitions - Applied to interactive elements */
+@layer utilities {
+  /* Touch transition for buttons and links */
+  .touch-active {
+    @apply transition-all duration-0 active:bg-accent/60 active:scale-[0.98];
+  }
+  
+  /* Active state makes text full white in dark mode, full black in light mode */
+  .active\:text-foreground:active {
+    @apply text-foreground;
+  }
+  
+  /* Instant hover transitions for header buttons */
+  .hover\:text-foreground:hover {
+    transition-duration: 0ms !important;
+  }
+  
+  /* For sidebar links specifically */
+  .sidebar-link-touch {
+    @apply transition-colors duration-0 active:bg-accent/70;
+  }
+  
+  /* Disable long press context menu on sidebar - comprehensive solution */
+  .no-ios-callout {
+    -webkit-touch-callout: none !important; /* iOS Safari */
+    -webkit-user-select: none !important;   /* Safari */
+    -khtml-user-select: none !important;    /* Konqueror HTML */
+    -moz-user-select: none !important;      /* Firefox */
+    -ms-user-select: none !important;       /* IE/Edge */
+    user-select: none !important;           /* Standard */
+    -webkit-tap-highlight-color: transparent !important; /* Remove tap highlight */
+  }
+  
+  /* Mobile viewport height fixes */
+  .mobile-h-full {
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile browsers */
+  }
+  
+  .mobile-min-h-full {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+  
+  /* Fix for iOS Safari safe areas */
+  .mobile-safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .mobile-safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Mobile-specific fixes for iOS Safari */
+@supports (-webkit-touch-callout: none) {
+  /* iOS specific viewport fixes */
+  .mobile-h-full {
+    height: -webkit-fill-available;
+  }
+  
+  .mobile-min-h-full {
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* Ensure overlays cover full screen on mobile */
+@media (max-width: 768px) {
+  .mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100vh;
+    height: 100dvh;
+  }
+}

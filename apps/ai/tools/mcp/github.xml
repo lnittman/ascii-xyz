@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tool_instructions>
+  <tools>
+    <tool>
+      <name>github.get_me</name>
+      <description>Gets details of the authenticated GitHub user.</description>
+      <usage>Use to check authentication status or get details about the authenticated user.</usage>
+      <parameters>
+        <!-- No parameters required -->
+      </parameters>
+      <example>
+        <request>
+          {
+            "name": "github.get_me",
+            "arguments": {}
+          }
+        </request>
+      </example>
+    </tool>
+
+    <tool>
+      <name>github.get_issue</name>
+      <description>Gets the contents of a specific GitHub issue.</description>
+      <usage>Use when you need to retrieve details about a specific issue in a repository.</usage>
+      <parameters>
+        <parameter name="owner" type="string" required="true">Repository owner.</parameter>
+        <parameter name="repo" type="string" required="true">Repository name.</parameter>
+        <parameter name="issue_number" type="number" required="true">Issue number.</parameter>
+      </parameters>
+      <example>
+        <request>
+          {
+            "name": "github.get_issue",
+            "arguments": {
+              "owner": "facebook",
+              "repo": "react",
+              "issue_number": 12345
+            }
+          }
+        </request>
+      </example>
+    </tool>
+
+    <tool>
+      <name>github.list_issues</name>
+      <description>Lists and filters issues in a GitHub repository.</description>
+      <usage>Use when you need to find issues matching certain criteria in a repository.</usage>
+      <parameters>
+        <parameter name="owner" type="string" required="true">Repository owner.</parameter>
+        <parameter name="repo" type="string" required="true">Repository name.</parameter>
+        <parameter name="state" type="string" required="false" default="open">State filter ('open', 'closed', 'all').</parameter>
+        <parameter name="labels" type="array" required="false">Labels to filter by.</parameter>
+        <parameter name="sort" type="string" required="false" default="created">Sort field ('created', 'updated', 'comments').</parameter>
+        <parameter name="direction" type="string" required="false" default="desc">Sort direction ('asc', 'desc').</parameter>
+      </parameters>
+      <example>
+        <request>
+          {
+            "name": "github.list_issues",
+            "arguments": {
+              "owner": "tensorflow",
+              "repo": "tensorflow",
+              "state": "open",
+              "labels": ["bug", "priority: high"],
+              "sort": "updated",
+              "direction": "desc"
+            }
+          }
+        </request>
+      </example>
+    </tool>
+
+    <tool>
+      <name>github.search_repositories</name>
+      <description>Searches for GitHub repositories matching a query.</description>
+      <usage>Use when you need to find repositories based on specific criteria.</usage>
+      <parameters>
+        <parameter name="query" type="string" required="true">Search query.</parameter>
+        <parameter name="sort" type="string" required="false">Sort field.</parameter>
+        <parameter name="order" type="string" required="false" default="desc">Sort order.</parameter>
+      </parameters>
+      <example>
+        <request>
+          {
+            "name": "github.search_repositories",
+            "arguments": {
+              "query": "language:typescript stars:>1000 topic:machine-learning",
+              "sort": "stars",
+              "order": "desc"
+            }
+          }
+        </request>
+      </example>
+    </tool>
+
+    <tool>
+      <name>github.get_file_contents</name>
+      <description>Gets the contents of a file or directory in a GitHub repository.</description>
+      <usage>Use when you need to view or analyze code from a specific file.</usage>
+      <parameters>
+        <parameter name="owner" type="string" required="true">Repository owner.</parameter>
+        <parameter name="repo" type="string" required="true">Repository name.</parameter>
+        <parameter name="path" type="string" required="true">File path within the repository.</parameter>
+        <parameter name="ref" type="string" required="false">Git reference (branch, tag, commit).</parameter>
+      </parameters>
+      <example>
+        <request>
+          {
+            "name": "github.get_file_contents",
+            "arguments": {
+              "owner": "vercel",
+              "repo": "next.js",
+              "path": "README.md",
+              "ref": "main"
+            }
+          }
+        </request>
+      </example>
+    </tool>
+
+    <tool>
+      <name>github.search_code</name>
+      <description>Searches for code across GitHub repositories.</description>
+      <usage>Use when you need to find specific code patterns or implementations.</usage>
+      <parameters>
+        <parameter name="query" type="string" required="true">Search query.</parameter>
+        <parameter name="sort" type="string" required="false">Sort field.</parameter>
+        <parameter name="order" type="string" required="false">Sort order.</parameter>
+      </parameters>
+      <example>
+        <request>
+          {
+            "name": "github.search_code",
+            "arguments": {
+              "query": "repo:kubernetes/kubernetes language:go function:CreatePod",
+              "sort": "indexed",
+              "order": "desc"
+            }
+          }
+        </request>
+      </example>
+    </tool>
+    
+    <tool>
+      <name>github.create_issue</name>
+      <description>Create a new issue in a GitHub repository.</description>
+      <usage>Use when you need to create an issue to track bugs, features, or other tasks.</usage>
+      <parameters>
+        <parameter name="owner" type="string" required="true">Repository owner.</parameter>
+        <parameter name="repo" type="string" required="true">Repository name.</parameter>
+        <parameter name="title" type="string" required="true">Issue title.</parameter>
+        <parameter name="body" type="string" required="false">Issue body content.</parameter>
+        <parameter name="assignees" type="array" required="false">Usernames to assign to this issue.</parameter>
+        <parameter name="labels" type="array" required="false">Labels to apply to this issue.</parameter>
+      </parameters>
+      <example>
+        <request>
+          {
+            "name": "github.create_issue",
+            "arguments": {
+              "owner": "octocat",
+              "repo": "hello-world",
+              "title": "Found a bug in the login flow",
+              "body": "When attempting to log in with incorrect credentials, the error message is not displayed properly.",
+              "assignees": ["developer1"],
+              "labels": ["bug", "priority:high"]
+            }
+          }
+        </request>
+      </example>
+    </tool>
+    
+    <tool>
+      <name>github.add_issue_comment</name>
+      <description>Add a comment to an existing issue.</description>
+      <usage>Use when you need to add information to an ongoing discussion in an issue.</usage>
+      <parameters>
+        <parameter name="owner" type="string" required="true">Repository owner.</parameter>
+        <parameter name="repo" type="string" required="true">Repository name.</parameter>
+        <parameter name="issue_number" type="number" required="true">Issue number.</parameter>
+        <parameter name="body" type="string" required="true">Comment text.</parameter>
+      </parameters>
+      <example>
+        <request>
+          {
+            "name": "github.add_issue_comment",
+            "arguments": {
+              "owner": "octocat",
+              "repo": "hello-world",
+              "issue_number": 42,
+              "body": "I've reproduced this bug on version 1.2.3 and found that it's related to the recent authentication updates."
+            }
+          }
+        </request>
+      </example>
+    </tool>
+  </tools>
+</tool_instructions> 

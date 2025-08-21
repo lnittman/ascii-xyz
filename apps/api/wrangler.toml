@@ -1,0 +1,32 @@
+name = "logs-api"
+main = "src/index-simple.ts"
+compatibility_date = "2025-04-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Environment variables
+[vars]
+NODE_ENV = "production"
+AI_SERVICE_URL = "https://logs-ai.mastra.cloud"
+
+# KV Namespaces
+[[kv_namespaces]]
+binding = "LOGS_CACHE"
+id = "327ae989b67a46308d090ada381b947d"
+
+# Observability
+[observability]
+enabled = true
+
+[observability.logs]
+enabled = true
+
+# Routes - to be configured after deployment
+# [[routes]]
+# pattern = "api.logs.xyz"
+# custom_domain = true
+
+# Note: Sensitive environment variables should be set via wrangler secrets:
+# wrangler secret put DATABASE_URL
+# wrangler secret put CLERK_SECRET_KEY
+# wrangler secret put OPENROUTER_API_KEY
+# wrangler secret put SENTRY_DSN

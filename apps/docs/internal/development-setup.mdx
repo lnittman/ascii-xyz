@@ -1,0 +1,270 @@
+---
+title: development setup
+description: get arbor running locally
+---
+
+# development setup
+
+this guide walks through setting up arbor for local development.
+
+## prerequisites
+
+ensure you have the following installed:
+
+- **node.js** 20.0.0 or higher
+- **pnpm** 9.0.0 or higher
+- **postgresql** 14 or higher
+- **git**
+- **docker** (optional, for local postgres)
+
+## clone the repository
+
+```bash
+git clone https://github.com/lnittman/arbor
+cd arbor/arbor-xyz
+```
+
+## install dependencies
+
+```bash
+pnpm install
+```
+
+this will install all dependencies across the monorepo.
+
+## environment setup
+
+### create environment files
+
+```bash
+cp .env.example .env.local
+cp apps/ai/.env.example apps/ai/.env.local
+```
+
+### configure environment variables
+
+edit `.env.local` with your configuration:
+
+```env
+# database
+DATABASE_URL="postgresql://user:password@localhost:5432/arbor"
+
+# clerk authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_..."
+CLERK_SECRET_KEY="sk_test_..."
+CLERK_WEBHOOK_SECRET="whsec_..."
+
+# ai service
+NEXT_PUBLIC_AI_URL="http://localhost:3999"
+
+# redis (optional)
+REDIS_URL="redis://localhost:6379"
+```
+
+edit `apps/ai/.env.local`:
+
+```env
+# database (same as main)
+DATABASE_URL="postgresql://user:password@localhost:5432/arbor"
+
+# ai providers
+OPENAI_API_KEY="sk-..."
+ANTHROPIC_API_KEY="sk-ant-..."
+GOOGLE_GENERATIVE_AI_API_KEY="..."
+OPENROUTER_API_KEY="sk-or-..."
+
+# main app url
+MAIN_APP_URL="http://localhost:3000"
+```
+
+## database setup
+
+### using docker
+
+```bash
+# start postgres in docker
+docker run -d \
+  --name arbor-postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=arbor \
+  -p 5432:5432 \
+  pgvector/pgvector:pg16
+```
+
+### using local postgres
+
+ensure pgvector extension is installed:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+```
+
+### run migrations
+
+```bash
+# generate prisma client
+pnpm db:generate
+
+# run migrations
+pnpm db:migrate
+
+# (optional) seed with sample data
+pnpm db:seed
+```
+
+## running the application
+
+### start all services
+
+```bash
+pnpm dev
+```
+
+this starts:
+- **web app**: http://localhost:3000
+- **ai service**: http://localhost:3999
+- **docs**: http://localhost:3004
+
+### start individual services
+
+```bash
+# web application only
+pnpm dev:app
+
+# ai service only
+pnpm dev:ai
+
+# documentation only
+pnpm dev:docs
+```
+
+## verify installation
+
+### check web app
+open http://localhost:3000 - you should see the login page
+
+### check ai service
+```bash
+curl http://localhost:3999/health
+```
+
+expected response:
+```json
+{
+  "status": "healthy",
+  "service": "arbor-ai"
+}
+```
+
+### check database
+```bash
+pnpm db:studio
+```
+
+opens prisma studio at http://localhost:5555
+
+## common issues
+
+### database connection error
+```bash
+# test connection
+psql $DATABASE_URL -c "SELECT 1"
+
+# check postgres is running
+pg_isready -h localhost -p 5432
+```
+
+### clerk authentication
+- verify keys start with correct prefixes
+- check clerk dashboard for webhook endpoint
+- ensure webhook secret matches
+
+### port conflicts
+```bash
+# check what's using a port
+lsof -i :3000
+
+# kill process using port
+kill -9 $(lsof -t -i:3000)
+```
+
+### dependency issues
+```bash
+# clear all caches
+rm -rf node_modules pnpm-lock.yaml
+rm -rf apps/*/node_modules
+rm -rf packages/*/node_modules
+
+# reinstall
+pnpm install
+```
+
+## development workflow
+
+### branch naming
+- `feature/description`
+- `fix/issue-description`
+- `chore/task-description`
+
+### commit messages
+follow conventional commits:
+- `feat: add new feature`
+- `fix: resolve bug`
+- `docs: update documentation`
+- `chore: maintenance task`
+
+### testing locally
+```bash
+# run tests
+pnpm test
+
+# run specific app tests
+pnpm test:app
+pnpm test:ai
+
+# run e2e tests
+pnpm test:e2e
+```
+
+### linting and formatting
+```bash
+# lint all code
+pnpm lint
+
+# fix lint issues
+pnpm lint:fix
+
+# format code
+pnpm format
+```
+
+## useful commands
+
+### database
+```bash
+pnpm db:generate    # generate prisma client
+pnpm db:migrate     # run migrations
+pnpm db:push        # push schema changes (dev only)
+pnpm db:studio      # open prisma studio
+pnpm db:seed        # seed sample data
+```
+
+### build
+```bash
+pnpm build          # build all apps
+pnpm build:app      # build web app only
+pnpm build:ai       # build ai service only
+```
+
+### clean
+```bash
+pnpm clean          # remove build artifacts
+pnpm clean:all      # remove everything including node_modules
+```
+
+## next steps
+
+- [architecture overview](/internal/architecture-overview)
+- [database schema](/internal/database-schema)
+- [ai integration](/internal/ai-integration)
+- [contributing guide](/internal/contributing-guide)

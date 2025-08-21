@@ -1,0 +1,650 @@
+/* Arbor Custom Theme for Mintlify */
+
+/* Import IosevkaTerm font */
+@font-face {
+  font-family: "IosevkaTerm-Regular";
+  src: url("https://intdev-global.s3.us-west-2.amazonaws.com/public/internet-dev/6397be61-3ea4-459d-8a3e-fd95168cb214.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Root variables matching Arbor's design system */
+:root {
+  /* Light theme - warm paper-like aesthetic */
+  --background: 250 249 247; /* #FAF9F7 */
+  --foreground: 26 26 26; /* Slightly warm black */
+  --card: 255 255 255;
+  --card-foreground: 26 26 26;
+  --popover: 255 255 255;
+  --popover-foreground: 26 26 26;
+  --primary: 35 35 35; /* Darker for primary elements */
+  --primary-foreground: 247 246 244;
+  --secondary: 239 238 236;
+  --secondary-foreground: 35 35 35;
+  --muted: 239 238 236;
+  --muted-foreground: 127 127 127;
+  --accent: 229 228 226;
+  --accent-foreground: 35 35 35;
+  --destructive: 147 51 51; /* Muted red */
+  --destructive-foreground: 247 246 244;
+  --border: 229 228 226;
+  --input: 229 228 226;
+  --ring: 178 178 178;
+
+  /* Mintlify-specific overrides */
+  --mint-primary: #1a1a1a;
+  --mint-primary-hover: #2a2a2a;
+  --mint-background: #faf9f7;
+  --mint-background-subtle: #f5f4f2;
+  --mint-foreground: #1a1a1a;
+  --mint-border: #e5e4e2;
+}
+
+/* Dark theme */
+[data-theme="dark"],
+.dark {
+  --background: 10 10 10; /* #0A0A0A */
+  --foreground: 239 238 236;
+  --card: 22 22 22;
+  --card-foreground: 239 238 236;
+  --popover: 22 22 22;
+  --popover-foreground: 239 238 236;
+  --primary: 229 228 226;
+  --primary-foreground: 22 22 22;
+  --secondary: 38 38 38;
+  --secondary-foreground: 239 238 236;
+  --muted: 38 38 38;
+  --muted-foreground: 183 182 180;
+  --accent: 48 48 48;
+  --accent-foreground: 239 238 236;
+  --destructive: 127 64 64;
+  --destructive-foreground: 229 228 226;
+  --border: 40 40 40;
+  --input: 35 35 35;
+  --ring: 89 89 89;
+
+  /* Mintlify-specific dark mode */
+  --mint-primary: #e5e4e2;
+  --mint-primary-hover: #f5f4f2;
+  --mint-background: #0a0a0a;
+  --mint-background-subtle: #1a1a1a;
+  --mint-foreground: #efeeed;
+  --mint-border: #282828;
+}
+
+/* Global styles */
+html {
+  font-family: "IosevkaTerm-Regular", monospace !important;
+  letter-spacing: 0.01em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: rgb(var(--background)) !important;
+  color: rgb(var(--foreground)) !important;
+  font-family: "IosevkaTerm-Regular", monospace !important;
+}
+
+/* Typography - all lowercase except code */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.text-3xl,
+.text-2xl,
+.text-xl,
+.text-lg,
+nav a,
+nav button,
+[role="navigation"] a,
+.sidebar-item,
+aside a {
+  text-transform: lowercase !important;
+  font-family: "IosevkaTerm-Regular", monospace !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Keep code blocks as-is */
+code,
+pre,
+.code-block,
+[class*="language-"],
+.token {
+  text-transform: none !important;
+}
+
+/* Navigation styling */
+nav {
+  background: rgb(var(--background)) !important;
+  border-bottom: 1px solid rgb(var(--border)) !important;
+}
+
+/* Sidebar styling */
+aside,
+[role="navigation"] {
+  background: rgb(var(--background)) !important;
+  border-right: 1px solid rgb(var(--border)) !important;
+}
+
+/* Links - subtle underline on hover */
+a {
+  color: rgb(var(--primary)) !important;
+  text-decoration: none !important;
+  transition: opacity 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.7;
+  text-decoration: underline !important;
+  text-decoration-thickness: 1px !important;
+  text-underline-offset: 2px !important;
+}
+
+/* Buttons - Vercel-quality premium styling */
+button,
+[role="button"],
+.button,
+[data-testid*="button"],
+[class*="Button"],
+[class*="button"] {
+  background: white !important;
+  background-image: none !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: rgb(var(--foreground)) !important;
+  font-family: "IosevkaTerm-Regular", monospace !important;
+  text-transform: lowercase !important;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05), inset 0 1px 0 0
+    rgba(255, 255, 255, 0.1) !important;
+  border-radius: 6px !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 400 !important;
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* Dark mode buttons */
+.dark button,
+.dark [role="button"],
+.dark .button,
+.dark [data-testid*="button"],
+.dark [class*="Button"],
+.dark [class*="button"] {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: rgb(var(--foreground)) !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 0
+    rgba(255, 255, 255, 0.05) !important;
+}
+
+button:hover,
+[role="button"]:hover,
+.button:hover,
+[data-testid*="button"]:hover,
+[class*="Button"]:hover,
+[class*="button"]:hover {
+  background: rgba(0, 0, 0, 0.02) !important;
+  background-image: none !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  transform: none !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px
+    rgba(0, 0, 0, 0.04), inset 0 1px 0 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark button:hover,
+.dark [role="button"]:hover,
+.dark .button:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+button:active,
+[role="button"]:active {
+  transform: none !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05), inset 0 2px 4px 0
+    rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Focus visible for accessibility */
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid rgb(var(--primary)) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 3px rgba(var(--primary), 0.1), 0 1px 2px 0
+    rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Search button specific */
+button[aria-label*="search"],
+[class*="search"][class*="button"],
+[class*="Search"][class*="Button"] {
+  background: rgb(var(--background)) !important;
+  border: 1px solid rgb(var(--border)) !important;
+  color: rgb(var(--muted-foreground)) !important;
+}
+
+/* Tab buttons - modern underline style */
+[role="tab"],
+[class*="tab"][class*="button"],
+[class*="Tab"][class*="Button"],
+[role="tablist"] button {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0.75rem 1.25rem !important;
+  position: relative !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  color: rgb(var(--muted-foreground)) !important;
+  transition: color 0.15s ease !important;
+}
+
+[role="tab"]::after,
+[class*="tab"][class*="button"]::after,
+[role="tablist"] button::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+[role="tab"][aria-selected="true"],
+[role="tab"][data-state="active"],
+[class*="tab"][class*="button"][class*="active"],
+[class*="Tab"][class*="Button"][class*="active"],
+[role="tablist"] button[aria-selected="true"] {
+  background: transparent !important;
+  color: rgb(var(--foreground)) !important;
+  font-weight: 500 !important;
+}
+
+[role="tab"][aria-selected="true"]::after,
+[role="tab"][data-state="active"]::after,
+[role="tablist"] button[aria-selected="true"]::after {
+  background: rgb(var(--foreground)) !important;
+}
+
+[role="tab"]:hover,
+[role="tablist"] button:hover {
+  background: transparent !important;
+  color: rgb(var(--foreground)) !important;
+  transform: none !important;
+}
+
+[role="tab"]:hover::after {
+  background: rgba(var(--foreground), 0.2) !important;
+}
+
+/* Copy code buttons - subtle floating style */
+[data-testid="copy-code-button"],
+[class*="copy"][class*="button"],
+[aria-label*="Copy"],
+button:has(svg[class*="copy"]) {
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  padding: 0.375rem !important;
+  border-radius: 4px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.15s ease !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.dark [data-testid="copy-code-button"],
+.dark [class*="copy"][class*="button"],
+.dark [aria-label*="Copy"],
+.dark button:has(svg[class*="copy"]) {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+[data-testid="copy-code-button"]:hover,
+[class*="copy"][class*="button"]:hover,
+[aria-label*="Copy"]:hover,
+button:has(svg[class*="copy"]):hover {
+  background: white !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  transform: none !important;
+  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.08) !important;
+}
+
+.dark [data-testid="copy-code-button"]:hover,
+.dark [class*="copy"][class*="button"]:hover,
+.dark [aria-label*="Copy"]:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Feedback buttons - pill style */
+button[aria-label*="Yes"],
+button[aria-label*="No"],
+[class*="feedback"][class*="button"] {
+  background: white !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  padding: 0.375rem 1rem !important;
+  border-radius: 20px !important;
+  font-size: 13px !important;
+  transition: all 0.15s ease !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.dark button[aria-label*="Yes"],
+.dark button[aria-label*="No"],
+.dark [class*="feedback"][class*="button"] {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+button[aria-label*="Yes"]:hover,
+button[aria-label*="No"]:hover,
+[class*="feedback"][class*="button"]:hover {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  transform: none !important;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.08) !important;
+}
+
+.dark button[aria-label*="Yes"]:hover,
+.dark button[aria-label*="No"]:hover,
+.dark [class*="feedback"][class*="button"]:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Icon buttons */
+button svg,
+[role="button"] svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+}
+
+/* Dark mode toggle - icon button style */
+button[aria-label*="dark mode"],
+button[aria-label*="Toggle"],
+[class*="theme"][class*="toggle"] {
+  background: white !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  padding: 0.5rem !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.15s ease !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.dark button[aria-label*="dark mode"],
+.dark button[aria-label*="Toggle"],
+.dark [class*="theme"][class*="toggle"] {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+button[aria-label*="dark mode"]:hover,
+button[aria-label*="Toggle"]:hover,
+[class*="theme"][class*="toggle"]:hover {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  transform: none !important;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08) !important;
+}
+
+.dark button[aria-label*="dark mode"]:hover,
+.dark button[aria-label*="Toggle"]:hover,
+.dark [class*="theme"][class*="toggle"]:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Primary/CTA buttons */
+button[data-variant="primary"],
+.primary-button,
+[class*="primary"][class*="button"] {
+  background: rgb(var(--foreground)) !important;
+  color: rgb(var(--background)) !important;
+  border: 1px solid rgb(var(--foreground)) !important;
+}
+
+button[data-variant="primary"]:hover,
+.primary-button:hover,
+[class*="primary"][class*="button"]:hover {
+  background: rgb(var(--primary)) !important;
+  opacity: 0.9;
+}
+
+/* Remove all gradient backgrounds */
+button[style*="gradient"],
+[role="button"][style*="gradient"],
+[class*="button"][style*="gradient"] {
+  background-image: none !important;
+  background: rgb(var(--background)) !important;
+}
+
+/* Navigation buttons and GitHub button - premium style */
+a[class*="button"],
+a[role="button"],
+nav a:has(svg),
+a[href*="github"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  background: white !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  text-decoration: none !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05), inset 0 1px 0 0
+    rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark a[class*="button"],
+.dark a[role="button"],
+.dark nav a:has(svg),
+.dark a[href*="github"] {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 0
+    rgba(255, 255, 255, 0.05) !important;
+}
+
+a[class*="button"]:hover,
+a[role="button"]:hover,
+nav a:has(svg):hover,
+a[href*="github"]:hover {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+  transform: none !important;
+  text-decoration: none !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px
+    rgba(0, 0, 0, 0.04), inset 0 1px 0 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark a[class*="button"]:hover,
+.dark a[role="button"]:hover,
+.dark nav a:has(svg):hover,
+.dark a[href*="github"]:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Code blocks - minimal styling */
+pre {
+  background: rgb(var(--muted)) !important;
+  border: 1px solid rgb(var(--border)) !important;
+  border-radius: 0.25rem !important;
+}
+
+/* Inline code */
+code:not(pre code) {
+  background: rgb(var(--muted)) !important;
+  padding: 0.125rem 0.25rem !important;
+  border-radius: 0.125rem !important;
+  font-size: 0.875em !important;
+}
+
+/* Cards and containers */
+.card,
+[role="article"] {
+  background: rgb(var(--card)) !important;
+  border: 1px solid rgb(var(--border)) !important;
+  border-radius: 0.5rem !important;
+}
+
+/* Search input */
+input[type="search"],
+input[type="text"],
+.search-input {
+  background: rgb(var(--background)) !important;
+  border: 1px solid rgb(var(--border)) !important;
+  color: rgb(var(--foreground)) !important;
+  font-family: "IosevkaTerm-Regular", monospace !important;
+  text-transform: lowercase !important;
+}
+
+input::placeholder {
+  color: rgb(var(--muted-foreground)) !important;
+  text-transform: lowercase !important;
+}
+
+/* Tables */
+table {
+  border: 1px solid rgb(var(--border)) !important;
+}
+
+th {
+  background: rgb(var(--muted)) !important;
+  font-weight: 400 !important;
+  text-transform: lowercase !important;
+}
+
+td,
+th {
+  border: 1px solid rgb(var(--border)) !important;
+  padding: 0.5rem !important;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--border));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--muted-foreground));
+}
+
+/* Remove shadows and excessive borders */
+* {
+  box-shadow: none !important;
+}
+
+/* Smooth transitions for theme switching */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+}
+
+/* Disable transitions on theme switch to prevent flashing */
+.theme-transitioning * {
+  transition: none !important;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 1.5rem !important;
+  }
+  h2 {
+    font-size: 1.25rem !important;
+  }
+  h3 {
+    font-size: 1.125rem !important;
+  }
+}
+
+/* Custom Mintlify overrides */
+.mint-search-results {
+  background: rgb(var(--background)) !important;
+  border: 1px solid rgb(var(--border)) !important;
+}
+
+.mint-search-result-item:hover {
+  background: rgb(var(--muted)) !important;
+}
+
+/* Footer */
+footer {
+  background: rgb(var(--background)) !important;
+  border-top: 1px solid rgb(var(--border)) !important;
+}
+
+/* Breadcrumbs */
+.breadcrumb {
+  text-transform: lowercase !important;
+  color: rgb(var(--muted-foreground)) !important;
+}
+
+/* Page headers */
+.page-header {
+  border-bottom: 1px solid rgb(var(--border)) !important;
+}
+
+/* Remove rounded corners for a more architectural feel */
+.rounded-lg {
+  border-radius: 0.25rem !important;
+}
+.rounded-md {
+  border-radius: 0.125rem !important;
+}
+.rounded-xl {
+  border-radius: 0.5rem !important;
+}
+
+/* Focus states - minimal */
+*:focus {
+  outline: 1px solid rgb(var(--ring)) !important;
+  outline-offset: 2px !important;
+}
+
+/* Selection color */
+::selection {
+  background: rgb(var(--primary)) !important;
+  color: rgb(var(--primary-foreground)) !important;
+}

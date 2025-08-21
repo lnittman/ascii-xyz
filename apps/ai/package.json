@@ -1,0 +1,39 @@
+{
+  "name": "ascii-ai",
+  "version": "1.0.0",
+  "description": "AI-powered ASCII art generation service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"No tests configured for AI service\"",
+    "dev": "mastra dev -p 3002",
+    "start": "mastra start",
+    "build": "mastra build",
+    "deploy": "mastra deploy"
+  },
+  "keywords": ["logs", "ai", "mastra", "agents"],
+  "author": "logs",
+  "license": "ISC",
+  "type": "module",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "2.0.0",
+    "@ai-sdk/google": "2.0.0",
+    "@ai-sdk/openai": "2.0.0",
+    "@mastra/core": "ai-v5",
+    "@mastra/libsql": "ai-v5",
+    "@mastra/loggers": "ai-v5",
+    "@mastra/memory": "ai-v5",
+    "@mastra/pg": "ai-v5",
+    "@openrouter/ai-sdk-provider": "1.0.0-beta.6",
+    "ai": "5.0.0",
+    "hono": "^4.8.5",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.8",
+    "mastra": "ai-v5",
+    "typescript": "^5.8.3"
+  }
+}

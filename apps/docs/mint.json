@@ -1,0 +1,170 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "arbor",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#1A1A1A",
+    "light": "#FAF9F7",
+    "dark": "#0A0A0A",
+    "background": {
+      "light": "#FAF9F7",
+      "dark": "#0A0A0A"
+    }
+  },
+  "font": {
+    "headings": {
+      "family": "IosevkaTerm-Regular, monospace",
+      "weight": 400
+    },
+    "body": {
+      "family": "IosevkaTerm-Regular, monospace",
+      "weight": 400
+    }
+  },
+  "layout": "sidenav",
+  "topbarCtaButton": {
+    "name": "launch app",
+    "url": "https://app.arbor.xyz"
+  },
+  "topbarLinks": [
+    {
+      "name": "github",
+      "url": "https://github.com/lnittman/arbor"
+    }
+  ],
+  "tabs": [
+    {
+      "name": "guides",
+      "url": "guides"
+    },
+    {
+      "name": "API reference",
+      "url": "api-reference"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "app",
+      "icon": "browser",
+      "url": "https://app.arbor.xyz"
+    },
+    {
+      "name": "discord",
+      "icon": "discord",
+      "url": "https://discord.gg/arbor"
+    },
+    {
+      "name": "github",
+      "icon": "github",
+      "url": "https://github.com/lnittman/arbor"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "getting started",
+      "pages": [
+        "introduction",
+        "quickstart"
+      ]
+    },
+    {
+      "group": "features",
+      "pages": [
+        "features/overview",
+        "features/chat",
+        "features/projects",
+        "features/workspaces",
+        "features/outputs",
+        "features/sharing",
+        "features/models",
+        "features/settings",
+        "features/daemon"
+      ]
+    },
+    {
+      "group": "guides",
+      "pages": [
+        "guides/getting-started",
+        "guides/effective-prompting",
+        "guides/project-organization",
+        "guides/workspace-setup",
+        "guides/api-keys",
+        "guides/sharing-collaboration",
+        "guides/troubleshooting"
+      ]
+    },
+    {
+      "group": "API documentation",
+      "pages": [
+        "api-reference/introduction",
+        "api-reference/authentication",
+        "api-reference/rate-limits",
+        "api-reference/errors"
+      ]
+    },
+    {
+      "group": "endpoints",
+      "pages": [
+        "api-reference/endpoints/chats",
+        "api-reference/endpoints/projects",
+        "api-reference/endpoints/workspaces",
+        "api-reference/endpoints/outputs",
+        "api-reference/endpoints/users",
+        "api-reference/endpoints/webhooks"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/lnittman/arbor",
+    "discord": "https://discord.gg/arbor",
+    "x": "https://x.com/arbor"
+  },
+  "theme": "prism",
+  "modeToggle": {
+    "default": "dark",
+    "isHidden": false
+  },
+  "search": {
+    "prompt": "search arbor docs..."
+  },
+  "feedback": {
+    "thumbsRating": true,
+    "suggestEdit": true,
+    "raiseIssue": true
+  },
+  "seo": {
+    "indexHiddenPages": false,
+    "siteUrl": "https://docs.arbor.xyz"
+  },
+  "metadata": {
+    "og:site_name": "arbor documentation",
+    "og:description": "comprehensive documentation for arbor - AI-powered development platform",
+    "og:image": "/images/og-image.png",
+    "twitter:site": "@arbor"
+  },
+  "analytics": {
+    "posthog": {
+      "apiKey": "phc_arbor_docs"
+    }
+  },
+  "api": {
+    "baseUrl": "https://api.arbor.xyz",
+    "auth": {
+      "method": "bearer",
+      "name": "Authorization"
+    },
+    "playground": {
+      "mode": "simple"
+    }
+  },
+  "versions": [
+    {
+      "name": "v1",
+      "url": "https://api.arbor.xyz/v1"
+    }
+  ]
+}

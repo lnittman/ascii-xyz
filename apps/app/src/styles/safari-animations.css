@@ -1,0 +1,62 @@
+/* Safari-specific animations and fixes */
+
+/* Fade animations for iOS Safari */
+@keyframes safariRFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes safariFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Classes for iOS Safari animations */
+.safari-fade-in {
+  animation: safariRFadeIn 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.safari-fade-out {
+  animation: safariFadeOut 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+/* Force GPU acceleration for Safari */
+.safari-gpu-accelerated {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  perspective: 1000;
+}
+
+/* Prevent flickering on opacity transitions */
+.safari-smooth-opacity {
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fix for prompt bar flickering */
+.safari-prompt-bar {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: opacity, transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Transition classes for iOS Safari */
+.safari-transition-opacity {
+  transition: opacity 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  -webkit-transition: opacity 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}

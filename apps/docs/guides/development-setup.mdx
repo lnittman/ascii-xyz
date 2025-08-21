@@ -1,0 +1,470 @@
+---
+title: development setup
+description: set up your local development environment for arbor
+---
+
+# development setup
+
+complete guide for setting up your arbor development environment.
+
+## prerequisites
+
+<Card title="required tools" icon="wrench">
+  - **node.js** v20 or higher
+  - **pnpm** v9 or higher
+  - **git** latest version
+  - **postgresql** v14+ or docker
+  - **redis** v6+ or docker (optional)
+</Card>
+
+## initial setup
+
+<Steps>
+  <Step title="clone the repository">
+    ```bash
+    git clone https://github.com/lnittman/arbor.git
+    cd arbor/arbor-xyz
+    ```
+  </Step>
+
+  <Step title="install dependencies">
+    ```bash
+    pnpm install
+    ```
+    
+    this installs all monorepo dependencies.
+  </Step>
+
+  <Step title="configure environment">
+    create environment files for each service:
+    
+    ```bash
+    # main app
+    cp apps/app/.env.example apps/app/.env.local
+    
+    # api service
+    cp apps/api/.env.example apps/api/.env.local
+    
+    # ai service
+    cp apps/ai/.env.example apps/ai/.env.local
+    ```
+  </Step>
+
+  <Step title="configure environment variables">
+    edit `.env.local` files with your configuration:
+    
+    <CodeGroup>
+    ```env apps/app/.env.local
+    # database
+    DATABASE_URL="postgresql://user:pass@localhost:5432/arbor"
+    
+    # clerk authentication
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_..."
+    CLERK_SECRET_KEY="sk_test_..."
+    
+    # ai service
+    NEXT_PUBLIC_AI_URL="http://localhost:3999"
+    
+    # optional debugging
+    DEBUG_MESSAGES=true
+    ```
+    
+    ```env apps/ai/.env.local
+    # database (same as main app)
+    DATABASE_URL="postgresql://user:pass@localhost:5432/arbor"
+    
+    # ai providers
+    OPENAI_API_KEY="sk-..."
+    ANTHROPIC_API_KEY="sk-ant-..."
+    OPENROUTER_API_KEY="sk-or-..."
+    
+    # main app url
+    MAIN_APP_URL="http://localhost:3000"
+    ```
+    
+    ```env apps/api/.env.local
+    # database
+    DATABASE_URL="postgresql://user:pass@localhost:5432/arbor"
+    
+    # redis (optional)
+    REDIS_URL="redis://localhost:6379"
+    
+    # api keys
+    API_SECRET_KEY="your-secret-key"
+    ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="setup database">
+    initialize postgresql database:
+    
+    ```bash
+    # generate prisma client
+    pnpm db:generate
+    
+    # run migrations
+    pnpm db:migrate
+    
+    # seed initial data (optional)
+    pnpm db:seed
+    
+    # open prisma studio (optional)
+    pnpm db:studio
+    ```
+  </Step>
+
+  <Step title="start development servers">
+    ```bash
+    # start all services
+    pnpm dev
+    ```
+    
+    services will be available at:
+    - **web app**: http://localhost:3000
+    - **api**: http://localhost:3000/api
+    - **ai service**: http://localhost:3999
+    - **docs**: http://localhost:3100
+  </Step>
+</Steps>
+
+## service-specific setup
+
+### ai service (mastra)
+
+<Tabs>
+  <Tab title="basic setup">
+    the ai service runs automatically with `pnpm dev`, but you can run it separately:
+    
+    ```bash
+    cd apps/ai
+    pnpm dev
+    ```
+  </Tab>
+  
+  <Tab title="advanced config">
+    configure mastra features:
+    
+    ```bash
+    # initialize mastra
+    cd apps/ai
+    pnpm mastra init
+    
+    # test agents
+    pnpm mastra chat
+    ```
+  </Tab>
+  
+  <Tab title="mcp tools">
+    install mcp servers for extended functionality:
+    
+    ```bash
+    # filesystem tools
+    npx @modelcontextprotocol/server-filesystem
+    
+    # github integration
+    npx @modelcontextprotocol/server-github
+    ```
+  </Tab>
+</Tabs>
+
+### desktop daemon (tauri)
+
+<Accordion title="setup tauri daemon">
+  the daemon provides local file system integration:
+  
+  ```bash
+  cd apps/daemon
+  
+  # install rust dependencies
+  cargo build
+  
+  # run in development
+  pnpm tauri dev
+  ```
+  
+  requirements:
+  - rust toolchain
+  - platform-specific dependencies
+</Accordion>
+
+## docker setup (alternative)
+
+<Card title="containerized development" icon="docker">
+  use docker for isolated development:
+  
+  ```yaml
+  # docker-compose.yml
+  version: '3.8'
+  services:
+    postgres:
+      image: postgres:14
+      environment:
+        POSTGRES_DB: arbor
+        POSTGRES_USER: user
+        POSTGRES_PASSWORD: pass
+      ports:
+        - "5432:5432"
+    
+    redis:
+      image: redis:6-alpine
+      ports:
+        - "6379:6379"
+  ```
+  
+  ```bash
+  # start services
+  docker-compose up -d
+  
+  # run app
+  pnpm dev
+  ```
+</Card>
+
+## development workflow
+
+### code quality
+
+<Tabs>
+  <Tab title="linting">
+    ```bash
+    # run linter
+    pnpm lint
+    
+    # auto-fix issues
+    pnpm lint:fix
+    ```
+  </Tab>
+  
+  <Tab title="formatting">
+    ```bash
+    # format code
+    pnpm format
+    
+    # check formatting
+    pnpm format:check
+    ```
+  </Tab>
+  
+  <Tab title="type checking">
+    ```bash
+    # check types
+    pnpm typecheck
+    
+    # watch mode
+    pnpm typecheck:watch
+    ```
+  </Tab>
+</Tabs>
+
+### testing
+
+```bash
+# run all tests
+pnpm test
+
+# run specific package tests
+pnpm test --filter=@repo/api
+
+# watch mode
+pnpm test:watch
+
+# coverage report
+pnpm test:coverage
+```
+
+### building
+
+```bash
+# build all packages
+pnpm build
+
+# build specific app
+pnpm build --filter=arbor-app
+
+# clean build artifacts
+pnpm clean
+```
+
+## ide setup
+
+### vs code
+
+<CodeGroup>
+```json .vscode/settings.json
+{
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "tailwindCSS.experimental.classRegex": [
+    ["cn\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+  ]
+}
+```
+
+```json .vscode/extensions.json
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "prisma.prisma",
+    "bradlc.vscode-tailwindcss",
+    "unifiedjs.vscode-mdx"
+  ]
+}
+```
+</CodeGroup>
+
+### cursor
+
+cursor works out of the box with the `.cursorrules` file in the repository.
+
+## troubleshooting
+
+<AccordionGroup>
+  <Accordion title="port already in use">
+    kill processes on specific ports:
+    
+    ```bash
+    # find process
+    lsof -i :3000
+    
+    # kill process
+    kill -9 <PID>
+    
+    # or kill all on port
+    lsof -ti:3000 | xargs kill -9
+    ```
+  </Accordion>
+  
+  <Accordion title="database connection issues">
+    verify postgresql is running:
+    
+    ```bash
+    # check status
+    pg_isready
+    
+    # test connection
+    psql $DATABASE_URL -c "SELECT 1"
+    
+    # reset database
+    pnpm db:reset
+    ```
+  </Accordion>
+  
+  <Accordion title="missing dependencies">
+    clear cache and reinstall:
+    
+    ```bash
+    # clear pnpm cache
+    pnpm store prune
+    
+    # remove node_modules
+    rm -rf node_modules
+    rm -rf apps/*/node_modules
+    rm -rf packages/*/node_modules
+    
+    # reinstall
+    pnpm install
+    ```
+  </Accordion>
+  
+  <Accordion title="typescript errors">
+    regenerate types:
+    
+    ```bash
+    # regenerate prisma types
+    pnpm db:generate
+    
+    # clear typescript cache
+    rm -rf .next
+    rm -rf apps/*/.next
+    
+    # rebuild
+    pnpm build
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## debugging tips
+
+### enable verbose logging
+
+```env
+# in .env.local files
+DEBUG_MESSAGES=true
+DEBUG_AGENTS=true
+DEBUG_TOOLS=true
+DEBUG_MEMORY=true
+```
+
+### inspect database
+
+```bash
+# open prisma studio
+pnpm db:studio
+
+# or use psql
+psql $DATABASE_URL
+```
+
+### monitor network
+
+- browser devtools network tab
+- check for excessive requests
+- monitor websocket connections
+- use react devtools for component updates
+
+## performance optimization
+
+<CardGroup cols={2}>
+  <Card title="frontend" icon="gauge">
+    - use `React.memo` sparingly
+    - virtualize long lists
+    - lazy load routes
+    - optimize images with next/image
+  </Card>
+  
+  <Card title="backend" icon="server">
+    - cache api responses
+    - use database indexes
+    - batch operations
+    - implement rate limiting
+  </Card>
+  
+  <Card title="ai service" icon="robot">
+    - lazy load models
+    - use streaming responses
+    - implement semantic caching
+    - optimize token usage
+  </Card>
+  
+  <Card title="database" icon="database">
+    - add appropriate indexes
+    - use connection pooling
+    - optimize queries
+    - implement caching layer
+  </Card>
+</CardGroup>
+
+## next steps
+
+<CardGroup cols={2}>
+  <Card title="architecture" icon="diagram-project" href="/architecture">
+    understand system design
+  </Card>
+  
+  <Card title="api reference" icon="code" href="/reference/api">
+    explore api endpoints
+  </Card>
+  
+  <Card title="testing guide" icon="vial" href="/guides/testing-strategy">
+    learn testing approach
+  </Card>
+  
+  <Card title="deployment" icon="rocket" href="/guides/deployment">
+    deploy to production
+  </Card>
+</CardGroup>

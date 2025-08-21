@@ -1,0 +1,59 @@
+# Dependencies
+node_modules
+.pnpm-store
+pnpm-lock.yaml
+
+# Build output
+.next
+dist
+build
+out
+*.tsbuildinfo
+
+# Test files
+**/*.test.*
+**/*.spec.*
+__tests__
+coverage
+.nyc_output
+
+# Development files
+.env.local
+.env.development
+.env.test
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git
+.gitignore
+
+# Other apps that aren't needed for the main app
+apps/ai
+apps/api
+apps/daemon
+apps/docs
+
+# Documentation
+docs
+
+# Misc
+.turbo
+.cache
+tmp
+temp
+logs
+*.orig
+
+# Mastra output directories
+.mastra

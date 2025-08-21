@@ -1,0 +1,68 @@
+/* Hover transitions: 0ms in, 150ms out */
+
+/* Main UI elements - 0ms in, 150ms out */
+.hover-transition {
+  transition-property: all;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.hover-transition:hover {
+  transition-duration: 0ms;
+}
+
+/* Menu/Modal/Sheet elements - 0ms in, 0ms out */
+.hover-instant {
+  transition-property: all;
+  transition-duration: 0ms;
+}
+
+/* For background color transitions */
+.hover-bg {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.hover-bg:hover {
+  transition-duration: 0ms;
+}
+
+/* For transform transitions */
+.hover-transform {
+  transition-property: transform, opacity;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.hover-transform:hover {
+  transition-duration: 0ms;
+}
+
+/* Combined all transitions */
+.hover-all {
+  transition-property: all;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.hover-all:hover,
+.hover-all:focus-visible,
+.hover-all:active {
+  transition-duration: 0ms;
+}
+
+/* Menu items instant transitions */
+.menu-item {
+  transition-property: background-color, color;
+  transition-duration: 0ms;
+}
+
+/* Custom duration class for 0ms in, 150ms out */
+.duration-out-150 {
+  transition-duration: 150ms;
+}
+
+.duration-out-150:hover {
+  transition-duration: 0ms;
+}

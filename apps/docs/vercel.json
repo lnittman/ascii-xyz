@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "echo 'Mintlify docs do not require build'",
+  "outputDirectory": ".",
+  "installCommand": "npm install",
+  "framework": null
+}

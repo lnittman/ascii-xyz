@@ -1,0 +1,328 @@
+---
+title: workspaces
+description: connect local development folders with AI assistance
+---
+
+# workspaces
+
+workspaces bridge your local development environment with arbor's AI capabilities, enabling powerful code assistance and task management.
+
+## understanding workspaces
+
+### what are workspaces?
+workspaces are connections between arbor and your local development folders, providing:
+- AI access to your codebase
+- task creation and tracking
+- file system operations
+- integrated development workflows
+
+### prerequisites
+to use workspaces, you need:
+1. **arbor desktop daemon** - local application for file system access
+2. **local project folder** - development directory to connect
+3. **proper permissions** - read/write access to the folder
+
+## setting up workspaces
+
+### installing the daemon
+
+<Tabs>
+  <Tab title="macOS">
+    1. download arbor daemon from [releases](https://github.com/lnittman/arbor/releases)
+    2. open the `.dmg` file
+    3. drag arbor to applications
+    4. launch from applications folder
+    5. allow system permissions when prompted
+  </Tab>
+  <Tab title="windows">
+    1. download arbor daemon installer
+    2. run the `.exe` installer
+    3. follow installation wizard
+    4. launch from start menu
+    5. allow firewall access
+  </Tab>
+  <Tab title="linux">
+    1. download `.AppImage` or `.deb` package
+    2. make executable: `chmod +x arbor-daemon.AppImage`
+    3. run: `./arbor-daemon.AppImage`
+    4. or install deb: `sudo dpkg -i arbor-daemon.deb`
+  </Tab>
+</Tabs>
+
+### connecting a workspace
+
+<Steps>
+  <Step title="launch daemon">
+    ensure the arbor daemon is running (check system tray)
+  </Step>
+  <Step title="navigate to workspaces">
+    go to **code** > **settings** > **workspaces** in arbor
+  </Step>
+  <Step title="create workspace">
+    click **create workspace** and enter:
+    - workspace name
+    - local folder path
+  </Step>
+  <Step title="verify connection">
+    check the connection status indicator turns green
+  </Step>
+</Steps>
+
+## workspace features
+
+### task management
+
+#### creating tasks
+tasks represent AI-assisted coding objectives:
+
+1. select active workspace from dropdown
+2. click **new task** or press `Cmd+T`
+3. describe what you want to accomplish
+4. AI will create and track the task
+
+#### task types
+| type | description | example |
+|------|-------------|---------|
+| feature | new functionality | "add user authentication" |
+| bug fix | resolve issues | "fix memory leak in chat component" |
+| refactor | improve code | "convert class components to hooks" |
+| documentation | add docs | "document API endpoints" |
+| test | write tests | "add unit tests for auth service" |
+
+#### task workflow
+<Steps>
+  <Step title="creation">
+    task is created with initial prompt
+  </Step>
+  <Step title="planning">
+    AI analyzes requirements and creates plan
+  </Step>
+  <Step title="execution">
+    AI performs file operations and generates code
+  </Step>
+  <Step title="review">
+    review changes and provide feedback
+  </Step>
+  <Step title="completion">
+    mark task complete or iterate
+  </Step>
+</Steps>
+
+### file operations
+
+the daemon enables AI to:
+- **read** files and directories
+- **write** new files
+- **modify** existing code
+- **create** directory structures
+- **execute** commands (with permission)
+
+<Warning>
+AI operations require explicit permission. review all changes before accepting.
+</Warning>
+
+### code assistance
+
+#### contextual understanding
+AI has access to:
+- entire codebase structure
+- file contents and relationships
+- git history and branches
+- package dependencies
+- configuration files
+
+#### intelligent suggestions
+based on workspace context, AI can:
+- suggest improvements
+- identify potential issues
+- recommend best practices
+- generate boilerplate
+- refactor code
+
+## advanced features
+
+### workspace configuration
+
+#### `.arbor/config.json`
+customize workspace behavior:
+
+```json
+{
+  "name": "my-project",
+  "description": "React application",
+  "ignore": [
+    "node_modules",
+    "dist",
+    ".next",
+    "coverage"
+  ],
+  "preferences": {
+    "language": "typescript",
+    "framework": "nextjs",
+    "testing": "jest",
+    "linting": "eslint"
+  },
+  "tasks": {
+    "autoArchive": true,
+    "requireReview": true
+  }
+}
+```
+
+#### ignore patterns
+prevent AI from accessing sensitive files:
+
+```gitignore
+# .arborignore
+.env*
+secrets/
+*.key
+*.pem
+config/production.json
+```
+
+### workspace templates
+
+create reusable workspace configurations:
+
+<AccordionGroup>
+  <Accordion title="Next.js template">
+    ```json
+    {
+      "name": "nextjs-app",
+      "preferences": {
+        "language": "typescript",
+        "framework": "nextjs",
+        "styling": "tailwind",
+        "testing": "cypress"
+      },
+      "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "test": "cypress run"
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Python API template">
+    ```json
+    {
+      "name": "python-api",
+      "preferences": {
+        "language": "python",
+        "framework": "fastapi",
+        "testing": "pytest",
+        "formatting": "black"
+      },
+      "scripts": {
+        "dev": "uvicorn main:app --reload",
+        "test": "pytest",
+        "format": "black ."
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### workspace sync
+
+keep workspaces synchronized:
+- **auto-sync**: changes detected automatically
+- **manual sync**: force refresh with sync button
+- **conflict resolution**: handle merge conflicts
+- **version control**: integrated git operations
+
+## workspace management
+
+### monitoring status
+
+workspace indicators:
+- 🟢 **connected**: daemon running, folder accessible
+- 🟡 **syncing**: updating file information
+- 🔴 **disconnected**: daemon offline or folder inaccessible
+- ⚠️ **error**: permission or configuration issue
+
+### troubleshooting connection issues
+
+<AccordionGroup>
+  <Accordion title="daemon not detected">
+    - ensure daemon is running (check system tray)
+    - restart the daemon application
+    - check firewall settings
+    - verify websocket port 3456 is available
+  </Accordion>
+  <Accordion title="folder access denied">
+    - check folder permissions
+    - ensure path is correct
+    - avoid system directories
+    - run daemon with appropriate privileges
+  </Accordion>
+  <Accordion title="sync failures">
+    - check .arborignore patterns
+    - verify disk space
+    - look for file locks
+    - restart daemon and retry
+  </Accordion>
+</AccordionGroup>
+
+## best practices
+
+### workspace organization
+- one workspace per project
+- use descriptive names
+- keep workspaces focused
+- archive completed projects
+- regular cleanup
+
+### task management
+- break large tasks into smaller ones
+- provide clear descriptions
+- review AI suggestions carefully
+- test changes thoroughly
+- commit frequently
+
+### security considerations
+- never share daemon tokens
+- use .arborignore for sensitive files
+- review AI-generated code
+- audit file permissions
+- monitor daemon activity
+
+## performance optimization
+
+### improving response time
+- exclude large directories (node_modules, vendor)
+- limit workspace size to relevant files
+- use specific task descriptions
+- keep daemon updated
+- close unused workspaces
+
+### resource management
+- daemon memory usage scales with workspace size
+- consider splitting large monorepos
+- archive completed tasks
+- clear task history periodically
+
+## workspace limits
+
+| feature | free | pro | enterprise |
+|---------|------|-----|------------|
+| active workspaces | 1 | 10 | unlimited |
+| tasks per workspace | 10 | 100 | unlimited |
+| file size limit | 1 MB | 10 MB | 100 MB |
+| workspace size | 100 MB | 1 GB | 10 GB |
+| concurrent tasks | 1 | 3 | unlimited |
+
+## next steps
+
+<CardGroup cols={3}>
+  <Card title="daemon guide" icon="desktop" href="/features/daemon">
+    daemon configuration
+  </Card>
+  <Card title="task workflows" icon="tasks" href="/guides/workspace-setup">
+    effective task management
+  </Card>
+  <Card title="API integration" icon="code" href="/api-reference/endpoints/workspaces">
+    programmatic access
+  </Card>
+</CardGroup>

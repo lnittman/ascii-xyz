@@ -1,0 +1,642 @@
+@import "tailwindcss";
+@import "./cmdk.css";
+@import "./transitions.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@font-face {
+  font-family: "IosevkaTerm-Regular";
+  src: url("https://intdev-global.s3.us-west-2.amazonaws.com/public/internet-dev/6397be61-3ea4-459d-8a3e-fd95168cb214.woff2")
+    format("woff2");
+}
+
+/* Highway Gothic Font Family */
+@font-face {
+  font-family: "HighwayGothic";
+  src: url("../fonts/HWYGOTH.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HighwayGothic";
+  src: url("../fonts/HWYGNRRW.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HighwayGothic";
+  src: url("../fonts/HWYGWDE.woff2") format("woff2");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HighwayGothic-Condensed";
+  src: url("../fonts/HWYGCOND.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HighwayGothic-Expanded";
+  src: url("../fonts/HWYGEXPD.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: 255, 255, 255;
+  --footer-height: 4rem; /* Defines footer height for consistent positioning */
+  --background: #faf9f7; /* Warm paper-like off-white - oklch(0.98 0.005 85) */
+  --foreground: oklch(0.2 0.01 85); /* Slightly warmer black */
+  --card: oklch(1 0.005 85); /* Slightly lighter paper */
+  --card-foreground: oklch(0.2 0.01 85);
+  --popover: oklch(1 0.005 85);
+  --popover-foreground: oklch(0.2 0.01 85);
+  --primary: oklch(0.22 0.01 85);
+  --primary-foreground: oklch(0.97 0.005 85);
+  --secondary: oklch(0.94 0.01 85); /* Slightly darker secondary for accents */
+  --secondary-foreground: oklch(0.22 0.01 85);
+  --muted: oklch(0.94 0.01 85);
+  --muted-foreground: oklch(0.5 0.01 85);
+  --accent: oklch(0.9 0.02 85); /* Subtle accent color */
+  --accent-foreground: oklch(0.22 0.01 85);
+  --destructive: oklch(0.577 0.08 27.325); /* Muted red - less saturated */
+  --destructive-foreground: oklch(0.97 0.005 85);
+  --border: oklch(0.9 0.01 85); /* Subtle border color */
+  --input: oklch(0.9 0.01 85);
+  --ring: oklch(0.7 0.01 85);
+  /* Subtle, coordinated chart colors in Rams style */
+  --chart-1: oklch(0.646 0.09 41.116);
+  --chart-2: oklch(0.6 0.06 184.704);
+  --chart-3: oklch(0.55 0.05 227.392);
+  --chart-4: oklch(0.7 0.08 84.429);
+  --chart-5: oklch(0.75 0.07 70.08);
+  --radius: 0.375rem; /* 6px - More noticeable Linear-style radius */
+  --sidebar: var(--background); /* Slightly darker sidebar */
+  --sidebar-foreground: oklch(0.2 0.01 85);
+  --sidebar-primary: oklch(0.22 0.01 85);
+  --sidebar-primary-foreground: oklch(0.97 0.005 85);
+  --sidebar-accent: oklch(0.94 0.01 85);
+  --sidebar-accent-foreground: oklch(0.22 0.01 85);
+  --sidebar-border: oklch(0.9 0.01 85);
+  --sidebar-ring: oklch(0.7 0.01 85);
+  --title-font: "IosevkaTerm-Regular", monospace;
+}
+
+.dark {
+  /* Dark Bauhaus-inspired palette with material quality */
+  --background: #0a0a0a; /* Dark background - proper dark gray */
+  --foreground: oklch(0.94 0.01 60); /* Slightly warm white text */
+  --card: oklch(0.22 0.02 240); /* Slightly lighter than background */
+  --card-foreground: oklch(0.94 0.01 60);
+  --popover: oklch(0.22 0.02 240);
+  --popover-foreground: oklch(0.94 0.01 60);
+  --primary: oklch(0.9 0.01 60);
+  --primary-foreground: oklch(0.2 0.02 240);
+  --secondary: oklch(0.26 0.03 240); /* Slightly lighter secondary */
+  --secondary-foreground: oklch(0.94 0.01 60);
+  --muted: oklch(0.26 0.03 240);
+  --muted-foreground: oklch(0.72 0.02 60);
+  --accent: oklch(0.3 0.04 240); /* Subtle accent with material quality */
+  --accent-foreground: oklch(0.94 0.01 60);
+  --destructive: oklch(0.5 0.12 25); /* Muted red - like in Rams' FM radio buttons */
+  --destructive-foreground: oklch(0.9 0.01 60);
+  --border: oklch(0.28 0.02 240); /* Border with subtle coolness */
+  --input: oklch(0.24 0.03 240);
+  --ring: oklch(0.35 0.04 240);
+  /* Coordinated chart colors inspired by Rams' selective color approach */
+  --chart-1: oklch(0.5 0.12 30); /* Blood orange (FM radio reference) */
+  --chart-2: oklch(0.6 0.1 80); /* Honey yellow (phono reference) */
+  --chart-3: oklch(0.5 0.09 130); /* Leaf green (power button reference) */
+  --chart-4: oklch(0.55 0.08 260); /* Blue-grey like the T52 variant */
+  --chart-5: oklch(0.65 0.07 300); /* Subtle purple, complementary to system */
+  --sidebar: var(--background); /* Darker sidebar with material quality */
+  --sidebar-foreground: oklch(0.92 0.01 60);
+  --sidebar-primary: oklch(0.5 0.12 30); /* Blood orange accent */
+  --sidebar-primary-foreground: oklch(0.92 0.01 60);
+  --sidebar-accent: oklch(0.26 0.03 240);
+  --sidebar-accent-foreground: oklch(0.92 0.01 60);
+  --sidebar-border: oklch(0.25 0.02 240);
+  --sidebar-ring: oklch(0.35 0.04 240);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+/* This layer is added by shadcn/ui */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Ensure smooth theme transitions on mobile Chrome */
+  html {
+    transition: background-color 0.2s ease;
+  }
+
+  /* Prevent FOUC (Flash of Unstyled Content) on theme changes */
+  html:not(.dark):not(.light) {
+    background-color: #0a0a0a !important; /* Default to dark background during loading */
+  }
+
+  /* Ensure browser chrome matches theme immediately */
+  html {
+    background-color: var(--background) !important;
+  }
+
+  html.light {
+    background-color: #faf9f7 !important; /* oklch(0.98 0.005 85) */
+  }
+
+  html.dark {
+    background-color: #0a0a0a !important; /* Dark background */
+  }
+
+  /* Additional mobile-specific background enforcement */
+  html.dark body,
+  html.dark #__next,
+  html.dark [data-radix-portal] {
+    background-color: #0a0a0a !important;
+  }
+
+  html.light body,
+  html.light #__next,
+  html.light [data-radix-portal] {
+    background-color: #faf9f7 !important;
+  }
+
+  /* Mobile-specific optimizations */
+  @media (max-width: 768px) {
+    /* Improve scrolling on mobile devices */
+    * {
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Ensure theme switcher doesn't interfere with mobile navigation */
+    .fixed {
+      transform: translateZ(0); /* Force hardware acceleration */
+    }
+
+    /* Better touch targets for mobile */
+    button,
+    [role="button"],
+    input,
+    select,
+    textarea {
+      touch-action: manipulation;
+    }
+
+    /* Force background color on mobile Safari */
+    html,
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+
+    html.dark,
+    html.dark body,
+    html.dark main,
+    html.dark div[data-wrapper] {
+      background-color: #0a0a0a !important;
+    }
+
+    html.light,
+    html.light body,
+    html.light main,
+    html.light div[data-wrapper] {
+      background-color: #faf9f7 !important;
+    }
+  }
+}
+
+/* This layer is by next-forge */
+@layer base {
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    @apply border-border;
+  }
+  * {
+    @apply min-w-0;
+  }
+  html {
+    text-rendering: optimizelegibility;
+  }
+  body {
+    @apply min-h-[100dvh];
+  }
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-muted-foreground;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    @apply cursor-pointer;
+  }
+}
+
+/* Typography plugin */
+@utility prose {
+  --tw-prose-body: var(--color-foreground);
+  --tw-prose-headings: var(--color-foreground);
+  --tw-prose-lead: var(--color-muted-foreground);
+  --tw-prose-links: var(--color-primary);
+  --tw-prose-bold: var(--color-foreground);
+  --tw-prose-counters: var(--color-foreground);
+  --tw-prose-bullets: var(--color-muted-foreground);
+  --tw-prose-hr: var(--color-muted-foreground);
+  --tw-prose-quotes: var(--color-muted-foreground);
+  --tw-prose-quote-borders: var(--color-border);
+  --tw-prose-captions: var(--color-muted-foreground);
+  --tw-prose-code: var(--color-foreground);
+  --tw-prose-pre-code: var(--color-foreground);
+  --tw-prose-pre-bg: var(--color-background);
+  --tw-prose-th-borders: var(--color-border);
+  --tw-prose-td-borders: var(--color-border);
+  --tw-prose-invert-body: var(--color-foreground);
+  --tw-prose-invert-headings: var(--color-foreground);
+  --tw-prose-invert-lead: var(--color-muted-foreground);
+  --tw-prose-invert-links: var(--color-primary);
+  --tw-prose-invert-bold: var(--color-foreground);
+  --tw-prose-invert-counters: var(--color-foreground);
+  --tw-prose-invert-bullets: var(--color-foreground);
+  --tw-prose-invert-hr: var(--color-muted-foreground);
+  --tw-prose-invert-quotes: var(--color-muted-foreground);
+  --tw-prose-invert-quote-borders: var(--color-border);
+  --tw-prose-invert-captions: var(--color-muted-foreground);
+  --tw-prose-invert-code: var(--color-foreground);
+  --tw-prose-invert-pre-code: var(--color-foreground);
+  --tw-prose-invert-pre-bg: var(--color-background);
+  --tw-prose-invert-th-borders: var(--color-border);
+  --tw-prose-invert-td-borders: var(--color-border);
+}
+
+html,
+body {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+}
+
+/* Prevent scrolling on main app pages but allow it on unauthenticated pages */
+body:not(.allow-scroll) {
+  overflow: hidden;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: var(--background);
+  font-family: "IosevkaTerm-Regular", monospace;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Add utility classes for fonts */
+.font-title {
+  font-family: var(--title-font);
+  letter-spacing: 0.01em;
+  font-weight: 400;
+}
+
+.cursor {
+  display: inline-block;
+  width: 2px; /* Thin vertical line instead of 12px block */
+  height: 1.2em;
+  background-color: black;
+  margin-left: 1px;
+  vertical-align: middle;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  from,
+  to {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.icon-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 0.25rem; /* Square with slight rounding */
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 0;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.icon-button:hover {
+  background-color: #f3f4f6;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Web emoji styling */
+.web-emoji {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.web-emoji.large {
+  font-size: 2rem;
+}
+
+.page-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+  background: white;
+}
+
+/* Main content area */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Input area styles */
+.input-area {
+  height: 4rem;
+  padding: 1rem;
+  background: white;
+}
+
+/* Footer styles */
+.page-container footer {
+  height: var(--footer-height);
+  background: white;
+  border-top: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  width: 100%;
+}
+
+/* Chat panel positioning */
+.chat-panel {
+  bottom: calc(var(--footer-height) + 4rem + 1rem); /* Adjusted to account for input area + footer */
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-in;
+}
+
+/* Status indicator */
+.status-indicator {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  z-index: 50;
+}
+
+.status-indicator.ready {
+  background-color: #10b981; /* Green */
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+}
+
+.status-indicator.loading {
+  background-color: #f59e0b; /* Amber */
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.status-indicator.error {
+  background-color: #ef4444; /* Red */
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0.6;
+    transform: scale(0.8);
+  }
+}
+
+/* Welcome message animation */
+.welcome-container {
+  padding-top: 4rem;
+  transition: opacity 0.5s ease-out;
+}
+
+.welcome-container.fade-out {
+  opacity: 0;
+}
+
+/* Summary tile */
+.summary-tile {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.summary-tile-header {
+  padding: 0.75rem 1rem;
+  background-color: #f9fafb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.summary-tile-header:hover {
+  background-color: #f3f4f6;
+}
+
+/* V4 updated styles for improved modern browser compatibility */
+.gradient-bg {
+  background: linear-gradient(
+    45deg,
+    oklch(60% 0.25 240) 0%,
+    oklch(65% 0.25 320) 100%
+  );
+}
+
+.text-gradient {
+  background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(
+    90deg,
+    oklch(60% 0.25 240),
+    oklch(80% 0.25 320)
+  );
+}
+
+/* Container query support in v4 */
+.container-query-demo {
+  container-type: inline-size;
+}
+
+@container (min-width: 400px) {
+  .container-adaptive {
+    font-size: 1.25rem;
+  }
+}
+
+/* Modern button color-mix for hover states */
+.modern-button {
+  background-color: oklch(60% 0.25 240);
+  transition: background-color 0.2s;
+}
+
+.modern-button:hover {
+  background-color: color-mix(in oklch, oklch(60% 0.25 240), white 20%);
+}
+
+/* Sheet customizations */
+[data-slot="sheet-overlay"] {
+  background-color: transparent !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+/* Don't use separate blur container effect - use backdrop-filter instead */
+body.sheet-open .blur-container {
+  transition: filter 0.3s ease;
+}
+
+/* Command+K menu styling */
+.k-positioner {
+  z-index: 9999;
+}
+
+/* Sign-in button arrow animation */
+.arrow-icon {
+  transition: transform 0.2s ease;
+}
+
+a:hover .arrow-icon,
+button:hover .arrow-icon {
+  transform: translateX(3px);
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Hide debug text */
+[style*="color:red"] {
+  display: none !important;
+}
+
+.red {
+  display: none !important;
+}
+
+@layer components {
+  .font-highway {
+    font-family: var(--title-font);
+    letter-spacing: 0.01em;
+  }
+}

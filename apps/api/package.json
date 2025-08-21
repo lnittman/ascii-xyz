@@ -1,0 +1,45 @@
+{
+  "name": "ascii-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "ASCII art generation API on Cloudflare Workers",
+  "scripts": {
+    "dev": "wrangler dev --port 3001",
+    "build": "wrangler deploy --dry-run --outdir dist",
+    "build:worker": "node build.mjs",
+    "build:tsc": "tsc --noEmit",
+    "deploy": "wrangler deploy",
+    "deploy:bundle": "bun run build:worker && wrangler deploy dist/index.js",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "keywords": ["logs", "api", "cloudflare", "hono"],
+  "author": "logs",
+  "license": "ISC",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "dependencies": {
+    "@repo/analytics": "workspace:*",
+    "@repo/auth": "workspace:*",
+    "@repo/cache": "workspace:*",
+    "@repo/database": "workspace:*",
+    "@repo/logger": "workspace:*",
+    "@repo/rate-limit": "workspace:*",
+    "@repo/security": "workspace:*",
+    "hono": "^4.7.6",
+    "nanoid": "^5.1.5",
+    "svix": "^1.64.0",
+    "zod": "^3.25.76",
+    "jose": "^5.9.6"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250130.0",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "22.14.1",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.8.3",
+    "wrangler": "^4.25.0"
+  }
+}
