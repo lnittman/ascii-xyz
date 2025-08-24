@@ -9,11 +9,13 @@ ASCII is a modern web platform for creating, saving, and sharing AI-generated AS
 ## <× Architecture
 
 ### Applications
+
 - **apps/app**: Next.js 15 web application (Vercel)
 - **apps/api**: Cloudflare Workers API (Hono + oRPC)
 - **apps/ai**: Mastra AI service for ASCII generation
 
 ### Core Packages
+
 - **@repo/ascii**: ASCII engine and animation system
 - **@repo/auth**: Clerk authentication with elements
 - **@repo/database**: Neon PostgreSQL with Drizzle ORM
@@ -23,18 +25,21 @@ ASCII is a modern web platform for creating, saving, and sharing AI-generated AS
 ## <¯ Core Features
 
 ### ASCII Generation
+
 - Text prompt to ASCII art conversion via AI
 - Frame-based animation system (data.json format)
 - Multiple animation styles and presets
 - Real-time preview and editing
 
 ### User Experience
+
 - Gallery of saved ASCII creations
 - Public/private artwork toggle
 - Download as JSON or text file
 - Share via unique URLs
 
 ### Technical Features
+
 - BYOK (Bring Your Own Key) AI model support
 - Persistent storage in Neon database
 - Real-time updates via oRPC subscriptions
@@ -43,26 +48,28 @@ ASCII is a modern web platform for creating, saving, and sharing AI-generated AS
 ## =¾ Data Structure
 
 ### ASCII Artwork Schema
+
 ```typescript
 interface AsciiArtwork {
-  id: string
-  userId: string
-  prompt: string
-  frames: string[] // JSON array of ASCII frames
+  id: string;
+  userId: string;
+  prompt: string;
+  frames: string[]; // JSON array of ASCII frames
   metadata: {
-    width: number
-    height: number
-    fps: number
-    generator: string
-    model: string
-  }
-  visibility: 'public' | 'private'
-  createdAt: Date
-  updatedAt: Date
+    width: number;
+    height: number;
+    fps: number;
+    generator: string;
+    model: string;
+  };
+  visibility: "public" | "private";
+  createdAt: Date;
+  updatedAt: Date;
 }
 ```
 
 ### Animation Format
+
 ASCII animations are stored as JSON arrays where each element is a string representing one frame of ASCII art. This allows for complex, multi-frame animations that can be played back at specified frame rates.
 
 ## =€ Development Workflow
@@ -87,6 +94,7 @@ bun deploy
 ## <¨ Design System
 
 Following Linear's aesthetic:
+
 - Clean, minimal interface
 - Subtle animations and transitions
 - Focus on content over chrome
@@ -96,6 +104,7 @@ Following Linear's aesthetic:
 ## = Authentication Flow
 
 Using Clerk Elements for seamless auth:
+
 1. Sign up/in with email or OAuth
 2. User profile with API key management
 3. Gallery access tied to user account
@@ -104,6 +113,7 @@ Using Clerk Elements for seamless auth:
 ## > AI Integration
 
 Mastra-powered generation with:
+
 - Multiple model support (OpenAI, Anthropic, etc.)
 - Custom prompting for ASCII-specific output
 - Style transfer and animation capabilities
@@ -128,6 +138,7 @@ shares: id, artworkId, shareUrl, expiresAt
 ## < API Endpoints
 
 ### oRPC Procedures
+
 - `artwork.create` - Generate new ASCII art
 - `artwork.list` - Get user's artworks
 - `artwork.get` - Get specific artwork
@@ -186,3 +197,4 @@ CF_API_TOKEN=
 - Embed code generator
 
 Remember: This is about democratizing ASCII art creation through AI, making it accessible and fun for everyone while maintaining the nostalgic charm of text-based graphics.
+

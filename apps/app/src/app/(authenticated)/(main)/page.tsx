@@ -1,174 +1,152 @@
 'use client';
 
-import { Heart, Archive, Activity } from 'iconoir-react';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { Heart, Eye, Plus, Search } from 'iconoir-react';
+import { useState } from 'react';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { cn } from '@repo/design/lib/utils';
-import { useRouter } from 'next/navigation';
+import { Button } from '@repo/design/components/ui/button';
+import { Input } from '@repo/design/components/ui/input';
+import { useArtworks, usePublicGallery, useSearchArtworks } from '@/hooks/use-ascii';
 
-// Mock data generator for infinite scroll demo
-const generateMockLogs = (page: number) => {
-  const logs = [];
-  const baseDate = new Date();
-  const startIdx = page * 10;
-  
-  for (let i = 0; i < 10; i++) {
-    const idx = startIdx + i;
-    const date = new Date(baseDate);
-    date.setDate(date.getDate() - idx);
-    
-    logs.push({
-      id: `log-${idx}`,
-      date,
-      repos: ['arbor-xyz', 'logs-xyz', 'webs-xyz'].slice(0, Math.floor(Math.random() * 3) + 1),
-      commits: Math.floor(Math.random() * 50) + 10,
-      pullRequests: Math.floor(Math.random() * 5),
-      issues: Math.floor(Math.random() * 3),
-      summary: [
-        'Focused on implementing the logs turborepo structure and Mastra workflows.',
-        'Major refactoring of the web analysis system and iOS app updates.',
-        'Settings UI improvements and runtime context implementation.',
-        'Enhanced authentication flow with magic links and Clerk integration.',
-        'Optimized database queries and added pgvector support for embeddings.',
-      ][i % 5],
-    });
-  }
-  
-  return logs;
-};
+// Prevent static generation for this page as it uses Convex
+export const dynamic = 'force-dynamic';
 
-export default function LogsHomePage() {
-  const [logs, setLogs] = useState(generateMockLogs(0));
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const observerTarget = useRef<HTMLDivElement>(null);
-  const router = useRouter();
+export default function AsciiGalleryPage() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [view, setView] = useState<'my-art' | 'public' | 'search'>('my-art');
   
-  const loadMoreLogs = useCallback(async () => {
-    if (loading || !hasMore) return;
-    
-    setLoading(true);
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    const newLogs = generateMockLogs(page);
-    if (page >= 5) { // Stop after 5 pages for demo
-      setHasMore(false);
-    }
-    
-    setLogs(prev => [...prev, ...newLogs]);
-    setPage(prev => prev + 1);
-    setLoading(false);
-  }, [page, loading, hasMore]);
+  const myArtworks = useArtworks();
+  const publicArtworks = usePublicGallery(50);
+  const searchResults = useSearchArtworks(searchQuery);
   
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      entries => {
-        if (entries[0].isIntersecting) {
-          loadMoreLogs();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    
-    const currentTarget = observerTarget.current;
-    if (currentTarget) {
-      observer.observe(currentTarget);
-    }
-    
-    return () => {
-      if (currentTarget) {
-        observer.unobserve(currentTarget);
-      }
-    };
-  }, [loadMoreLogs]);
+  const artworks = view === 'search' ? searchResults :
+                  view === 'public' ? publicArtworks :
+                  myArtworks;
 
   return (
     <div className="h-full">
-      {/* Logs List */}
-      <div className="">
-        {logs.length > 0 ? (
-          <div className="">
-            {logs.map((log, index) => (
-              <Link key={log.id} href={`/logs/${log.id}`} className="block">
-                <div className={cn(
-                  "border-b border-border px-4 sm:px-6 lg:px-8 py-4 transition-none duration-0",
-                  "hover:bg-accent/50",
-                  index === 0 && "border-t border-border"
-                )}>
-                  <div className="space-y-3">
-                    <div className="flex items-start justify-between">
-                      <h3 className="text-sm font-medium text-foreground">
-                        {format(log.date, 'EEEE, MMM d')}
-                      </h3>
-                      <div className="flex gap-2">
-                        {log.repos.slice(0, 2).map((repo) => (
-                          <span
-                            key={repo}
-                            className="rounded-md bg-accent px-2 py-0.5 text-xs font-mono text-muted-foreground"
-                          >
-                            {repo}
-                          </span>
-                        ))}
-                        {log.repos.length > 2 && (
-                          <span className="rounded-md bg-accent px-2 py-0.5 text-xs text-muted-foreground">
-                            +{log.repos.length - 2}
-                          </span>
+      {/* Header */}
+      <div className="border-b border-border px-4 sm:px-6 lg:px-8 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h1 className="text-lg font-medium">ASCII Gallery</h1>
+            <div className="flex items-center gap-2">
+              <Button
+                variant={view === 'my-art' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setView('my-art')}
+              >
+                My Art
+              </Button>
+              <Button
+                variant={view === 'public' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setView('public')}
+              >
+                Public Gallery
+              </Button>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search ASCII art..."
+                className="pl-8 w-64"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  if (e.target.value) setView('search');
+                }}
+              />
+            </div>
+            <Link href="/generate">
+              <Button size="sm">
+                <Plus className="h-4 w-4 mr-1" />
+                Generate
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Gallery Grid */}
+      <div className="p-4 sm:p-6 lg:p-8">
+        {artworks && artworks.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {artworks.map((artwork) => (
+              <Link key={artwork._id} href={`/art/${artwork._id}`}>
+                <div className="border border-border rounded-lg p-4 hover:bg-accent/50 transition-colors">
+                  {/* ASCII Preview */}
+                  <div className="bg-black rounded p-2 mb-3 overflow-hidden">
+                    <pre className="text-green-400 text-xs leading-none font-mono whitespace-pre">
+                      {artwork.frames[0]?.slice(0, 200) || 'No preview available'}
+                    </pre>
+                  </div>
+                  
+                  {/* Artwork Info */}
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium line-clamp-2">
+                      {artwork.prompt}
+                    </h3>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>{format(new Date(artwork.createdAt), 'MMM d, yyyy')}</span>
+                      <div className="flex items-center gap-2">
+                        {artwork.visibility === 'public' && (
+                          <div className="flex items-center gap-1">
+                            <Heart className="h-3 w-3" />
+                            <span>{artwork.likes || 0}</span>
+                          </div>
                         )}
+                        <div className="flex items-center gap-1">
+                          <Eye className="h-3 w-3" />
+                          <span>{artwork.views || 0}</span>
+                        </div>
                       </div>
                     </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {log.summary}
-                    </p>
-                    <div className="flex gap-4 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Heart className="h-3 w-3" />
-                        {log.commits} commits
+                    <div className="flex items-center gap-2">
+                      <span className={cn(
+                        "inline-flex items-center px-2 py-0.5 rounded text-xs",
+                        artwork.visibility === 'public' 
+                          ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
+                          : "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400"
+                      )}>
+                        {artwork.visibility}
                       </span>
-                      <span>{log.pullRequests} PRs</span>
-                      {log.issues > 0 && <span>{log.issues} issues</span>}
+                      {artwork.frames.length > 1 && (
+                        <span className="text-xs text-muted-foreground">
+                          {artwork.frames.length} frames
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
               </Link>
             ))}
-            
-            {/* Infinite scroll trigger */}
-            <div ref={observerTarget} className="h-10" />
-            
-            {/* Loading indicator for infinite scroll */}
-            {loading && (
-              <div className="flex h-20 items-center justify-center">
-                <p className="text-xs text-muted-foreground">loading more...</p>
-              </div>
-            )}
-            
-            {/* End of list indicator */}
-            {!hasMore && logs.length > 0 && (
-              <div className="flex h-20 items-center justify-center">
-                <p className="text-xs text-muted-foreground">you've reached the beginning</p>
-              </div>
-            )}
           </div>
         ) : (
-          <div className="px-4 sm:px-6 lg:px-8 py-6">
-            <div className="border border-border rounded-md p-8">
-              <div className="text-center">
-              <Activity className="mx-auto h-10 w-10 text-muted-foreground/50" />
-              <h3 className="mt-3 text-sm font-medium">no activity logs yet</h3>
-              <p className="mt-1 text-xs text-muted-foreground">
-                logs will appear here once your repositories are connected
-              </p>
-              <Link 
-                href="/settings" 
-                className="mt-4 inline-flex items-center gap-2 text-sm text-primary hover:underline transition-none duration-0"
-              >
-                configure repositories →
-              </Link>
+          <div className="text-center py-12">
+            <div className="mx-auto w-12 h-12 bg-accent rounded-lg flex items-center justify-center mb-4">
+              {view === 'search' ? <Search className="h-6 w-6 text-muted-foreground" /> :
+               <Heart className="h-6 w-6 text-muted-foreground" />}
             </div>
-          </div>
+            <h3 className="text-lg font-medium mb-2">
+              {view === 'search' ? 'No results found' :
+               view === 'public' ? 'No public artwork yet' :
+               'Create your first ASCII art'}
+            </h3>
+            <p className="text-muted-foreground mb-4">
+              {view === 'search' ? 'Try a different search term' :
+               view === 'public' ? 'Check back later for community creations' :
+               'Generate beautiful ASCII art from text prompts'}
+            </p>
+            <Link href="/generate">
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Generate ASCII Art
+              </Button>
+            </Link>
           </div>
         )}
       </div>

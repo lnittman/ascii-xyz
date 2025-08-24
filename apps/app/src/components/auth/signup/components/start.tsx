@@ -6,7 +6,7 @@ import { useState } from 'react';
 import * as Clerk from '@clerk/elements/common';
 import * as ClerkSignUp from '@clerk/elements/sign-up';
 import { Link } from '@phosphor-icons/react';
-import { LogsAnimation } from '@repo/ascii';
+import { AsciiLogo } from '../../../shared/ascii-logo';
 
 interface SignUpStartStepProps {
   renderLogo?: () => React.ReactNode;
@@ -28,18 +28,7 @@ export const SignUpStartStep: React.FC<SignUpStartStepProps> = ({
   return (
     <ClerkSignUp.Step name="start" className="w-full">
       <div className="mb-8 flex justify-center">
-        {renderLogo ? renderLogo() : (
-          <LogsAnimation 
-            width={50} 
-            height={10} 
-            fps={15}
-            logCount={4}
-            floating={true}
-            rotation={true}
-            moss={false}
-            water={true}
-          />
-        )}
+        {renderLogo ? renderLogo() : <AsciiLogo size="medium" />}
       </div>
 
       <div className="space-y-4">

@@ -48,6 +48,10 @@ apps/daemon/src-tauri/gen/
 # OpenCode
 .opencode
 
+# Convex - only in packages/backend
+/convex
+/convex/
+
 # Documentation
 docs/implementation/implementation-plan-*.md
 docs/implementation/implementation-summary-*.md

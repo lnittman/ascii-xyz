@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { SignIn as CustomSignInComponent } from '@/components/auth/signin';
-import { LogsAnimation } from '@repo/ascii';
+import { LogsAnimation } from '@/lib/ascii';
 
 export default function SignInPage() {
   const router = useRouter();

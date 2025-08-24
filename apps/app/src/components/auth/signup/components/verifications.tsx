@@ -3,7 +3,7 @@
 import * as Clerk from '@clerk/elements/common';
 import * as ClerkSignUp from '@clerk/elements/sign-up';
 import type React from 'react';
-import { ArborAsciiLogo } from '../../../code/ArborAsciiLogo';
+import { AsciiLogo } from '../../../shared/ascii-logo';
 
 interface SignUpVerificationsStepProps {
   renderLogo?: () => React.ReactNode;
@@ -16,7 +16,7 @@ export const SignUpVerificationsStep: React.FC<
     <ClerkSignUp.Step name="verifications">
       <ClerkSignUp.Strategy name="email_code">
         <div className="mb-6 text-center">
-          {renderLogo ? renderLogo() : <ArborAsciiLogo size="small" />}
+          {renderLogo ? renderLogo() : <AsciiLogo size="small" />}
           <h1 className="mt-4 font-bold text-xl">check your email</h1>
           <p className="mt-2 text-muted-foreground text-sm">
             we sent a verification code to your email
@@ -48,7 +48,7 @@ export const SignUpVerificationsStep: React.FC<
 
       <ClerkSignUp.Strategy name="phone_code">
         <div className="mb-6 text-center">
-          {renderLogo ? renderLogo() : <ArborAsciiLogo size="small" />}
+          {renderLogo ? renderLogo() : <AsciiLogo size="small" />}
           <h1 className="mt-4 font-bold text-xl">check your phone</h1>
           <p className="mt-2 text-muted-foreground text-sm">
             we sent a verification code to your phone

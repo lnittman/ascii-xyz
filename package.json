@@ -4,21 +4,20 @@
   "description": "AI-powered ASCII art generation platform",
   "scripts": {
     "build": "turbo build",
-    "dev": "turbo dev --filter=ascii-app --filter=ascii-api --filter=ascii-ai",
+    "dev": "turbo dev --filter=ascii-app --filter=ascii-ai --filter=@repo/backend",
     "dev:app": "turbo dev --filter=ascii-app",
-    "dev:api": "turbo dev --filter=ascii-api",
     "dev:ai": "turbo dev --filter=ascii-ai",
+    "dev:backend": "cd packages/backend && npx convex dev",
     "lint": "ultracite lint",
     "format": "ultracite format",
     "test": "turbo test",
     "analyze": "turbo analyze",
     "bump-deps": "bunx npm-check-updates --deep -u -x react-day-picker && bun install",
     "bump-ui": "bunx shadcn@latest add --all --overwrite -c packages/design",
-    "migrate": "cd packages/database && bun run migrate",
     "clean": "git clean -xdf node_modules",
-    "deploy:api": "turbo build --filter=api && cd apps/api && wrangler deploy",
     "deploy:ai": "turbo build --filter=ai && cd apps/ai && mastra deploy",
-    "deploy:all": "turbo build --filter=api --filter=ai && cd apps/api && wrangler deploy && cd ../ai && mastra deploy"
+    "deploy:backend": "cd packages/backend && npx convex deploy",
+    "deploy:all": "turbo build --filter=ai && cd apps/ai && mastra deploy && cd ../../packages/backend && npx convex deploy"
   },
   "devDependencies": {
     "@auto-it/first-time-contributor": "^11.3.0",
@@ -50,9 +49,9 @@
   "dependencies": {
     "@ai-sdk/react": "2.0.0",
     "@openrouter/ai-sdk-provider": "1.0.0-beta.6",
-    "@orpc/contract": "^1.7.5",
     "@sargamdesign/icons-react": "^1.4.8",
     "ai": "5.0.0",
+    "convex": "^1.26.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   }

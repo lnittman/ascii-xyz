@@ -1,3 +1,21 @@
-import { createLogger } from '@repo/logger';
-
-export const log = createLogger();
+// Simple logger implementation for development
+export const log = {
+  info: (message: string, ...args: any[]) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[INFO] ${message}`, ...args);
+    }
+  },
+  error: (message: string, ...args: any[]) => {
+    console.error(`[ERROR] ${message}`, ...args);
+  },
+  warn: (message: string, ...args: any[]) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`[WARN] ${message}`, ...args);
+    }
+  },
+  debug: (message: string, ...args: any[]) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.debug(`[DEBUG] ${message}`, ...args);
+    }
+  },
+};

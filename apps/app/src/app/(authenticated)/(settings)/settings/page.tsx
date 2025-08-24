@@ -1,38 +1,128 @@
+'use client';
+
+import { useUserSettings } from '@/hooks/use-settings';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design/components/ui/card';
+import { Label } from '@repo/design/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/design/components/ui/select';
+import { Switch } from '@repo/design/components/ui/switch';
+
+// Prevent static generation for this page as it uses Convex
+export const dynamic = 'force-dynamic';
+
 export default function SettingsPage() {
-  return (
-    <div className="p-6">
-      <h1 className="text-lg font-medium text-foreground mb-6">general</h1>
-      
-      <div className="space-y-6">
-        <div>
-          <label className="text-sm text-foreground block mb-2">workspace name</label>
-          <input
-            type="text"
-            defaultValue="Personal"
-            className="w-full max-w-md px-3 py-1.5 text-sm text-foreground bg-background border border-border rounded-md focus:outline-none focus:border-primary"
-          />
-        </div>
-        
-        <div>
-          <label className="text-sm text-foreground block mb-2">default view</label>
-          <select className="w-full max-w-md px-3 py-1.5 text-sm text-foreground bg-background border border-border rounded-md">
-            <option>today</option>
-            <option>week</option>
-            <option>month</option>
-            <option>all time</option>
-          </select>
-        </div>
-        
-        <div>
-          <label className="text-sm text-foreground block mb-2">time zone</label>
-          <select className="w-full max-w-md px-3 py-1.5 text-sm text-foreground bg-background border border-border rounded-md">
-            <option>America/New_York</option>
-            <option>America/Los_Angeles</option>
-            <option>Europe/London</option>
-            <option>Asia/Tokyo</option>
-          </select>
+  const { settings, updateSettings } = useUserSettings();
+
+  if (!settings) {
+    return (
+      <div className="p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-4 bg-accent rounded w-32"></div>
+          <div className="h-20 bg-accent rounded"></div>
         </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="p-6 space-y-6">
+      <div>
+        <h1 className="text-lg font-medium mb-2">General Settings</h1>
+        <p className="text-sm text-muted-foreground">
+          Manage your ASCII art generation preferences and account settings.
+        </p>
+      </div>
+
+      {/* General Preferences */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Preferences</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="theme">Theme</Label>
+            <Select 
+              value={settings.theme} 
+              onValueChange={(value: 'light' | 'dark' | 'system') => 
+                updateSettings({ theme: value })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="light">Light</SelectItem>
+                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="system">System</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="default-visibility">Default Visibility</Label>
+            <Select 
+              value={settings.defaultVisibility} 
+              onValueChange={(value: 'public' | 'private') => 
+                updateSettings({ defaultVisibility: value })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="private">Private</SelectItem>
+                <SelectItem value="public">Public</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="email-notifications">Email Notifications</Label>
+              <p className="text-sm text-muted-foreground">
+                Receive updates about your ASCII art and platform news.
+              </p>
+            </div>
+            <Switch
+              id="email-notifications"
+              checked={settings.emailNotifications}
+              onCheckedChange={(checked) => 
+                updateSettings({ emailNotifications: checked })
+              }
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* API Keys */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">API Keys</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground mb-4">
+            Configure your AI model API keys for ASCII generation.
+          </p>
+          {settings.apiKeys && settings.apiKeys.length > 0 ? (
+            <div className="space-y-2">
+              {settings.apiKeys.map((key, index) => (
+                <div key={index} className="flex items-center justify-between p-2 border rounded">
+                  <div>
+                    <div className="text-sm font-medium">{key.name}</div>
+                    <div className="text-xs text-muted-foreground">{key.provider}</div>
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {key.key.substring(0, 8)}...
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              No API keys configured. You can add them in the Models section.
+            </p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

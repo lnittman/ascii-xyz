@@ -6,7 +6,7 @@ import * as Clerk from '@clerk/elements/common';
 import * as ClerkSignIn from '@clerk/elements/sign-in';
 
 import { Button } from '@repo/design/components/ui/button';
-import { ArborAsciiLogo } from '../../../code/ArborAsciiLogo';
+import { AsciiLogo } from '../../../shared/ascii-logo';
 
 interface SignInSsoCallbackStepProps {
   goToHome: () => void;
@@ -20,7 +20,7 @@ export const SignInSsoCallbackStep: React.FC<SignInSsoCallbackStepProps> = ({
   return (
     <ClerkSignIn.Step name="sso-callback">
       <div className="mb-10 text-center">
-        {renderLogo ? renderLogo() : <ArborAsciiLogo size="small" />}
+        {renderLogo ? renderLogo() : <AsciiLogo size="small" />}
 
         <h2 className="mt-4 font-medium text-foreground text-xl">
           Completing sign-in...

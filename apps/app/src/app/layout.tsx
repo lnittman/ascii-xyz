@@ -1,9 +1,11 @@
 import { createMetadata } from '@repo/seo/metadata';
 import type { Metadata } from 'next';
 import { ViewTransitions } from 'next-view-transitions';
+import { ClerkProvider } from '@clerk/nextjs';
 
 //import { ReactScan } from '@/components/shared/ReactScan';
 import { DesignSystemProvider } from '@repo/design';
+import ConvexClientProvider from '@/providers/ConvexClientProvider';
 
 import '@/styles/globals.css';
 
@@ -149,9 +151,13 @@ export default function RootLayout({
       </head>
 
       <body className="min-h-screen bg-background" suppressHydrationWarning>
-        <DesignSystemProvider>
-          <ViewTransitions>{children}</ViewTransitions>
-        </DesignSystemProvider>
+        <ClerkProvider>
+          <ConvexClientProvider>
+            <DesignSystemProvider>
+              <ViewTransitions>{children}</ViewTransitions>
+            </DesignSystemProvider>
+          </ConvexClientProvider>
+        </ClerkProvider>
       </body>
     </html>
   );

@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 
 import { ThemeSwitcher } from '@/components/auth/ThemeSwitcher';
 import { ScrollFadeContainer } from '@/components/shared/scroll-fade-container';
-import { ForestScene, TreeType } from '@repo/ascii';
+import { ForestScene, TreeType } from '@/lib/ascii';
 
 interface UnauthenticatedLayoutProps {
   children: React.ReactNode;
