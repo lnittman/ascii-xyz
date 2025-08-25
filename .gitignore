@@ -65,6 +65,9 @@ packages/**/*.js
 packages/**/*.js.map
 packages/**/*.d.ts
 packages/**/*.d.ts.map
+# But allow Convex generated files
+!packages/backend/convex/_generated/*.js
+!packages/backend/convex/_generated/*.d.ts
 apps/**/*.js
 apps/**/*.js.map
 apps/**/*.d.ts
