@@ -6,15 +6,6 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
-    const { userId } = await auth();
-    
-    if (!userId) {
-      return Response.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
     const { prompt, apiKey } = await request.json();
     
     if (!prompt || typeof prompt !== 'string') {

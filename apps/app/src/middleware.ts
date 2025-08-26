@@ -5,6 +5,7 @@ import type { NextRequest } from 'next/server';
 const isPublicRoute = createRouteMatcher([
   '/',
   '/gallery(.*)',
+  '/generate(.*)',  // Temporarily make generate public for testing
   '/share/(.*)',
   '/signin(.*)',
   '/signup(.*)',
