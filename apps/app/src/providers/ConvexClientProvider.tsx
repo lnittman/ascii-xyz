@@ -1,9 +1,7 @@
 "use client";
 
-import { ReactNode, useMemo } from "react";
-import { ConvexReactClient } from "convex/react";
-import { ConvexProviderWithClerk } from "convex/react-clerk";
-import { useAuth } from "@clerk/nextjs";
+import { ReactNode } from "react";
+import { ConvexReactClient, ConvexProvider } from "convex/react";
 
 // Create a dummy URL for build time when env var is not available
 const getConvexUrl = () => {
@@ -21,9 +19,10 @@ export default function ConvexClientProvider({
 }: { 
   children: ReactNode 
 }) {
+  // Temporarily use regular ConvexProvider without Clerk
   return (
-    <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
+    <ConvexProvider client={convex}>
       {children}
-    </ConvexProviderWithClerk>
+    </ConvexProvider>
   );
 }
