@@ -62,10 +62,17 @@ export default clerkMiddleware(
 
     // For non-API routes, protect if not public
     if (!isPublicRoute(req)) {
-      await auth.protect();
+      await auth.protect({
+        unauthenticatedUrl: '/signin',
+        unauthorizedUrl: '/signin',
+      });
     }
   },
-  { debug: false } // Disable Clerk debug mode
+  { 
+    debug: false,
+    signInUrl: '/signin',
+    signUpUrl: '/signup',
+  }
 );
 
 export const config = {
