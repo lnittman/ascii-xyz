@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Static Test Page</title>
+</head>
+<body>
+    <h1>Static Test Page</h1>
+    <p>This is a static HTML page that bypasses Next.js entirely.</p>
+    <button onclick="testApi()">Test ASCII API</button>
+    <div id="result"></div>
+    
+    <script>
+        async function testApi() {
+            try {
+                const response = await fetch('/api/ascii/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: 'matrix rain' })
+                });
+                const data = await response.json();
+                document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
