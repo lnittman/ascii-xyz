@@ -10,6 +10,8 @@
     "./chat": "./chat.ts"
   },
   "dependencies": {
+    "ai": "5.0.0",
+    "@ai-sdk/openai": "2.0.21"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

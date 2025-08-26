@@ -1,6 +1,5 @@
-// Temporarily disabled for build compatibility
-// import { generateText } from 'ai';
-// import { createOpenRouter } from '@openrouter/ai-sdk-provider';
+import { generateText } from 'ai';
+import { createOpenAI } from '@ai-sdk/openai';
 
 // ASCII generation patterns
 function generateMatrixRainFrames(width: number, height: number, frameCount: number): string[] {
@@ -108,42 +107,59 @@ function generatePulseFrames(width: number, height: number, frameCount: number):
 
 export async function generateAsciiArt(prompt: string, apiKey?: string) {
   try {
-    // Temporarily use pattern matching without AI to fix build
-    // TODO: Fix OpenRouter integration with proper AI SDK v5 compatibility
+    // Use OpenAI for ASCII generation
+    const openaiKey = apiKey || process.env.OPENAI_API_KEY;
     
-    // Analyze prompt to determine best animation type
-    const lowerPrompt = prompt.toLowerCase();
-    let type = 'matrix';
-    
-    if (lowerPrompt.includes('wave') || lowerPrompt.includes('ocean') || lowerPrompt.includes('water')) {
-      type = 'wave';
-    } else if (lowerPrompt.includes('data') || lowerPrompt.includes('flow') || lowerPrompt.includes('stream')) {
-      type = 'dataflow';
-    } else if (lowerPrompt.includes('pulse') || lowerPrompt.includes('heart') || lowerPrompt.includes('beat')) {
-      type = 'pulse';
-    }
-    
-    const config = {
-      type,
-      frameCount: 30,
-      width: 80,
-      height: 24,
-      characters: ['0', '1', '░', '▒', '▓'],
-      description: prompt
-    };
-    
-    /* Disabled AI generation until SDK compatibility is fixed
-    const openRouterKey = apiKey || process.env.OPENROUTER_API_KEY;
-    if (!openRouterKey) {
-      throw new Error('OpenRouter API key is required');
+    if (!openaiKey) {
+      // Fall back to pattern matching if no API key
+      const lowerPrompt = prompt.toLowerCase();
+      let type = 'matrix';
+      
+      if (lowerPrompt.includes('wave') || lowerPrompt.includes('ocean') || lowerPrompt.includes('water')) {
+        type = 'wave';
+      } else if (lowerPrompt.includes('data') || lowerPrompt.includes('flow') || lowerPrompt.includes('stream')) {
+        type = 'dataflow';
+      } else if (lowerPrompt.includes('pulse') || lowerPrompt.includes('heart') || lowerPrompt.includes('beat')) {
+        type = 'pulse';
+      }
+      
+      const config = {
+        type,
+        frameCount: 30,
+        width: 80,
+        height: 24,
+        characters: ['0', '1', '░', '▒', '▓'],
+        description: prompt
+      };
+      
+      let frames: string[] = [];
+      switch (config.type) {
+        case 'matrix':
+          frames = generateMatrixRainFrames(config.width, config.height, config.frameCount);
+          break;
+        case 'wave':
+          frames = generateWaveFrames(config.width, config.height, config.frameCount);
+          break;
+        case 'dataflow':
+          frames = generateDataFlowFrames(config.width, config.height, config.frameCount);
+          break;
+        case 'pulse':
+          frames = generatePulseFrames(config.width, config.height, config.frameCount);
+          break;
+        default:
+          frames = generateMatrixRainFrames(config.width, config.height, config.frameCount);
+      }
+      
+      return { frames, config };
     }
 
-    const openrouter = createOpenRouter({ 
-      apiKey: openRouterKey,
+    // Generate ASCII art description using AI
+    const openai = createOpenAI({
+      apiKey: openaiKey,
     });
-
+    
     const { text } = await generateText({
-      model: openrouter('anthropic/claude-3.5-sonnet'),
+      model: openai('gpt-5') as any,
       prompt: `You are an ASCII art expert. Based on this prompt, describe what ASCII animation to create. Be specific about:
 1. Animation type (matrix, wave, dataflow, pulse, dots, custom pattern)
 2. Frame count (10-60 frames)
@@ -165,8 +181,9 @@ Respond in JSON format:
       temperature: 0.7,
       maxTokens: 500,
     });
+
+    // Parse the AI response
     const config = JSON.parse(text);
-    */
     
     // Generate frames based on type
     let frames: string[] = [];
@@ -185,8 +202,20 @@ Respond in JSON format:
         frames = generatePulseFrames(config.width, config.height, config.frameCount);
         break;
       default:
-        // For custom patterns, fall back to matrix for now
-        frames = generateMatrixRainFrames(config.width, config.height, config.frameCount);
+        // For custom, generate using AI
+        const { text: customFrames } = await generateText({
+          model: openai('gpt-5') as any,
+          prompt: `Create ${config.frameCount} ASCII art animation frames.
+Each frame should be ${config.width} characters wide and ${config.height} lines tall.
+Use these characters: ${config.characters.join(', ')}
+Description: ${config.description}
+
+Return ONLY the frames, separated by "---FRAME---" markers.`,
+          temperature: 0.8,
+          maxTokens: 4000,
+        });
+        
+        frames = customFrames.split('---FRAME---').map(f => f.trim()).filter(Boolean);
     }
 
     return {
