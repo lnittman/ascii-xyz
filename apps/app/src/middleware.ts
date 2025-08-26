@@ -8,7 +8,10 @@ const isPublicRoute = createRouteMatcher([
   '/share/(.*)',
   '/signin(.*)',
   '/signup(.*)',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
   '/api/webhook(.*)',
+  '/api/ascii/generate',  // Allow public ASCII generation with API key
   '/_next(.*)',
   '/favicon.ico',
   '/images(.*)',

@@ -151,7 +151,12 @@ export default function RootLayout({
       </head>
 
       <body className="min-h-screen bg-background" suppressHydrationWarning>
-        <ClerkProvider>
+        <ClerkProvider
+          signInUrl="/signin"
+          signUpUrl="/signup"
+          signInFallbackRedirectUrl="/"
+          signUpFallbackRedirectUrl="/"
+        >
           <ConvexClientProvider>
             <DesignSystemProvider>
               <ViewTransitions>{children}</ViewTransitions>
