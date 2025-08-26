@@ -1,4 +1,3 @@
-import { auth } from '@clerk/nextjs/server';
 import { generateAsciiArt } from '@repo/services/ascii';
 
 export const runtime = 'nodejs';
@@ -6,6 +5,7 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
+    // Auth temporarily disabled for testing
     const { prompt, apiKey } = await request.json();
     
     if (!prompt || typeof prompt !== 'string') {
