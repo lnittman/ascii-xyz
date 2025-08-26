@@ -33,25 +33,23 @@ export default function GenerateAsciiPage() {
   
   const createArtwork = useCreateArtwork();
   
-  // Mock generation function - in real app, this would call your AI service
+  // Call the API to generate ASCII art
   const generateAsciiArt = async (prompt: string) => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    const response = await fetch('/api/ascii/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ prompt }),
+    });
     
-    // Mock ASCII art generation
-    const mockAscii = `
-    ╔══════════════════════════════════════╗
-    ║              ${prompt.substring(0, 20).padEnd(20)}            ║
-    ║                                      ║
-    ║    /\\   /\\     Generated ASCII      ║
-    ║   (  o.o  )         Art             ║
-    ║    > ^ <                            ║
-    ║                                      ║
-    ║  This is a mock generation for      ║
-    ║  demonstration purposes only        ║
-    ╚══════════════════════════════════════╝`.trim();
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to generate ASCII art');
+    }
     
-    return [mockAscii]; // Return array of frames
+    const result = await response.json();
+    return result.data.frames;
   };
 
   const handleGenerate = async () => {
