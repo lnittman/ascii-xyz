@@ -1,7 +1,6 @@
 'use client';
 
 import type { ComponentProps } from 'react';
-
 import { ClerkProvider } from '@clerk/nextjs';
 import { dark } from '@clerk/themes';
 import type { Theme } from '@clerk/types';
@@ -44,11 +43,11 @@ export const AuthProvider = (
   };
 
   const variables: Theme['variables'] = {
-    colorPrimary: 'var(--primary)',
+    colorPrimary: 'hsl(var(--primary))',
     colorText: '#ffffff',
     colorTextSecondary: '#ffffff',
-    colorBackground: 'var(--background)',
-    colorInputBackground: 'var(--card)',
+    colorBackground: 'hsl(var(--background))',
+    colorInputBackground: 'hsl(var(--card))',
     colorInputText: '#ffffff',
     colorTextOnPrimaryBackground: '#000000',
   };
@@ -60,6 +59,7 @@ export const AuthProvider = (
       signInUrl="/signin"
       signUpUrl="/signup"
       signInFallbackRedirectUrl="/"
+      signUpFallbackRedirectUrl="/"
     />
   );
 };
