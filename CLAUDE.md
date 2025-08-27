@@ -2,27 +2,23 @@
 
 AI-powered ASCII art generation platform with collaborative features and persistence.
 
-## <¨ Project Overview
+## <ï¿½ Project Overview
 
 ASCII is a modern web platform for creating, saving, and sharing AI-generated ASCII artwork. Users can prompt an AI to generate ASCII art animations from text descriptions, save their creations, and build a personal gallery.
 
-## <× Architecture
+## <ï¿½ Architecture
 
 ### Applications
 
 - **apps/app**: Next.js 15 web application (Vercel)
-- **apps/api**: Cloudflare Workers API (Hono + oRPC)
-- **apps/ai**: Mastra AI service for ASCII generation
 
 ### Core Packages
 
-- **@repo/ascii**: ASCII engine and animation system
+- **@repo/backend**: Convex backend with AI-powered ASCII generation
 - **@repo/auth**: Clerk authentication with elements
-- **@repo/database**: Neon PostgreSQL with Drizzle ORM
 - **@repo/design**: Linear-inspired UI components
-- **@repo/orpc**: Type-safe RPC procedures
 
-## <¯ Core Features
+## <ï¿½ Core Features
 
 ### ASCII Generation
 
@@ -45,7 +41,7 @@ ASCII is a modern web platform for creating, saving, and sharing AI-generated AS
 - Real-time updates via oRPC subscriptions
 - Progressive enhancement with server components
 
-## =¾ Data Structure
+## =ï¿½ Data Structure
 
 ### ASCII Artwork Schema
 
@@ -72,7 +68,7 @@ interface AsciiArtwork {
 
 ASCII animations are stored as JSON arrays where each element is a string representing one frame of ASCII art. This allows for complex, multi-frame animations that can be played back at specified frame rates.
 
-## =€ Development Workflow
+## =ï¿½ Development Workflow
 
 ```bash
 # Install dependencies
@@ -91,7 +87,7 @@ bun build
 bun deploy
 ```
 
-## <¨ Design System
+## <ï¿½ Design System
 
 Following Linear's aesthetic:
 
@@ -119,7 +115,7 @@ Mastra-powered generation with:
 - Style transfer and animation capabilities
 - Batch generation for animation frames
 
-## =Ê Database Schema
+## =ï¿½ Database Schema
 
 ```sql
 -- Users extended from Clerk
@@ -147,7 +143,7 @@ shares: id, artworkId, shareUrl, expiresAt
 - `share.create` - Generate share URL
 - `collection.manage` - CRUD for collections
 
-## <¯ User Stories
+## <ï¿½ User Stories
 
 1. **Creator**: "I want to generate ASCII art from text prompts"
 2. **Collector**: "I want to save and organize my ASCII creations"
@@ -161,15 +157,14 @@ shares: id, artworkId, shareUrl, expiresAt
 - **Form State**: React Hook Form
 - **Animation State**: Custom hooks in @repo/ascii
 
-## =¦ Deployment
+## =ï¿½ Deployment
 
 - **Web App**: Vercel (apps/app)
-- **API**: Cloudflare Workers (apps/api)
-- **AI Service**: Mastra Cloud (apps/ai)
-- **Database**: Neon PostgreSQL
-- **Storage**: Cloudflare R2 for exports
+- **Backend**: Convex (packages/backend)
+- **Database**: Neon PostgreSQL (user data)
+- **Storage**: Convex for ASCII artworks
 
-## =Ý Environment Variables
+## =ï¿½ Environment Variables
 
 ```env
 # Auth
@@ -180,15 +175,13 @@ CLERK_SECRET_KEY=
 DATABASE_URL=
 
 # AI
-MASTRA_API_KEY=
 OPENAI_API_KEY=
 
-# Cloudflare
-CF_ACCOUNT_ID=
-CF_API_TOKEN=
+# Convex
+NEXT_PUBLIC_CONVEX_URL=
 ```
 
-## <® Interactive Features
+## <ï¿½ Interactive Features
 
 - Live preview during generation
 - Frame-by-frame editor
