@@ -7,9 +7,17 @@
     "setup": "convex dev --until-success"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "2.0.0",
+    "@ai-sdk/google": "2.0.0",
+    "@ai-sdk/openai": "^2.0.22",
     "@clerk/backend": "^1.20.0",
+    "@convex-dev/agent": "^0.2.5",
+    "@convex-dev/rate-limiter": "^0.2.12",
+    "@convex-dev/workflow": "^0.2.6",
+    "ai": "5.0.0",
     "convex": "^1.17.0",
-    "svix": "^1.44.0"
+    "svix": "^1.44.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "typescript": "^5.6.2"

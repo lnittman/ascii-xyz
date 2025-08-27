@@ -1,6 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { getUserId } from "./artworks";
+import { getUserId } from "./artworks/queries";
 
 // Generate upload URL for file storage
 export const generateUploadUrl = mutation({

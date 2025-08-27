@@ -7,7 +7,7 @@
     "dev:ws": "tsx src/lib/websocket/start-server.ts",
     "build": "next build",
     "start": "next start",
-    "analyze": "ANALYZE=true bun run build",
+    "analyze": "ANALYZE=true pnpm run build",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },

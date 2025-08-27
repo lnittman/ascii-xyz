@@ -12,8 +12,8 @@
     "format": "ultracite format",
     "test": "turbo test",
     "analyze": "turbo analyze",
-    "bump-deps": "bunx npm-check-updates --deep -u -x react-day-picker && bun install",
-    "bump-ui": "bunx shadcn@latest add --all --overwrite -c packages/design",
+    "bump-deps": "pnpx npm-check-updates --deep -u -x react-day-picker && pnpm install",
+    "bump-ui": "pnpx shadcn@latest add --all --overwrite -c packages/design",
     "clean": "git clean -xdf node_modules",
     "deploy:ai": "turbo build --filter=ai && cd apps/ai && mastra deploy",
     "deploy:backend": "cd packages/backend && npx convex deploy",
@@ -41,7 +41,7 @@
     "unist-util-visit": "^5.0.0",
     "vitest": "^1.5.0"
   },
-  "packageManager": "bun@1.1.29",
+  "packageManager": "pnpm@9.10.0",
   "workspaces": [
     "apps/*",
     "packages/*"

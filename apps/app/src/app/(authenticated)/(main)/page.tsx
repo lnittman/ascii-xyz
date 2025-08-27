@@ -28,8 +28,8 @@ export default function AsciiGalleryPage() {
     <div className="h-full">
       {/* Header */}
       <div className="border-b border-border px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <h1 className="text-lg font-medium">ASCII Gallery</h1>
             <div className="flex items-center gap-2">
               <Button
@@ -49,11 +49,11 @@ export default function AsciiGalleryPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className="relative">
+            <div className="relative flex-1 sm:flex-initial">
               <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search ASCII art..."
-                className="pl-8 w-64"
+                className="pl-8 w-full sm:w-64"
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -62,9 +62,9 @@ export default function AsciiGalleryPage() {
               />
             </div>
             <Link href="/generate">
-              <Button size="sm">
-                <Plus className="h-4 w-4 mr-1" />
-                Generate
+              <Button size="sm" className="whitespace-nowrap">
+                <Plus className="h-4 w-4 sm:mr-1" />
+                <span className="hidden sm:inline">Generate</span>
               </Button>
             </Link>
           </div>
@@ -75,7 +75,7 @@ export default function AsciiGalleryPage() {
       <div className="p-4 sm:p-6 lg:p-8">
         {artworks && artworks.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {artworks.map((artwork) => (
+            {artworks.map((artwork: any) => (
               <Link key={artwork._id} href={`/art/${artwork._id}`}>
                 <div className="border border-border rounded-lg p-4 hover:bg-accent/50 transition-colors">
                   {/* ASCII Preview */}

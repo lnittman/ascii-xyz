@@ -1,14 +1,14 @@
-import { mutation, query, action } from "./_generated/server";
+import { mutation, query, action } from "../_generated/server";
 import { v } from "convex/values";
 import { Auth } from "convex/server";
-import { internal } from "./_generated/api";
+import { internal } from "../_generated/api";
 import { 
   validateFrames, 
   parseAIResponse, 
   formatArtworkForExport,
   canUserAccessArtwork,
   generateDefaultFrame 
-} from "./lib/ascii";
+} from "../lib/ascii";
 
 // Helper to get user ID from auth
 export const getUserId = async (ctx: { auth: Auth }) => {

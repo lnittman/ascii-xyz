@@ -6,26 +6,26 @@ import { Id } from "@repo/backend/convex/_generated/dataModel";
 
 // Hook to create shareable link
 export function useCreateShare() {
-  return useMutation(api.shares.create);
+  return useMutation(api.shares.queries.create);
 }
 
 // Hook to get artwork by share code
 export function useSharedArtwork(shareCode: string) {
   return useQuery(
-    api.shares.getByCode,
+    api.shares.queries.getByCode,
     shareCode ? { shareCode } : "skip"
   );
 }
 
 // Hook to list user's shares
 export function useShares() {
-  const shares = useQuery(api.shares.list);
+  const shares = useQuery(api.shares.queries.list);
   return shares || [];
 }
 
 // Hook to revoke share
 export function useRevokeShare() {
-  return useMutation(api.shares.revoke);
+  return useMutation(api.shares.queries.revoke);
 }
 
 // Example usage:

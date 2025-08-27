@@ -16,7 +16,7 @@ export default defineSchema({
 
   // ASCII artworks
   artworks: defineTable({
-    userId: v.id("users"),
+    userId: v.string(), // Clerk user ID, not a reference to users table
     prompt: v.string(),
     frames: v.array(v.string()), // Array of ASCII frames for animation
     metadata: v.object({
@@ -28,7 +28,7 @@ export default defineSchema({
       style: v.optional(v.string()),
       createdAt: v.string(),
     }),
-    visibility: v.union(v.literal("public"), v.literal("private")),
+    visibility: v.union(v.literal("public"), v.literal("private"), v.literal("unlisted")),
     featured: v.optional(v.boolean()),
     likes: v.optional(v.number()),
     views: v.optional(v.number()),
