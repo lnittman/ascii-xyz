@@ -4,9 +4,8 @@
   "description": "AI-powered ASCII art generation platform",
   "scripts": {
     "build": "turbo build",
-    "dev": "turbo dev --filter=ascii-app --filter=ascii-ai --filter=@repo/backend",
+    "dev": "turbo dev --filter=ascii-app --filter=@repo/backend",
     "dev:app": "turbo dev --filter=ascii-app",
-    "dev:ai": "turbo dev --filter=ascii-ai",
     "dev:backend": "cd packages/backend && npx convex dev",
     "lint": "ultracite lint",
     "format": "ultracite format",
@@ -15,9 +14,8 @@
     "bump-deps": "pnpx npm-check-updates --deep -u -x react-day-picker && pnpm install",
     "bump-ui": "pnpx shadcn@latest add --all --overwrite -c packages/design",
     "clean": "git clean -xdf node_modules",
-    "deploy:ai": "turbo build --filter=ai && cd apps/ai && mastra deploy",
     "deploy:backend": "cd packages/backend && npx convex deploy",
-    "deploy:all": "turbo build --filter=ai && cd apps/ai && mastra deploy && cd ../../packages/backend && npx convex deploy"
+    "deploy:all": "cd packages/backend && npx convex deploy"
   },
   "devDependencies": {
     "@auto-it/first-time-contributor": "^11.3.0",
