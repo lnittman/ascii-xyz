@@ -1,5 +1,6 @@
 {
-  "framework": "nextjs",
-  "buildCommand": "bun run build",
-  "installCommand": "bun install"
+  "installCommand": "pnpm install",
+  "buildCommand": "cd apps/app && pnpm run build",
+  "outputDirectory": "apps/app/.next",
+  "framework": "nextjs"
 }

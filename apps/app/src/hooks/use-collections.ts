@@ -6,38 +6,38 @@ import { Id } from "@repo/backend/convex/_generated/dataModel";
 
 // Hook to list user's collections
 export function useCollections() {
-  const collections = useQuery(api.collections.list);
+  const collections = useQuery(api.collections.queries.list);
   return collections || [];
 }
 
 // Hook to get a collection with artworks
 export function useCollection(id: Id<"collections">) {
-  return useQuery(api.collections.get, { id });
+  return useQuery(api.collections.queries.get, { id });
 }
 
 // Hook to create collection
 export function useCreateCollection() {
-  return useMutation(api.collections.create);
+  return useMutation(api.collections.queries.create);
 }
 
 // Hook to add artwork to collection
 export function useAddToCollection() {
-  return useMutation(api.collections.addArtwork);
+  return useMutation(api.collections.queries.addArtwork);
 }
 
 // Hook to remove artwork from collection
 export function useRemoveFromCollection() {
-  return useMutation(api.collections.removeArtwork);
+  return useMutation(api.collections.queries.removeArtwork);
 }
 
 // Hook to update collection
 export function useUpdateCollection() {
-  return useMutation(api.collections.update);
+  return useMutation(api.collections.queries.update);
 }
 
 // Hook to delete collection
 export function useDeleteCollection() {
-  return useMutation(api.collections.remove);
+  return useMutation(api.collections.queries.remove);
 }
 
 // Example usage:

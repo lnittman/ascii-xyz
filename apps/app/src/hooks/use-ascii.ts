@@ -6,40 +6,40 @@ import { Id } from "@repo/backend/convex/_generated/dataModel";
 
 // Hook to list user's artworks
 export function useArtworks(visibility?: "public" | "private") {
-  const artworks = useQuery(api.artworks.list, { visibility });
+  const artworks = useQuery(api.ascii.queries.list, { visibility });
   return artworks || [];
 }
 
 // Hook to get a single artwork
-export function useArtwork(id: Id<"artworks">) {
-  return useQuery(api.artworks.get, { id });
+export function useArtwork(id: Id<"artworks">, userId?: string) {
+  return useQuery(api.ascii.queries.get, { id, userId });
 }
 
 // Hook to get public gallery
 export function usePublicGallery(limit?: number) {
-  const artworks = useQuery(api.artworks.getPublic, { limit });
+  const artworks = useQuery(api.ascii.queries.getPublic, { limit });
   return artworks || [];
 }
 
 // Hook to create artwork
 export function useCreateArtwork() {
-  return useMutation(api.artworks.create);
+  return useMutation(api.ascii.mutations.save);
 }
 
 // Hook to update artwork visibility
 export function useUpdateArtworkVisibility() {
-  return useMutation(api.artworks.updateVisibility);
+  return useMutation(api.ascii.mutations.updateVisibility);
 }
 
 // Hook to delete artwork
 export function useDeleteArtwork() {
-  return useMutation(api.artworks.remove);
+  return useMutation(api.ascii.mutations.remove);
 }
 
 // Hook to search artworks
 export function useSearchArtworks(query: string, limit?: number) {
   const results = useQuery(
-    api.artworks.search,
+    api.ascii.queries.search,
     query ? { query, limit } : "skip"
   );
   return results || [];

@@ -1,6 +1,6 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, query } from "../_generated/server";
 import { v } from "convex/values";
-import { getUserId } from "./artworks";
+import { getUserId } from "../artworks/queries";
 
 // Get all collections for the current user
 export const list = query({

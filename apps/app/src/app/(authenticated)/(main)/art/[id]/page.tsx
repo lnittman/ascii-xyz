@@ -13,15 +13,17 @@ import { cn } from '@repo/design/lib/utils';
 export const dynamic = 'force-dynamic';
 import { useArtwork, useDeleteArtwork, useUpdateArtworkVisibility } from '@/hooks/use-ascii';
 import { Id } from '@repo/backend/convex/_generated/dataModel';
+import { useUser } from '@clerk/nextjs';
 
 export default function ArtworkPage() {
   const params = useParams();
   const router = useRouter();
+  const { user } = useUser();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentFrame, setCurrentFrame] = useState(0);
   
   const artworkId = params?.id as Id<"artworks">;
-  const artwork = useArtwork(artworkId!);
+  const artwork = useArtwork(artworkId!, user?.id);
   const deleteArtwork = useDeleteArtwork();
   const updateVisibility = useUpdateArtworkVisibility();
 
@@ -42,8 +44,12 @@ export default function ArtworkPage() {
   }
 
   const handleDelete = async () => {
+    if (!user?.id) {
+      alert('You must be signed in to delete artwork');
+      return;
+    }
     if (confirm('Are you sure you want to delete this artwork?')) {
-      await deleteArtwork({ id: artworkId! });
+      await deleteArtwork({ id: artworkId!, userId: user.id });
       router.push('/');
     }
   };

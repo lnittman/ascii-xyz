@@ -1,287 +1,351 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { ArrowLeft, MagicWand, Settings, Eye, EyeClosed } from 'iconoir-react';
+import { useState, useRef } from 'react'
+import { AsciiEngine } from '@/lib/ascii/engine'
+import { generateAsciiArt } from './actions'
+import { BlockLoader } from '@/components/shared/block-loader'
+import { DefaultLayout } from '@/components/shared/default-layout'
+import { ModeToggle } from '@/components/shared/mode-toggle'
+import { useIsMobile } from '@/hooks/useIsMobile'
 
-// Prevent static generation for this page as it uses Convex
-export const dynamic = 'force-dynamic';
-import Link from 'next/link';
-import { Button } from '@repo/design/components/ui/button';
-import { Input } from '@repo/design/components/ui/input';
-import { Textarea } from '@repo/design/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/design/components/ui/select';
-import { Switch } from '@repo/design/components/ui/switch';
-import { Label } from '@repo/design/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design/components/ui/card';
-import { useCreateArtwork } from '@/hooks/use-ascii';
+interface AsciiGeneration {
+  id: string
+  prompt: string
+  frames: string[]
+  timestamp: Date
+}
 
-export default function GenerateAsciiPage() {
-  const router = useRouter();
-  const [prompt, setPrompt] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [visibility, setVisibility] = useState<'public' | 'private'>('private');
-  
-  // Advanced settings
-  const [width, setWidth] = useState(80);
-  const [height, setHeight] = useState(24);
-  const [style, setStyle] = useState('default');
-  const [model, setModel] = useState('gpt-4');
-  const [frames, setFrames] = useState(1);
-  const [fps, setFps] = useState(10);
-  
-  const createArtwork = useCreateArtwork();
-  
-  // Call the API to generate ASCII art
-  const generateAsciiArt = async (prompt: string) => {
-    const response = await fetch('/api/ascii/generate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ prompt }),
-    });
-    
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to generate ASCII art');
-    }
-    
-    const result = await response.json();
-    return result.data.frames;
-  };
+export default function GeneratePage() {
+  const [prompt, setPrompt] = useState('')
+  const [generations, setGenerations] = useState<AsciiGeneration[]>([])
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isGenerating, setIsGenerating] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const isMobile = useIsMobile()
 
   const handleGenerate = async () => {
-    if (!prompt.trim()) return;
+    if (!prompt.trim() || isGenerating) return
     
-    setIsGenerating(true);
+    setIsGenerating(true)
     try {
-      const generatedFrames = await generateAsciiArt(prompt);
+      const result = await generateAsciiArt(prompt)
       
-      const artworkId = await createArtwork({
+      const generation: AsciiGeneration = {
+        id: crypto.randomUUID(),
         prompt,
-        frames: generatedFrames,
-        metadata: {
-          width,
-          height,
-          fps,
-          generator: 'ascii-ai-v1',
-          model,
-          style,
-        },
-        visibility,
-      });
+        frames: result.frames,
+        timestamp: new Date()
+      }
       
-      router.push(`/art/${artworkId}`);
+      setGenerations(prev => [...prev, generation])
+      setCurrentIndex(generations.length) // Set to new generation
+      setPrompt('')
     } catch (error) {
-      console.error('Generation failed:', error);
-      // Handle error (show toast, etc.)
+      console.error('Failed to generate ASCII art:', error)
     } finally {
-      setIsGenerating(false);
+      setIsGenerating(false)
     }
-  };
+  }
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    const reader = new FileReader()
+    reader.onload = async () => {
+      setPrompt(`Convert this image to ASCII art: ${file.name}`)
+      inputRef.current?.focus()
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const copyToClipboard = () => {
+    const current = generations[currentIndex]
+    if (current && current.frames.length > 0) {
+      navigator.clipboard.writeText(current.frames[0])
+    }
+  }
+
+  const downloadAscii = () => {
+    const current = generations[currentIndex]
+    if (current && current.frames.length > 0) {
+      const blob = new Blob([current.frames[0]], { type: 'text/plain' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `ascii-${current.id}.txt`
+      a.click()
+      URL.revokeObjectURL(url)
+    }
+  }
+
+  const clearHistory = () => {
+    setGenerations([])
+    setCurrentIndex(0)
+  }
+
+  const currentGeneration = generations[currentIndex] || null
 
   return (
-    <div className="h-full">
+    <DefaultLayout>
+      <style jsx>{`
+        /* Custom scrollbar for viewport */
+        .ascii-viewport::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+        
+        .ascii-viewport::-webkit-scrollbar-track {
+          background: hsl(var(--muted));
+          border-radius: 0;
+        }
+        
+        .ascii-viewport::-webkit-scrollbar-thumb {
+          background: hsl(var(--border));
+          border-radius: 0;
+        }
+        
+        .ascii-viewport::-webkit-scrollbar-thumb:hover {
+          background: hsl(var(--foreground));
+        }
+        
+        .ascii-viewport {
+          scrollbar-width: thin;
+          scrollbar-color: hsl(var(--border)) hsl(var(--muted));
+        }
+      `}</style>
+
       {/* Header */}
       <div className="border-b border-border px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-            </Link>
-            <h1 className="text-lg font-medium">Generate ASCII Art</h1>
+            <BlockLoader />
+            <h1 className="text-lg font-medium">ASCII Generator</h1>
           </div>
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowAdvanced(!showAdvanced)}
-          >
-            <Settings className="h-4 w-4 mr-1" />
-            Advanced
-          </Button>
+          <ModeToggle />
         </div>
       </div>
 
-      <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto">
-        <div className="max-w-2xl mx-auto space-y-6">
-          {/* Prompt Input */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Describe Your ASCII Art</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Textarea
-                placeholder="A majestic mountain landscape with snow peaks and pine trees..."
+      {/* Content */}
+      <div className="flex-1 overflow-hidden">
+        <div className="h-full relative">
+          
+          {/* Sticky prompt bar */}
+          <div className="sticky top-0 z-20 bg-background border-b border-border p-4">
+            {/* Full width input */}
+            <div className="flex items-center border border-border px-3 h-10 bg-transparent relative mb-3">
+              <input
+                ref={inputRef}
+                type="text"
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                className="min-h-[100px]"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault()
+                    handleGenerate()
+                  }
+                }}
+                placeholder="describe the ascii art you want to create..."
+                className="w-full bg-transparent border-none outline-none text-sm font-mono"
+                disabled={isGenerating}
               />
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="visibility">Visibility:</Label>
-                  <Select value={visibility} onValueChange={(value: 'public' | 'private') => setVisibility(value)}>
-                    <SelectTrigger className="w-32">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="private">
-                        <div className="flex items-center gap-2">
-                          <EyeClosed className="h-4 w-4" />
-                          Private
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="public">
-                        <div className="flex items-center gap-2">
-                          <Eye className="h-4 w-4" />
-                          Public
-                        </div>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <Button 
+              {prompt && (
+                <button
+                  onClick={() => setPrompt('')}
+                  className="absolute right-2 text-lg opacity-70 hover:opacity-100"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+
+            {/* Control row */}
+            <div className="flex justify-between items-center gap-2">
+              {/* Left controls */}
+              <div className="flex gap-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isGenerating}
+                  className="flex items-center justify-center w-10 h-8 border border-border hover:bg-muted transition-colors font-mono text-sm disabled:opacity-50"
+                  title="Upload image"
+                >
+                  □
+                </button>
+
+                {currentGeneration && (
+                  <>
+                    <button
+                      onClick={copyToClipboard}
+                      className="flex items-center justify-center w-10 h-8 border border-border hover:bg-muted transition-colors font-mono text-sm"
+                      title="Copy to clipboard"
+                    >
+                      {isMobile ? '⊡' : 'CPY'}
+                    </button>
+
+                    <button
+                      onClick={downloadAscii}
+                      className="flex items-center justify-center w-10 h-8 border border-border hover:bg-muted transition-colors font-mono text-sm"
+                      title="Download ASCII"
+                    >
+                      {isMobile ? '↓' : 'DL'}
+                    </button>
+                  </>
+                )}
+
+                {generations.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => setCurrentIndex((prev) => (prev > 0 ? prev - 1 : generations.length - 1))}
+                      disabled={generations.length === 0}
+                      className="flex items-center justify-center w-10 h-8 border border-border hover:bg-muted transition-colors font-mono text-sm"
+                      title="Previous"
+                    >
+                      ←
+                    </button>
+
+                    <button
+                      onClick={() => setCurrentIndex((prev) => (prev < generations.length - 1 ? prev + 1 : 0))}
+                      disabled={generations.length === 0}
+                      className="flex items-center justify-center w-10 h-8 border border-border hover:bg-muted transition-colors font-mono text-sm"
+                      title="Next"
+                    >
+                      →
+                    </button>
+                  </>
+                )}
+
+                {generations.length > 0 && (
+                  <button
+                    onClick={clearHistory}
+                    className="flex items-center justify-center w-10 h-8 border border-border hover:bg-muted transition-colors font-mono text-sm"
+                    title="Clear history"
+                  >
+                    {isMobile ? '○' : 'CLR'}
+                  </button>
+                )}
+              </div>
+
+              {/* Right controls */}
+              <div className="flex gap-2 items-center">
+                {generations.length > 0 && (
+                  <span className="text-xs text-muted-foreground font-mono mr-2">
+                    {currentIndex + 1}/{generations.length}
+                  </span>
+                )}
+
+                <button
                   onClick={handleGenerate}
                   disabled={!prompt.trim() || isGenerating}
-                  className="min-w-32"
+                  className="flex items-center justify-center px-4 h-8 bg-foreground text-background border border-foreground disabled:bg-transparent disabled:text-muted-foreground disabled:border-border transition-colors font-mono text-sm gap-2"
                 >
-                  {isGenerating ? (
-                    <>Generating...</>
-                  ) : (
-                    <>
-                      <MagicWand className="h-4 w-4 mr-1" />
-                      Generate
-                    </>
+                  {isGenerating ? '◌' : '▶'}
+                  {!isMobile && <span>{isGenerating ? 'GENERATING' : 'RUN'}</span>}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Main content area */}
+          <div className="ascii-viewport overflow-auto p-6">
+            {isGenerating ? (
+              <div className="text-center pt-16">
+                <div className="text-2xl font-mono text-foreground mb-4">
+                  ◌ ◌ ◌
+                </div>
+                <p className="text-sm text-muted-foreground font-mono">
+                  generating ascii art...
+                </p>
+              </div>
+            ) : currentGeneration ? (
+              <div className="pt-8">
+                <div className="mb-6">
+                  <p className="text-sm font-mono text-muted-foreground mb-2">
+                    PROMPT:
+                  </p>
+                  <p className="text-base font-mono">
+                    {currentGeneration.prompt}
+                  </p>
+                </div>
+
+                <div className="border border-border bg-muted/30 p-6 overflow-auto">
+                  {currentGeneration.frames && currentGeneration.frames.length > 0 && (
+                    <AsciiEngine
+                      frames={currentGeneration.frames}
+                      fps={12}
+                      loop={true}
+                      autoPlay={true}
+                      style={{
+                        fontSize: '12px',
+                        lineHeight: '14px',
+                        color: 'hsl(var(--foreground))',
+                        fontFamily: 'monospace',
+                      }}
+                    />
                   )}
-                </Button>
+                </div>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Advanced Settings */}
-          {showAdvanced && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Advanced Settings</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="width">Width</Label>
-                    <Input
-                      id="width"
-                      type="number"
-                      value={width}
-                      onChange={(e) => setWidth(Number(e.target.value))}
-                      min="20"
-                      max="120"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="height">Height</Label>
-                    <Input
-                      id="height"
-                      type="number"
-                      value={height}
-                      onChange={(e) => setHeight(Number(e.target.value))}
-                      min="10"
-                      max="50"
-                    />
+            ) : (
+              <div className="pt-16">
+                <div className="text-center max-w-2xl mx-auto">
+                  <h2 className="text-2xl font-mono mb-4">
+                    ASCII ART GENERATOR
+                  </h2>
+                  <p className="text-sm text-muted-foreground font-mono leading-relaxed mb-8">
+                    Create unique ASCII animations with AI. Describe what you want to see, 
+                    upload an image, or try one of the examples below.
+                  </p>
+                  <div className="flex gap-3 justify-center flex-wrap">
+                    <button
+                      onClick={() => {
+                        setPrompt('Matrix rain effect with falling green characters')
+                        inputRef.current?.focus()
+                      }}
+                      className="px-4 py-2 text-xs border border-border bg-transparent hover:bg-muted transition-colors font-mono"
+                    >
+                      MATRIX RAIN
+                    </button>
+                    <button
+                      onClick={() => {
+                        setPrompt('Ocean waves crashing on a beach')
+                        inputRef.current?.focus()
+                      }}
+                      className="px-4 py-2 text-xs border border-border bg-transparent hover:bg-muted transition-colors font-mono"
+                    >
+                      OCEAN WAVES
+                    </button>
+                    <button
+                      onClick={() => {
+                        setPrompt('Fire flames dancing and flickering')
+                        inputRef.current?.focus()
+                      }}
+                      className="px-4 py-2 text-xs border border-border bg-transparent hover:bg-muted transition-colors font-mono"
+                    >
+                      FIRE DANCE
+                    </button>
+                    <button
+                      onClick={() => {
+                        setPrompt('Geometric patterns pulsing and morphing')
+                        inputRef.current?.focus()
+                      }}
+                      className="px-4 py-2 text-xs border border-border bg-transparent hover:bg-muted transition-colors font-mono"
+                    >
+                      GEOMETRY
+                    </button>
                   </div>
                 </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="model">AI Model</Label>
-                  <Select value={model} onValueChange={setModel}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="gpt-4">GPT-4</SelectItem>
-                      <SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo</SelectItem>
-                      <SelectItem value="claude-3">Claude 3</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="style">Style</Label>
-                  <Select value={style} onValueChange={setStyle}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="default">Default</SelectItem>
-                      <SelectItem value="detailed">Detailed</SelectItem>
-                      <SelectItem value="minimal">Minimal</SelectItem>
-                      <SelectItem value="retro">Retro</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                {frames > 1 && (
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="frames">Animation Frames</Label>
-                      <Input
-                        id="frames"
-                        type="number"
-                        value={frames}
-                        onChange={(e) => setFrames(Number(e.target.value))}
-                        min="1"
-                        max="30"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="fps">FPS</Label>
-                      <Input
-                        id="fps"
-                        type="number"
-                        value={fps}
-                        onChange={(e) => setFps(Number(e.target.value))}
-                        min="1"
-                        max="30"
-                      />
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Examples */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Example Prompts</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {[
-                  "A serene mountain landscape with snow-capped peaks",
-                  "A vintage car driving through a desert",
-                  "A cozy cabin in a pine forest",
-                  "A lighthouse on a rocky coastline",
-                  "A steam locomotive crossing a bridge"
-                ].map((example, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setPrompt(example)}
-                    className="text-left text-sm text-muted-foreground hover:text-foreground transition-colors block w-full p-2 rounded hover:bg-accent"
-                  >
-                    "{example}"
-                  </button>
-                ))}
               </div>
-            </CardContent>
-          </Card>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    </DefaultLayout>
+  )
 }
