@@ -25,6 +25,9 @@
     "@types/fs-extra": "^11.0.4",
     "@types/glob": "^8.1.0",
     "@types/minimatch": "^5.1.2",
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.8",
     "chokidar": "^4.0.3",
     "fs-extra": "^11.3.0",
     "glob": "^11.0.3",
@@ -35,6 +38,7 @@
     "remark-mdx": "^3.1.0",
     "tsx": "^4.19.4",
     "turbo": "^2.5.2",
+    "typescript": "^5.9.2",
     "ultracite": "^4.2.1",
     "unist-util-visit": "^5.0.0",
     "vitest": "^1.5.0"
@@ -50,6 +54,7 @@
     "@sargamdesign/icons-react": "^1.4.8",
     "ai": "5.0.0",
     "convex": "^1.26.1",
+    "next": "^15.5.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   }

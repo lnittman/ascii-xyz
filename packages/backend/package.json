@@ -14,7 +14,7 @@
     "@convex-dev/agent": "^0.2.5",
     "@convex-dev/rate-limiter": "^0.2.12",
     "@convex-dev/workflow": "^0.2.6",
-    "ai": "5.0.0",
+    "ai": "5.0.26",
     "convex": "^1.17.0",
     "svix": "^1.44.0",
     "zod": "^3.25.76"

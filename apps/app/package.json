@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@ai-sdk/react": "2.0.0",
+    "@ai-sdk/react": "2.0.26",
     "@ai-sdk/ui-utils": "1.2.11",
     "@clerk/elements": "^0.23.29",
     "@clerk/nextjs": "^6.18.0",
@@ -35,7 +35,7 @@
     "@t3-oss/env-nextjs": "^0.13.0",
     "@types/diff": "^5.2.3",
     "@types/react-syntax-highlighter": "^15.5.13",
-    "ai": "5.0.0",
+    "ai": "5.0.26",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "convex": "^1.26.1",
@@ -49,12 +49,12 @@
     "jotai-ai": "^0.1.1",
     "markdown-to-jsx": "^7.7.6",
     "nanoid": "^5.1.5",
-    "next": "15.3.2",
+    "next": "15.5.2",
     "next-themes": "^0.4.6",
     "next-view-transitions": "^0.3.4",
     "prism-react-renderer": "^2.4.1",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
     "react-dropzone": "^14.3.8",
     "react-markdown": "^10.1.0",
     "react-scan": "^0.3.4",
@@ -71,14 +71,14 @@
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4.1.7",
-    "@types/node": "22.15.3",
-    "@types/react": "19.1.2",
-    "@types/react-dom": "19.1.3",
+    "@types/node": "24.3.0",
+    "@types/react": "19.1.12",
+    "@types/react-dom": "19.1.8",
     "@types/uuid": "^10.0.0",
     "@types/ws": "^8.18.1",
     "jsdom": "^26.1.0",
     "tailwindcss": "^4.1.4",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.2",
     "ws": "^8.18.2"
   }
 }
