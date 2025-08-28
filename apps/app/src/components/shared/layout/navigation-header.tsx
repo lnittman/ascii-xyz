@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useUser } from '@repo/auth/client';
 import { cn } from '@repo/design/lib/utils';
-import { Sparkle, Layers } from 'lucide-react';
+import { Sparkle, Stack } from '@phosphor-icons/react';
 import { UserMenu } from '../menu/user/user-menu';
 import { MobileUserMenu } from '../menu/user/mobile-user-menu';
 
@@ -13,7 +13,7 @@ export function NavigationHeader() {
   const pathname = usePathname();
 
   // Determine active section based on pathname
-  const isGallery = pathname === '/' || pathname.includes('/art/');
+  const isGallery = pathname === '/' || pathname?.includes('/art/');
   const isGenerate = pathname === '/generate';
 
   return (
@@ -36,7 +36,7 @@ export function NavigationHeader() {
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
-              <Layers className="w-4 h-4" />
+              <Stack className="w-4 h-4" />
               <span className="hidden sm:inline">Gallery</span>
             </Link>
             <Link

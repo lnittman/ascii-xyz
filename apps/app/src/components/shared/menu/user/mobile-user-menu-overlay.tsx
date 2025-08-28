@@ -3,13 +3,13 @@
 import React, { useEffect, Suspense } from 'react';
 import { SignOutButton, useAuth, useUser } from '@repo/auth/client';
 import { 
-  LogOut, 
-  Home, 
-  Settings, 
-  Github, 
-  Twitter,
-  ChevronRight 
-} from 'lucide-react';
+  SignOut, 
+  House, 
+  Gear, 
+  GithubLogo, 
+  TwitterLogo,
+  CaretRight 
+} from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { useAtom } from 'jotai';
@@ -152,7 +152,7 @@ function MobileUserMenuOverlayContent() {
                     <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-200">
                       Gallery
                     </span>
-                    <Home className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-200" />
+                    <House className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-200" />
                   </button>
 
                   <button
@@ -162,7 +162,7 @@ function MobileUserMenuOverlayContent() {
                     <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-200">
                       Settings
                     </span>
-                    <Settings className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-200" />
+                    <Gear className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-200" />
                   </button>
 
                   {/* Theme selector */}
@@ -179,7 +179,7 @@ function MobileUserMenuOverlayContent() {
                       <span className="text-red-500/70 group-hover:text-red-600 transition-colors duration-200">
                         Log Out
                       </span>
-                      <LogOut className="w-4 h-4 text-red-500/70 group-hover:text-red-600 transition-colors duration-200" />
+                      <SignOut className="w-4 h-4 text-red-500/70 group-hover:text-red-600 transition-colors duration-200" />
                     </button>
                   </SignOutButton>
                 </div>
@@ -195,7 +195,7 @@ function MobileUserMenuOverlayContent() {
                     <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-200">
                       GitHub
                     </span>
-                    <Github className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-200" />
+                    <GithubLogo className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-200" />
                   </a>
 
                   <a
@@ -207,7 +207,7 @@ function MobileUserMenuOverlayContent() {
                     <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-200">
                       Twitter
                     </span>
-                    <Twitter className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-200" />
+                    <TwitterLogo className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-200" />
                   </a>
                 </div>
               </div>

@@ -4,7 +4,7 @@ import { useUser, useClerk } from '@repo/auth/client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Settings, LogOut, Layers, MessageCircle } from 'lucide-react';
+import { Gear, SignOut, Stack } from '@phosphor-icons/react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -92,7 +92,7 @@ export function UserMenu() {
                   className="mx-1 px-2 py-1.5 rounded-md hover:bg-muted/30 transition-all duration-300 group cursor-pointer"
                 >
                   <div className="flex items-center w-full">
-                    <Layers className="w-4 h-4 mr-2 text-muted-foreground group-hover:text-foreground transition-all duration-300" />
+                    <Stack className="w-4 h-4 mr-2 text-muted-foreground group-hover:text-foreground transition-all duration-300" />
                     <span className="flex-1 text-sm">My Gallery</span>
                   </div>
                 </DropdownMenuItem>
@@ -102,7 +102,7 @@ export function UserMenu() {
                   className="mx-1 px-2 py-1.5 rounded-md hover:bg-muted/30 transition-all duration-300 group cursor-pointer"
                 >
                   <div className="flex items-center w-full">
-                    <Settings className="w-4 h-4 mr-2 text-muted-foreground group-hover:text-foreground transition-all duration-300" />
+                    <Gear className="w-4 h-4 mr-2 text-muted-foreground group-hover:text-foreground transition-all duration-300" />
                     <span className="flex-1 text-sm">Settings</span>
                   </div>
                 </DropdownMenuItem>
@@ -115,7 +115,7 @@ export function UserMenu() {
                 className="mx-1 px-2 py-1.5 rounded-md hover:bg-muted/30 transition-all duration-300 group cursor-pointer"
               >
                 <div className="flex items-center w-full">
-                  <LogOut className="w-4 h-4 mr-2 text-red-500/70 group-hover:text-red-600 transition-all duration-300" />
+                  <SignOut className="w-4 h-4 mr-2 text-red-500/70 group-hover:text-red-600 transition-all duration-300" />
                   <span className="flex-1 text-sm text-red-500/70 group-hover:text-red-600 transition-all duration-300">Sign out</span>
                 </div>
               </DropdownMenuItem>
