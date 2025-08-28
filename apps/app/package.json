@@ -3,7 +3,7 @@
   "description": "AI-powered ASCII art generation platform",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3006",
+    "dev": "next dev",
     "dev:ws": "tsx src/lib/websocket/start-server.ts",
     "build": "next build",
     "start": "next start",
