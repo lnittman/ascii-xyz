@@ -7,15 +7,15 @@ type MetadataGenerator = Omit<Metadata, 'description' | 'title'> & {
   image?: string;
 };
 
-const applicationName = 'arbor';
+const applicationName = 'ASCII';
 
 const author: Metadata['authors'] = {
-  name: 'Luke Nittmann',
-  url: 'https://luke-nittman.vercel.app/',
+  name: 'ASCII Team',
+  url: 'https://ascii.app/',
 };
 
-const publisher = 'Luke Nittman';
-const twitterHandle = '@lukenittman';
+const publisher = 'ASCII Platform';
+const twitterHandle = '@asciiapp';
 
 const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
 const productionUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL;
