@@ -1,6 +1,6 @@
 'use client';
 
-import { Heart, Eye, Plus, Search } from 'iconoir-react';
+import { Heart, Eye, Plus, Search, Grid3x3, Globe } from 'lucide-react';
 import { useState } from 'react';
 import { format } from 'date-fns';
 import Link from 'next/link';
@@ -25,55 +25,65 @@ export default function AsciiGalleryPage() {
                   myArtworks;
 
   return (
-    <div className="h-full">
-      {/* Header */}
-      <div className="border-b border-border px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <h1 className="text-lg font-medium">ASCII Gallery</h1>
-            <div className="flex items-center gap-2">
-              <Button
-                variant={view === 'my-art' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setView('my-art')}
-              >
-                My Art
-              </Button>
-              <Button
-                variant={view === 'public' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setView('public')}
-              >
-                Public Gallery
-              </Button>
+    <div className="min-h-[calc(100vh-4rem)]">
+      <div className="px-4 py-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-mono font-bold tracking-tight text-foreground mb-1">ascii gallery</h1>
+            </div>
+            <div className="flex items-center gap-3">
+              {/* Search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search..."
+                  className="pl-9 w-48 sm:w-64 h-9 bg-muted/50 border-transparent focus:bg-background focus:border-border"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    if (e.target.value) setView('search');
+                  }}
+                />
+              </div>
+              
+              {/* Filter Toggle */}
+              <div className="flex items-center bg-muted border border-border rounded-lg">
+                <div className="relative p-1">
+                  <button
+                    onClick={() => setView('my-art')}
+                    className={cn(
+                      "flex items-center justify-center gap-1.5 px-3 py-1.5 m-px transition-all duration-300 rounded-md text-sm font-medium",
+                      view === 'my-art'
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <Grid3x3 className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">my art</span>
+                  </button>
+                </div>
+                <div className="relative pr-1">
+                  <button
+                    onClick={() => setView('public')}
+                    className={cn(
+                      "flex items-center justify-center gap-1.5 px-3 py-1.5 m-px transition-all duration-300 rounded-md text-sm font-medium",
+                      view === 'public'
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <Globe className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">public</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1 sm:flex-initial">
-              <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Search ASCII art..."
-                className="pl-8 w-full sm:w-64"
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  if (e.target.value) setView('search');
-                }}
-              />
-            </div>
-            <Link href="/generate">
-              <Button size="sm" className="whitespace-nowrap">
-                <Plus className="h-4 w-4 sm:mr-1" />
-                <span className="hidden sm:inline">Generate</span>
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
 
-      {/* Gallery Grid */}
-      <div className="p-4 sm:p-6 lg:p-8">
-        {artworks && artworks.length > 0 ? (
+          {/* Gallery Grid */}
+          {artworks && artworks.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {artworks.map((artwork: any) => (
               <Link key={artwork._id} href={`/art/${artwork._id}`}>
@@ -126,7 +136,7 @@ export default function AsciiGalleryPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
+          <div className="text-center py-16">
             <div className="mx-auto w-12 h-12 bg-accent rounded-lg flex items-center justify-center mb-4">
               {view === 'search' ? <Search className="h-6 w-6 text-muted-foreground" /> :
                <Heart className="h-6 w-6 text-muted-foreground" />}
@@ -149,6 +159,7 @@ export default function AsciiGalleryPage() {
             </Link>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

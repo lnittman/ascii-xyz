@@ -10,9 +10,9 @@ import ConvexClientProvider from '@/providers/ConvexClientProvider';
 import '@/styles/globals.css';
 
 export const metadata: Metadata = createMetadata({
-  title: 'logs',
-  description: 'where bits become bytes and time becomes memory',
-  image: '/assets/leaves/fall.png',
+  title: 'ASCII',
+  description: 'AI-powered ASCII art generation platform',
+  image: '/assets/ascii-og.png',
 });
 
 export default function RootLayout({
@@ -27,16 +27,17 @@ export default function RootLayout({
           name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=cover"
         />
-        <link rel="icon" href="/assets/leaves/fall.png" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/favicon.ico" />
         <link rel="manifest" href="/manifest.webmanifest" />
         <meta name="theme-color" content="#faf9f7" />
-        <meta name="keywords" content="logs, traces, echoes, time, memory, digital archaeology" />
-        <meta name="author" content="anonymous" />
-        <meta property="og:site_name" content="logs" />
+        <meta name="keywords" content="ascii, art, ai, generation, text art, ascii animation" />
+        <meta name="author" content="ASCII Platform" />
+        <meta property="og:site_name" content="ASCII" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:title" content="logs" />
-        <meta name="twitter:description" content="where bits become bytes and time becomes memory" />
+        <meta name="twitter:title" content="ASCII" />
+        <meta name="twitter:description" content="AI-powered ASCII art generation platform" />
         <script
           dangerouslySetInnerHTML={{
             __html: `

@@ -75,3 +75,4 @@ apps/**/*.d.ts.map
 !apps/**/next-env.d.ts
 !apps/**/env.d.ts
 
+.playwright-mcp/

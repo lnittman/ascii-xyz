@@ -3,9 +3,6 @@
 import { useState, useRef } from 'react'
 import { AsciiEngine } from '@/lib/ascii/engine'
 import { generateAsciiArt } from './actions'
-import { BlockLoader } from '@/components/shared/block-loader'
-import { DefaultLayout } from '@/components/shared/default-layout'
-import { ModeToggle } from '@/components/shared/mode-toggle'
 import { useIsMobile } from '@/hooks/useIsMobile'
 
 interface AsciiGeneration {
@@ -88,51 +85,16 @@ export default function GeneratePage() {
   const currentGeneration = generations[currentIndex] || null
 
   return (
-    <DefaultLayout>
-      <style jsx>{`
-        /* Custom scrollbar for viewport */
-        .ascii-viewport::-webkit-scrollbar {
-          width: 8px;
-          height: 8px;
-        }
-        
-        .ascii-viewport::-webkit-scrollbar-track {
-          background: hsl(var(--muted));
-          border-radius: 0;
-        }
-        
-        .ascii-viewport::-webkit-scrollbar-thumb {
-          background: hsl(var(--border));
-          border-radius: 0;
-        }
-        
-        .ascii-viewport::-webkit-scrollbar-thumb:hover {
-          background: hsl(var(--foreground));
-        }
-        
-        .ascii-viewport {
-          scrollbar-width: thin;
-          scrollbar-color: hsl(var(--border)) hsl(var(--muted));
-        }
-      `}</style>
-
-      {/* Header */}
-      <div className="border-b border-border px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <BlockLoader />
-            <h1 className="text-lg font-medium">ASCII Generator</h1>
+    <div className="min-h-[calc(100vh-4rem)]">
+      <div className="px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="mb-6">
+            <h1 className="text-2xl font-mono font-bold tracking-tight text-foreground">generate ascii</h1>
           </div>
-          <ModeToggle />
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 overflow-hidden">
-        <div className="h-full relative">
           
-          {/* Sticky prompt bar */}
-          <div className="sticky top-0 z-20 bg-background border-b border-border p-4">
+          {/* Prompt bar */}
+          <div className="bg-muted/50 border border-border rounded-lg p-4 mb-6">
             {/* Full width input */}
             <div className="flex items-center border border-border px-3 h-10 bg-transparent relative mb-3">
               <input
@@ -254,7 +216,7 @@ export default function GeneratePage() {
           </div>
 
           {/* Main content area */}
-          <div className="ascii-viewport overflow-auto p-6">
+          <div className="">
             {isGenerating ? (
               <div className="text-center pt-16">
                 <div className="text-2xl font-mono text-foreground mb-4">
@@ -346,6 +308,6 @@ export default function GeneratePage() {
           </div>
         </div>
       </div>
-    </DefaultLayout>
+    </div>
   )
 }

@@ -2,6 +2,7 @@ import type React from 'react';
 import { ErrorBoundary } from '@/components/shared/error-boundary';
 import { auth } from '@repo/auth/server';
 import { redirect } from 'next/navigation';
+import { ClientLayout } from './client-layout';
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
@@ -18,7 +19,9 @@ export default async function AuthenticatedLayout({
   
   return (
     <ErrorBoundary>
-      {children}
+      <ClientLayout>
+        {children}
+      </ClientLayout>
     </ErrorBoundary>
   );
 }
