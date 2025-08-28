@@ -1,7 +1,7 @@
 import { createMetadata } from '@repo/seo/metadata';
 import type { Metadata } from 'next';
 import { ViewTransitions } from 'next-view-transitions';
-// import { ClerkProvider } from '@clerk/nextjs';  // Temporarily disabled
+import { ClerkProvider } from '@clerk/nextjs';
 
 //import { ReactScan } from '@/components/shared/ReactScan';
 import { DesignSystemProvider } from '@repo/design';
@@ -151,12 +151,13 @@ export default function RootLayout({
       </head>
 
       <body className="min-h-screen bg-background" suppressHydrationWarning>
-        {/* Temporarily remove ClerkProvider to bypass auth completely */}
-        <ConvexClientProvider>
-          <DesignSystemProvider>
-            <ViewTransitions>{children}</ViewTransitions>
-          </DesignSystemProvider>
-        </ConvexClientProvider>
+        <ClerkProvider>
+          <ConvexClientProvider>
+            <DesignSystemProvider>
+              <ViewTransitions>{children}</ViewTransitions>
+            </DesignSystemProvider>
+          </ConvexClientProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
