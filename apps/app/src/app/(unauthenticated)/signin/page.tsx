@@ -2,12 +2,12 @@
 
 import { useAuth } from '@repo/auth/client';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import * as Clerk from '@clerk/elements/common';
 import * as ClerkSignIn from '@clerk/elements/sign-in';
 import { MatrixRain } from '@/components/shared/matrix-rain';
 
-export default function SignInPage() {
+function SignInContent() {
   const router = useRouter();
   const { isSignedIn } = useAuth();
 
@@ -48,11 +48,25 @@ export default function SignInPage() {
         </ClerkSignIn.Step>
         
         {/* SSO Callback Step */}
-        <ClerkSignIn.Step name="sso-callback" className="flex flex-col items-center justify-center gap-4">
-          <div className="animate-spin h-6 w-6 border-2 border-foreground border-t-transparent rounded-full" />
-          <p className="text-xs font-mono text-muted-foreground">authenticating...</p>
+        <ClerkSignIn.Step name="sso-callback">
+          <div className="flex flex-col items-center justify-center gap-4">
+            <div className="animate-spin h-6 w-6 border-2 border-foreground border-t-transparent rounded-full" />
+            <p className="text-xs font-mono text-muted-foreground">authenticating...</p>
+          </div>
         </ClerkSignIn.Step>
       </ClerkSignIn.Root>
     </div>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-full w-full items-center justify-center px-4 bg-background">
+        <div className="animate-spin h-6 w-6 border-2 border-foreground border-t-transparent rounded-full" />
+      </div>
+    }>
+      <SignInContent />
+    </Suspense>
   );
 }

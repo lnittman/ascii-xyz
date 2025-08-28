@@ -1,6 +1,6 @@
 'use client';
 
-import { Heart, Eye, Plus, Search, Grid3x3, Globe } from 'lucide-react';
+import { Heart, Eye, Plus, MagnifyingGlass, GridFour, Globe } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { format } from 'date-fns';
 import Link from 'next/link';
@@ -36,7 +36,7 @@ export default function AsciiGalleryPage() {
             <div className="flex items-center gap-3">
               {/* Search */}
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <MagnifyingGlass className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   placeholder="Search..."
                   className="pl-9 w-48 sm:w-64 h-9 bg-muted/50 border-transparent focus:bg-background focus:border-border"
@@ -60,7 +60,7 @@ export default function AsciiGalleryPage() {
                         : "text-muted-foreground hover:text-foreground"
                     )}
                   >
-                    <Grid3x3 className="w-3.5 h-3.5" />
+                    <GridFour className="w-3.5 h-3.5" />
                     <span className="hidden sm:inline">my art</span>
                   </button>
                 </div>
@@ -138,7 +138,7 @@ export default function AsciiGalleryPage() {
         ) : (
           <div className="text-center py-16">
             <div className="mx-auto w-12 h-12 bg-accent rounded-lg flex items-center justify-center mb-4">
-              {view === 'search' ? <Search className="h-6 w-6 text-muted-foreground" /> :
+              {view === 'search' ? <MagnifyingGlass className="h-6 w-6 text-muted-foreground" /> :
                <Heart className="h-6 w-6 text-muted-foreground" />}
             </div>
             <h3 className="text-lg font-medium mb-2">
