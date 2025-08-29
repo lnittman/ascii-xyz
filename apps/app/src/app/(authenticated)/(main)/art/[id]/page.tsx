@@ -88,7 +88,7 @@ export default function ArtworkPage() {
           <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/">
-              <Button variant="ghost" size="icon" className="rounded-xl hover:bg-muted/50">
+              <Button variant="ghost" size="icon" className="rounded-md hover:bg-muted/50">
                 <ArrowLeft className="h-4 w-4" weight="bold" />
               </Button>
             </Link>
@@ -114,11 +114,11 @@ export default function ArtworkPage() {
               )}
             </div>
             
-            <Button variant="ghost" size="icon" onClick={handleDownload} className="rounded-xl hover:bg-muted/50">
+            <Button variant="ghost" size="icon" onClick={handleDownload} className="rounded-md hover:bg-muted/50">
               <Download className="h-4 w-4" weight="bold" />
             </Button>
             
-            <Button variant="ghost" size="icon" onClick={() => {}} className="rounded-xl hover:bg-muted/50">
+            <Button variant="ghost" size="icon" onClick={() => {}} className="rounded-md hover:bg-muted/50">
               <Share className="h-4 w-4" weight="bold" />
             </Button>
             
@@ -126,9 +126,9 @@ export default function ArtworkPage() {
               variant="outline" 
               size="sm" 
               onClick={handleVisibilityToggle}
-              className="rounded-xl border-border/50 hover:bg-muted/50"
+              className="rounded-md border-border/50 hover:bg-muted/50"
             >
-              <Badge variant={artwork.visibility === 'public' ? 'default' : 'secondary'} className="rounded-lg">
+              <Badge variant={artwork.visibility === 'public' ? 'default' : 'secondary'} className="rounded-md">
                 {artwork.visibility}
               </Badge>
             </Button>
@@ -137,7 +137,7 @@ export default function ArtworkPage() {
               variant="ghost" 
               size="icon" 
               onClick={handleDelete}
-              className="rounded-xl text-destructive/70 hover:text-destructive hover:bg-destructive/10"
+              className="rounded-md text-destructive/70 hover:text-destructive hover:bg-destructive/10"
             >
               <Trash className="h-4 w-4" weight="bold" />
             </Button>
@@ -168,14 +168,14 @@ export default function ArtworkPage() {
           )}
           
           {/* ASCII Art Display */}
-          <div className="bg-black rounded-xl p-8 overflow-auto shadow-2xl">
+          <div className="bg-black rounded-md p-8 overflow-auto shadow-2xl">
             <pre className="text-green-400 font-mono text-sm leading-tight whitespace-pre">
               {artwork.frames[currentFrame] || 'No content available'}
             </pre>
           </div>
           
           {/* Metadata */}
-          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-6 p-6 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl">
+          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-6 p-6 bg-card/50 backdrop-blur-sm border border-border/50 rounded-md">
             <div>
               <div className="text-xs font-medium text-muted-foreground mb-1">Dimensions</div>
               <div className="text-sm">{artwork.metadata.width}×{artwork.metadata.height}</div>

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./design-system.css";
 @import "@repo/design/styles/globals.css";
 @import "./safari-animations.css";
 @import "./mobile-touch.css";

@@ -27,11 +27,11 @@ export function NavigationHeader() {
 
         {/* Center Navigation Toggle */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-          <div className="bg-muted/80 backdrop-blur-sm border border-border/60 rounded-xl shadow-sm h-10 p-1 flex items-center gap-0.5">
+          <div className="bg-muted/80 backdrop-blur-sm border border-border/60 rounded-md shadow-sm h-10 p-1 flex items-center gap-0.5">
             <Link
               href="/"
               className={cn(
-                "flex items-center gap-2 px-4 h-full text-sm font-medium rounded-lg transition-all duration-300",
+                "flex items-center gap-2 px-4 h-full text-sm font-medium rounded-sm transition-all duration-200",
                 isGallery
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground/80 hover:text-foreground hover:bg-background/50"
@@ -43,7 +43,7 @@ export function NavigationHeader() {
             <Link
               href="/generate"
               className={cn(
-                "flex items-center gap-2 px-4 h-full text-sm font-medium rounded-lg transition-all duration-300",
+                "flex items-center gap-2 px-4 h-full text-sm font-medium rounded-sm transition-all duration-200",
                 isGenerate
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground/80 hover:text-foreground hover:bg-background/50"
