@@ -17,23 +17,24 @@ export function NavigationHeader() {
   const isGenerate = pathname === '/generate';
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-background border-b border-border">
-      <div className="flex h-16 items-center justify-between px-4 relative">
+    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm border-b border-border/50">
+      <div className="mx-auto max-w-7xl">
+        <div className="flex h-16 items-center justify-between px-6 relative">
         {/* Logo */}
         <Link href="/" className="flex-shrink-0">
           <span className="font-mono text-2xl font-bold text-foreground">ASCII</span>
         </Link>
 
         {/* Center Navigation Toggle */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          <div className="bg-muted border border-border rounded-lg h-9 p-1 flex items-center gap-1">
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+          <div className="bg-muted/80 backdrop-blur-sm border border-border/60 rounded-xl shadow-sm h-10 p-1 flex items-center gap-0.5">
             <Link
               href="/"
               className={cn(
-                "flex items-center gap-2 px-3 h-full text-sm font-medium rounded-md transition-all duration-200",
+                "flex items-center gap-2 px-4 h-full text-sm font-medium rounded-lg transition-all duration-300",
                 isGallery
                   ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground/80 hover:text-foreground hover:bg-background/50"
               )}
             >
               <Stack className="w-4 h-4" />
@@ -42,10 +43,10 @@ export function NavigationHeader() {
             <Link
               href="/generate"
               className={cn(
-                "flex items-center gap-2 px-3 h-full text-sm font-medium rounded-md transition-all duration-200",
+                "flex items-center gap-2 px-4 h-full text-sm font-medium rounded-lg transition-all duration-300",
                 isGenerate
                   ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground/80 hover:text-foreground hover:bg-background/50"
               )}
             >
               <Sparkle className="w-4 h-4" />
@@ -65,6 +66,7 @@ export function NavigationHeader() {
             {user && <MobileUserMenu />}
           </div>
         </div>
+      </div>
       </div>
     </header>
   );

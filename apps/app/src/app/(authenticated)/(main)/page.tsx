@@ -26,20 +26,21 @@ export default function AsciiGalleryPage() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)]">
-      <div className="px-4 py-8">
-        <div className="max-w-7xl mx-auto">
+      <div className="px-6 py-12">
+        <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="mb-8 flex items-center justify-between">
+          <div className="mb-10 flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-mono font-bold tracking-tight text-foreground mb-1">ascii gallery</h1>
+              <h1 className="text-3xl font-mono font-medium tracking-tight text-foreground">ascii gallery</h1>
+              <p className="text-sm text-muted-foreground mt-1">Your collection of generated ASCII art</p>
             </div>
             <div className="flex items-center gap-3">
               {/* Search */}
               <div className="relative">
-                <MagnifyingGlass className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <MagnifyingGlass className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
                 <Input
-                  placeholder="Search..."
-                  className="pl-9 w-48 sm:w-64 h-9 bg-muted/50 border-transparent focus:bg-background focus:border-border"
+                  placeholder="Search artworks..."
+                  className="pl-10 w-48 sm:w-72 h-10 bg-muted/30 border-border/50 focus:bg-background focus:border-border transition-all duration-200 rounded-xl"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
@@ -49,15 +50,15 @@ export default function AsciiGalleryPage() {
               </div>
               
               {/* Filter Toggle */}
-              <div className="flex items-center bg-muted border border-border rounded-lg">
+              <div className="flex items-center bg-muted/50 backdrop-blur-sm border border-border/60 rounded-xl shadow-sm">
                 <div className="relative p-1">
                   <button
                     onClick={() => setView('my-art')}
                     className={cn(
-                      "flex items-center justify-center gap-1.5 px-3 py-1.5 m-px transition-all duration-300 rounded-md text-sm font-medium",
+                      "flex items-center justify-center gap-2 px-4 py-2 transition-all duration-300 rounded-lg text-sm font-medium",
                       view === 'my-art'
                         ? "bg-background text-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground"
+                        : "text-muted-foreground/80 hover:text-foreground hover:bg-background/50"
                     )}
                   >
                     <GridFour className="w-3.5 h-3.5" />
@@ -68,10 +69,10 @@ export default function AsciiGalleryPage() {
                   <button
                     onClick={() => setView('public')}
                     className={cn(
-                      "flex items-center justify-center gap-1.5 px-3 py-1.5 m-px transition-all duration-300 rounded-md text-sm font-medium",
+                      "flex items-center justify-center gap-2 px-4 py-2 transition-all duration-300 rounded-lg text-sm font-medium",
                       view === 'public'
                         ? "bg-background text-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground"
+                        : "text-muted-foreground/80 hover:text-foreground hover:bg-background/50"
                     )}
                   >
                     <Globe className="w-3.5 h-3.5" />
@@ -84,12 +85,12 @@ export default function AsciiGalleryPage() {
 
           {/* Gallery Grid */}
           {artworks && artworks.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {artworks.map((artwork: any) => (
               <Link key={artwork._id} href={`/art/${artwork._id}`}>
-                <div className="border border-border rounded-lg p-4 hover:bg-accent/50 transition-colors">
+                <div className="group border border-border/50 rounded-xl p-5 hover:border-border hover:shadow-lg transition-all duration-300 bg-card/50 backdrop-blur-sm">
                   {/* ASCII Preview */}
-                  <div className="bg-black rounded p-2 mb-3 overflow-hidden">
+                  <div className="bg-black rounded-lg p-3 mb-4 overflow-hidden group-hover:shadow-xl transition-shadow duration-300">
                     <pre className="text-green-400 text-xs leading-none font-mono whitespace-pre">
                       {artwork.frames[0]?.slice(0, 200) || 'No preview available'}
                     </pre>
@@ -136,8 +137,8 @@ export default function AsciiGalleryPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16">
-            <div className="mx-auto w-12 h-12 bg-accent rounded-lg flex items-center justify-center mb-4">
+          <div className="text-center py-20">
+            <div className="mx-auto w-14 h-14 bg-muted rounded-xl flex items-center justify-center mb-6">
               {view === 'search' ? <MagnifyingGlass className="h-6 w-6 text-muted-foreground" /> :
                <Heart className="h-6 w-6 text-muted-foreground" />}
             </div>

@@ -86,17 +86,18 @@ export default function GeneratePage() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)]">
-      <div className="px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+      <div className="px-6 py-12">
+        <div className="max-w-3xl mx-auto">
           {/* Header */}
-          <div className="mb-6">
-            <h1 className="text-2xl font-mono font-bold tracking-tight text-foreground">generate ascii</h1>
+          <div className="mb-10">
+            <h1 className="text-3xl font-mono font-medium tracking-tight text-foreground">generate ascii</h1>
+            <p className="text-sm text-muted-foreground mt-1">Transform your ideas into ASCII art</p>
           </div>
           
           {/* Prompt bar */}
-          <div className="bg-muted/50 border border-border rounded-lg p-4 mb-6">
+          <div className="bg-card/50 backdrop-blur-sm border border-border/60 rounded-xl p-5 mb-8 shadow-sm">
             {/* Full width input */}
-            <div className="flex items-center border border-border px-3 h-10 bg-transparent relative mb-3">
+            <div className="flex items-center border border-border/50 rounded-lg px-4 h-12 bg-background/50 relative mb-4 transition-all duration-200 focus-within:border-border focus-within:bg-background">
               <input
                 ref={inputRef}
                 type="text"
@@ -108,14 +109,14 @@ export default function GeneratePage() {
                     handleGenerate()
                   }
                 }}
-                placeholder="describe the ascii art you want to create..."
-                className="w-full bg-transparent border-none outline-none text-sm font-mono"
+                placeholder="Describe the ASCII art you want to create..."
+                className="w-full bg-transparent border-none outline-none text-sm font-mono placeholder:text-muted-foreground/60"
                 disabled={isGenerating}
               />
               {prompt && (
                 <button
                   onClick={() => setPrompt('')}
-                  className="absolute right-2 text-lg opacity-70 hover:opacity-100"
+                  className="absolute right-3 text-lg opacity-60 hover:opacity-100 transition-opacity duration-200"
                 >
                   ×
                 </button>
@@ -136,7 +137,7 @@ export default function GeneratePage() {
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isGenerating}
-                  className="flex items-center justify-center w-10 h-8 border border-border hover:bg-muted transition-colors font-mono text-sm disabled:opacity-50"
+                  className="flex items-center justify-center w-10 h-9 border border-border/50 rounded-lg hover:bg-muted/50 hover:border-border transition-all duration-200 font-mono text-sm disabled:opacity-50"
                   title="Upload image"
                 >
                   □
@@ -146,7 +147,7 @@ export default function GeneratePage() {
                   <>
                     <button
                       onClick={copyToClipboard}
-                      className="flex items-center justify-center w-10 h-8 border border-border hover:bg-muted transition-colors font-mono text-sm"
+                      className="flex items-center justify-center w-10 h-9 border border-border/50 rounded-lg hover:bg-muted/50 hover:border-border transition-all duration-200 font-mono text-sm"
                       title="Copy to clipboard"
                     >
                       {isMobile ? '⊡' : 'CPY'}
@@ -154,7 +155,7 @@ export default function GeneratePage() {
 
                     <button
                       onClick={downloadAscii}
-                      className="flex items-center justify-center w-10 h-8 border border-border hover:bg-muted transition-colors font-mono text-sm"
+                      className="flex items-center justify-center w-10 h-9 border border-border/50 rounded-lg hover:bg-muted/50 hover:border-border transition-all duration-200 font-mono text-sm"
                       title="Download ASCII"
                     >
                       {isMobile ? '↓' : 'DL'}
@@ -167,7 +168,7 @@ export default function GeneratePage() {
                     <button
                       onClick={() => setCurrentIndex((prev) => (prev > 0 ? prev - 1 : generations.length - 1))}
                       disabled={generations.length === 0}
-                      className="flex items-center justify-center w-10 h-8 border border-border hover:bg-muted transition-colors font-mono text-sm"
+                      className="flex items-center justify-center w-10 h-9 border border-border/50 rounded-lg hover:bg-muted/50 hover:border-border transition-all duration-200 font-mono text-sm"
                       title="Previous"
                     >
                       ←
@@ -176,7 +177,7 @@ export default function GeneratePage() {
                     <button
                       onClick={() => setCurrentIndex((prev) => (prev < generations.length - 1 ? prev + 1 : 0))}
                       disabled={generations.length === 0}
-                      className="flex items-center justify-center w-10 h-8 border border-border hover:bg-muted transition-colors font-mono text-sm"
+                      className="flex items-center justify-center w-10 h-9 border border-border/50 rounded-lg hover:bg-muted/50 hover:border-border transition-all duration-200 font-mono text-sm"
                       title="Next"
                     >
                       →
@@ -187,7 +188,7 @@ export default function GeneratePage() {
                 {generations.length > 0 && (
                   <button
                     onClick={clearHistory}
-                    className="flex items-center justify-center w-10 h-8 border border-border hover:bg-muted transition-colors font-mono text-sm"
+                    className="flex items-center justify-center w-10 h-9 border border-border/50 rounded-lg hover:bg-muted/50 hover:border-border transition-all duration-200 font-mono text-sm"
                     title="Clear history"
                   >
                     {isMobile ? '○' : 'CLR'}
