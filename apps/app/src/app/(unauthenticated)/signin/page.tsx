@@ -22,7 +22,7 @@ function SignInContent() {
       <ClerkSignIn.Root routing="path" path="/signin">
         <ClerkSignIn.Step name="start" className="flex flex-col items-stretch w-full max-w-sm">
           {/* Card with same background as page */}
-          <div className="relative rounded-xl overflow-hidden bg-background">
+          <div className="relative rounded-md overflow-hidden bg-background">
             {/* Matrix ASCII Animation as full background */}
             <div className="absolute inset-0 flex items-center justify-center">
               <MatrixRain />
@@ -37,7 +37,7 @@ function SignInContent() {
               <div className="p-8">
                 <Clerk.Connection
                   name="google"
-                  className="flex items-center justify-center gap-2 rounded-lg border border-border bg-muted px-4 py-3 font-mono text-sm text-foreground hover:bg-accent transition-colors duration-200 w-full"
+                  className="flex items-center justify-center gap-2 rounded-md border border-border bg-muted px-4 py-3 font-mono text-sm text-foreground hover:bg-accent transition-colors duration-200 w-full"
                 >
                   <Clerk.Icon className="h-4 w-4" />
                   continue with Google
