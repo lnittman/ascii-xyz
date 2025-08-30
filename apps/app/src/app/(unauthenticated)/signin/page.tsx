@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect, Suspense } from 'react';
 import * as Clerk from '@clerk/elements/common';
 import * as ClerkSignIn from '@clerk/elements/sign-in';
-import { AsciiMorph } from '@/components/shared/ascii-morph';
+import { AsciiMorph } from '@repo/ascii';
+import { geometricMorphData } from '@repo/ascii/data';
 
 function SignInContent() {
   const router = useRouter();
@@ -81,7 +82,12 @@ function SignInContent() {
         
         {/* Right panel - ASCII Animation */}
         <div className="flex-1 relative bg-muted/5 border-l border-border/50 overflow-hidden">
-          <AsciiMorph className="absolute inset-0" speed={150} interactive={true} />
+          <AsciiMorph 
+            frames={geometricMorphData}
+            className="absolute inset-0" 
+            speed={150} 
+            interactive={true} 
+          />
           
           {/* Overlay with sample prompt */}
           <div className="absolute bottom-8 left-8 right-8 p-6 backdrop-blur-sm bg-background/80 rounded-xl border border-border/50">
@@ -96,7 +102,12 @@ function SignInContent() {
       {/* Mobile: Centered layout */}
       <div className="flex lg:hidden w-full h-full flex-col">
         {/* Full page ASCII morph background */}
-        <AsciiMorph className="absolute inset-0 z-0" speed={200} interactive={true} />
+        <AsciiMorph 
+          frames={geometricMorphData}
+          className="absolute inset-0 z-0" 
+          speed={200} 
+          interactive={true} 
+        />
         
         {/* Sign-in content - bottom aligned */}
         <div className="relative z-10 flex flex-1 flex-col justify-end px-4 pb-8">
