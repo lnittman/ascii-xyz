@@ -12,15 +12,11 @@ export const keys = () =>
       NEXT_RUNTIME: z.enum(['nodejs', 'edge']).optional(),
     },
     client: {
-      NEXT_PUBLIC_AI_URL: z.string().min(1).url(),
-      NEXT_PUBLIC_API_URL: z.string().min(1).url(),
       NEXT_PUBLIC_APP_URL: z.string().min(1).url(),
     },
     runtimeEnv: {
       ANALYZE: process.env.ANALYZE,
       NEXT_RUNTIME: process.env.NEXT_RUNTIME,
-      NEXT_PUBLIC_AI_URL: process.env.NEXT_PUBLIC_AI_URL,
-      NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
       NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     },
   });
