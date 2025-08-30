@@ -88,6 +88,8 @@ export default defineSchema({
     theme: v.union(v.literal("light"), v.literal("dark"), v.literal("system")),
     defaultVisibility: v.union(v.literal("public"), v.literal("private")),
     emailNotifications: v.boolean(),
+    preferredModel: v.optional(v.string()),
+    preferredProvider: v.optional(v.string()),
     apiKeys: v.optional(v.array(v.object({
       name: v.string(),
       key: v.string(),

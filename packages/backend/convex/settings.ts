@@ -31,6 +31,8 @@ export const update = mutation({
     theme: v.optional(v.union(v.literal("light"), v.literal("dark"), v.literal("system"))),
     defaultVisibility: v.optional(v.union(v.literal("public"), v.literal("private"))),
     emailNotifications: v.optional(v.boolean()),
+    preferredModel: v.optional(v.string()),
+    preferredProvider: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await getUserId(ctx);
@@ -55,6 +57,8 @@ export const update = mutation({
     if (args.theme !== undefined) updates.theme = args.theme;
     if (args.defaultVisibility !== undefined) updates.defaultVisibility = args.defaultVisibility;
     if (args.emailNotifications !== undefined) updates.emailNotifications = args.emailNotifications;
+    if (args.preferredModel !== undefined) updates.preferredModel = args.preferredModel;
+    if (args.preferredProvider !== undefined) updates.preferredProvider = args.preferredProvider;
 
     if (settings) {
       await ctx.db.patch(settings._id, updates);
