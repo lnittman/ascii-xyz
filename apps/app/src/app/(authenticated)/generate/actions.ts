@@ -4,7 +4,7 @@ import { api } from '@repo/backend/convex/_generated/api';
 import { fetchAction } from 'convex/nextjs';
 import { auth } from '@clerk/nextjs/server';
 
-export async function generateAsciiArt(prompt: string, apiKey?: string) {
+export async function generateAsciiArt(prompt: string, modelId?: string, apiKey?: string) {
   try {
     // Get the current user ID (optional)
     const { userId } = await auth();
@@ -14,6 +14,7 @@ export async function generateAsciiArt(prompt: string, apiKey?: string) {
     const result = await fetchAction(api.ascii.actions.generate, {
       prompt,
       userId: userId || undefined,
+      modelId: modelId || undefined, // Selected model from jotai atom
       apiKey: apiKey || undefined // Can be provided by user or from env
     });
     
