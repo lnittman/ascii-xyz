@@ -104,7 +104,7 @@ export default function SettingsPage() {
           </p>
           {settings.apiKeys && settings.apiKeys.length > 0 ? (
             <div className="space-y-2">
-              {settings.apiKeys.map((key, index) => (
+              {settings.apiKeys.map((key: any, index: number) => (
                 <div key={index} className="flex items-center justify-between p-2 border rounded">
                   <div>
                     <div className="text-sm font-medium">{key.name}</div>

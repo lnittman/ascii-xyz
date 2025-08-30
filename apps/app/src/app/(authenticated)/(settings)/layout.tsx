@@ -7,10 +7,11 @@ import { cn } from '@repo/design/lib/utils';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Dialog, Transition } from '@headlessui/react';
-import { Settings, User, Palette, Bell, Shield, CreditCard, Code, Database } from 'iconoir-react';
+import { Settings, User, Palette, Bell, Shield, CreditCard, Code, Database, Brain } from 'iconoir-react';
 
 const settingsNavigation = [
   { name: 'general', href: '/settings', icon: Settings },
+  { name: 'models', href: '/settings/models', icon: Brain },
   { name: 'profile', href: '/settings/profile', icon: User },
   { name: 'appearance', href: '/settings/appearance', icon: Palette },
   { name: 'notifications', href: '/settings/notifications', icon: Bell },

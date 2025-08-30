@@ -1,7 +1,7 @@
 import { action } from "../_generated/server";
 import { v } from "convex/values";
 import { generateText } from 'ai';
-import { getAsciiModel } from "./ai";
+import { getAsciiModel, DEFAULT_MODEL } from "./ai";
 
 // Pure AI-driven ASCII generation
 export const generate = action({
@@ -9,17 +9,14 @@ export const generate = action({
     prompt: v.string(),
     apiKey: v.optional(v.string()),
     userId: v.optional(v.string()),
+    modelId: v.optional(v.string()),
   },
-  handler: async (ctx, { prompt, apiKey, userId }) => {
-    // API key is required - either user-provided or from environment
-    const key = apiKey || process.env.OPENAI_API_KEY;
-    
-    if (!key) {
-      throw new Error("API key required for ASCII generation. Please add your OpenAI API key in settings.");
-    }
+  handler: async (ctx, { prompt, apiKey, userId, modelId }) => {
+    // Use provided model or default
+    const selectedModel = modelId || DEFAULT_MODEL;
 
     try {
-      const model = getAsciiModel(key);
+      const model = getAsciiModel(selectedModel, apiKey);
       
       // Step 1: AI analyzes the prompt and creates a generation plan
       const planResponse = await generateText({
@@ -138,7 +135,7 @@ Generate the frames now:`,
           prompt,
           ...plan,
           generatedAt: new Date().toISOString(),
-          model: "gpt-4o",
+          model: selectedModel,
           userId,
         }
       };
@@ -157,16 +154,14 @@ export const generateVariation = action({
     variationPrompt: v.string(),
     apiKey: v.optional(v.string()),
     userId: v.optional(v.string()),
+    modelId: v.optional(v.string()),
   },
-  handler: async (ctx, { originalFrames, variationPrompt, apiKey, userId }) => {
-    const key = apiKey || process.env.OPENAI_API_KEY;
-    
-    if (!key) {
-      throw new Error("API key required for ASCII generation.");
-    }
+  handler: async (ctx, { originalFrames, variationPrompt, apiKey, userId, modelId }) => {
+    // Use provided model or default
+    const selectedModel = modelId || DEFAULT_MODEL;
 
     try {
-      const model = getAsciiModel(key);
+      const model = getAsciiModel(selectedModel, apiKey);
       
       // Analyze original and create variation
       const response = await generateText({
@@ -199,7 +194,7 @@ Return a JSON array of all ${originalFrames.length} modified frames.`,
           prompt: variationPrompt,
           originalFrameCount: originalFrames.length,
           generatedAt: new Date().toISOString(),
-          model: "gpt-4o",
+          model: selectedModel,
           userId,
         }
       };

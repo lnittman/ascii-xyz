@@ -7,24 +7,32 @@ import { api } from "@repo/backend/convex/_generated/api";
 export function useUserSettings() {
   const settings = useQuery(api.settings.get);
   const updateSettingsMutation = useMutation(api.settings.update);
+  const addKeyMutation = useMutation(api.settings.addApiKey);
+  const removeKeyMutation = useMutation(api.settings.removeApiKey);
   
   const updateSettings = async (updates: {
     theme?: 'light' | 'dark' | 'system';
     defaultVisibility?: 'public' | 'private';
     emailNotifications?: boolean;
-    apiKeys?: Array<{
-      name: string;
-      key: string;
-      provider: string;
-      createdAt: string;
-    }>;
+    preferredModel?: string;
+    preferredProvider?: string;
   }) => {
     await updateSettingsMutation(updates);
+  };
+
+  const addApiKey = async (keyData: { name: string; key: string; provider: string }) => {
+    await addKeyMutation(keyData);
+  };
+  
+  const removeApiKey = async (name: string) => {
+    await removeKeyMutation({ name });
   };
 
   return {
     settings,
     updateSettings,
+    addApiKey,
+    removeApiKey,
   };
 }
 
