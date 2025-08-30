@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { useAtomValue } from 'jotai'
+import { selectedModelIdAtom } from '@/atoms/models'
 import { AsciiEngine } from '@/lib/ascii/engine'
 import { generateAsciiArt } from './actions'
 import { useIsMobile } from '@/hooks/useIsMobile'
@@ -20,13 +22,14 @@ export default function GeneratePage() {
   const inputRef = useRef<HTMLInputElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const isMobile = useIsMobile()
+  const selectedModelId = useAtomValue(selectedModelIdAtom)
 
   const handleGenerate = async () => {
     if (!prompt.trim() || isGenerating) return
     
     setIsGenerating(true)
     try {
-      const result = await generateAsciiArt(prompt)
+      const result = await generateAsciiArt(prompt, selectedModelId)
       
       const generation: AsciiGeneration = {
         id: crypto.randomUUID(),
