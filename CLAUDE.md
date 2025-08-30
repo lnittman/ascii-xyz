@@ -108,7 +108,7 @@ Using Clerk Elements for seamless auth:
 
 ## > AI Integration
 
-Mastra-powered generation with:
+Convex-powered generation with:
 
 - Multiple model support (OpenAI, Anthropic, etc.)
 - Custom prompting for ASCII-specific output

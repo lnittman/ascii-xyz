@@ -54,5 +54,3 @@ temp
 logs
 *.orig
 
-# Mastra output directories
-.mastra
