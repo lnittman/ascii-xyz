@@ -1,8 +1,0 @@
-{
-  "buildCommand": "cd ../.. && pnpm run build --filter=ascii-app",
-  "outputDirectory": ".next",
-  "framework": "nextjs",
-  "installCommand": "cd ../.. && pnpm install --frozen-lockfile --no-cache",
-  "ignoreCommand": "git diff HEAD^ HEAD --quiet .",
-  "crons": []
-}
