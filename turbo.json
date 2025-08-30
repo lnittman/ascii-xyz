@@ -8,15 +8,8 @@
       "outputs": [
         ".next/**",
         "!.next/cache/**",
-        "**/generated/**",
-        ".mastra/**"
+        "**/generated/**"
       ]
-    },
-    "api#build": {
-      "outputs": [".mastra/**"]
-    },
-    "ai#build": {
-      "outputs": [".mastra/**"]
     },
     "analyze": {
       "dependsOn": ["^analyze"]
