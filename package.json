@@ -47,15 +47,5 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ],
-  "dependencies": {
-    "@ai-sdk/react": "2.0.0",
-    "@openrouter/ai-sdk-provider": "1.0.0-beta.6",
-    "@sargamdesign/icons-react": "^1.4.8",
-    "ai": "5.0.0",
-    "convex": "^1.26.1",
-    "next": "^15.5.2",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1"
-  }
+  ]
 }
