@@ -33,13 +33,15 @@ export const config: NextConfig = {
     ];
   },
 
-  webpack(config, { isServer }) {
+  webpack(config, context) {
+    const isServer = Boolean(context?.isServer);
     config.ignoreWarnings = [{ module: otelRegex }];
 
     // Don't bundle Node.js modules for the browser
     if (!isServer) {
+      config.resolve = config.resolve ?? {};
       config.resolve.fallback = {
-        ...config.resolve.fallback,
+        ...(config.resolve as any).fallback,
         fs: false,
         net: false,
         tls: false,

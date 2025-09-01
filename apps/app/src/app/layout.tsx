@@ -1,6 +1,5 @@
 import { createMetadata } from '@repo/seo/metadata';
 import type { Metadata } from 'next';
-import { ViewTransitions } from 'next-view-transitions';
 import { ClerkProvider } from '@clerk/nextjs';
 
 //import { ReactScan } from '@/components/shared/ReactScan';
@@ -155,7 +154,7 @@ export default function RootLayout({
         <ClerkProvider>
           <ConvexClientProvider>
             <DesignSystemProvider>
-              <ViewTransitions>{children}</ViewTransitions>
+              {children}
             </DesignSystemProvider>
           </ConvexClientProvider>
         </ClerkProvider>
