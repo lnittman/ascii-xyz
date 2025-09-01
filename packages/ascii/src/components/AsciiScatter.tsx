@@ -29,8 +29,9 @@ export function AsciiScatter({ className = '', active = true, isDark = false }: 
   
   // Create a larger grid for full-screen effect
   const generateFrame = (frameNum: number) => {
-    const width = 160;
-    const height = 80;
+    // Calculate based on viewport - with 10px font size and line-height: 1, we need more rows
+    const width = 200;
+    const height = 150; // Increased significantly to ensure full coverage
     const grid = [];
     
     for (let y = 0; y < height; y++) {

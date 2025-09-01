@@ -89,13 +89,13 @@ function SignInContent() {
         </div>
         
         {/* Right panel - Full-screen ASCII Animation */}
-        <div className="flex-1 relative bg-muted/5 overflow-hidden">
-          {/* Full-height ASCII scatter animation */}
-          <div className="absolute inset-0 w-full h-full">
+        <div className="flex-1 relative bg-muted/5">
+          {/* Full-height ASCII scatter animation - no overflow hidden to allow full render */}
+          <div className="absolute inset-0">
             <AsciiScatter 
               active={true} 
               isDark={isDark}
-              className="w-full h-full" 
+              className="absolute inset-0" 
             />
           </div>
           
@@ -111,7 +111,7 @@ function SignInContent() {
           <AsciiScatter 
             active={true} 
             isDark={isDark}
-            className="w-full h-full" 
+            className="absolute inset-0" 
           />
         </div>
         
