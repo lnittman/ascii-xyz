@@ -27,65 +27,74 @@ export default function AsciiGalleryPage() {
   return (
     <div className="min-h-[calc(100vh-4rem)]">
       <div className="px-6 py-12">
-        <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="mb-10 flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-mono font-medium tracking-tight text-foreground">ascii gallery</h1>
-              <p className="text-sm text-muted-foreground mt-1">Your collection of generated ASCII art</p>
+        <div className="max-w-3xl mx-auto">
+          {/* Header - Search bar full width with filter toggle */}
+          <div className="mb-10 flex items-center gap-3">
+            {/* Search - Full width on desktop, compact on mobile */}
+            <div className="relative flex-1">
+              <MagnifyingGlass className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
+              <Input
+                placeholder="Search artworks..."
+                className="pl-10 w-full h-10 bg-muted/30 border-border/50 focus:bg-background focus:border-border transition-all duration-200 rounded-md hidden sm:block"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  if (e.target.value) setView('search');
+                }}
+              />
+              {/* Mobile search button */}
+              <button
+                className="sm:hidden flex items-center gap-2 px-4 py-2 h-10 bg-muted/30 border border-border/50 hover:bg-muted/50 transition-all duration-200 rounded-md text-sm font-medium text-muted-foreground"
+                onClick={() => {
+                  // Could open a search modal on mobile
+                  const input = prompt('Search artworks:');
+                  if (input) {
+                    setSearchQuery(input);
+                    setView('search');
+                  }
+                }}
+              >
+                <MagnifyingGlass className="w-4 h-4" />
+                <span>Search</span>
+              </button>
             </div>
-            <div className="flex items-center gap-3">
-              {/* Search */}
-              <div className="relative">
-                <MagnifyingGlass className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
-                <Input
-                  placeholder="Search artworks..."
-                  className="pl-10 w-48 sm:w-72 h-10 bg-muted/30 border-border/50 focus:bg-background focus:border-border transition-all duration-200 rounded-md"
-                  value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    if (e.target.value) setView('search');
-                  }}
-                />
+            
+            {/* Filter Toggle */}
+            <div className="flex items-center bg-muted/50 backdrop-blur-sm border border-border/60 rounded-md shadow-sm">
+              <div className="relative p-1">
+                <button
+                  onClick={() => setView('my-art')}
+                  className={cn(
+                    "flex items-center justify-center gap-2 px-4 py-2 transition-all duration-200 rounded-md text-sm font-medium",
+                    view === 'my-art'
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground/80 hover:text-foreground hover:bg-background/50"
+                  )}
+                >
+                  <GridFour className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">my art</span>
+                </button>
               </div>
-              
-              {/* Filter Toggle */}
-              <div className="flex items-center bg-muted/50 backdrop-blur-sm border border-border/60 rounded-md shadow-sm">
-                <div className="relative p-1">
-                  <button
-                    onClick={() => setView('my-art')}
-                    className={cn(
-                      "flex items-center justify-center gap-2 px-4 py-2 transition-all duration-200 rounded-md text-sm font-medium",
-                      view === 'my-art'
-                        ? "bg-background text-foreground shadow-sm"
-                        : "text-muted-foreground/80 hover:text-foreground hover:bg-background/50"
-                    )}
-                  >
-                    <GridFour className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">my art</span>
-                  </button>
-                </div>
-                <div className="relative pr-1">
-                  <button
-                    onClick={() => setView('public')}
-                    className={cn(
-                      "flex items-center justify-center gap-2 px-4 py-2 transition-all duration-200 rounded-md text-sm font-medium",
-                      view === 'public'
-                        ? "bg-background text-foreground shadow-sm"
-                        : "text-muted-foreground/80 hover:text-foreground hover:bg-background/50"
-                    )}
-                  >
-                    <Globe className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">public</span>
-                  </button>
-                </div>
+              <div className="relative pr-1">
+                <button
+                  onClick={() => setView('public')}
+                  className={cn(
+                    "flex items-center justify-center gap-2 px-4 py-2 transition-all duration-200 rounded-md text-sm font-medium",
+                    view === 'public'
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground/80 hover:text-foreground hover:bg-background/50"
+                  )}
+                >
+                  <Globe className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">public</span>
+                </button>
               </div>
             </div>
           </div>
 
           {/* Gallery Grid */}
           {artworks && artworks.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {artworks.map((artwork: any) => (
               <Link key={artwork._id} href={`/art/${artwork._id}`}>
                 <div className="group border border-border/50 rounded-md p-5 hover:border-border hover:shadow-lg transition-all duration-200 bg-card/50 backdrop-blur-sm">
@@ -152,10 +161,10 @@ export default function AsciiGalleryPage() {
                view === 'public' ? 'Check back later for community creations' :
                'Generate beautiful ASCII art from text prompts'}
             </p>
-            <Link href="/generate">
+            <Link href="/create">
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
-                Generate ASCII Art
+                Create ASCII Art
               </Button>
             </Link>
           </div>

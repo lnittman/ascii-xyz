@@ -5,6 +5,7 @@
 
 export * from './FourMLogsAnimation'; // Keep existing export
 export { AsciiMorph } from './ascii-morph';
+export { AsciiScatter } from './AsciiScatter';
 
 // Re-export types for convenience
 export type { 

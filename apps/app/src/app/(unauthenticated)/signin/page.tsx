@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, Suspense } from 'react';
 import * as Clerk from '@clerk/elements/common';
 import * as ClerkSignIn from '@clerk/elements/sign-in';
-import { AsciiMorph } from '@repo/ascii';
-import { geometricMorphData } from '@repo/ascii/data';
+import { AsciiScatter } from '@repo/ascii';
 
 function SignInContent() {
   const router = useRouter();
@@ -28,8 +27,8 @@ function SignInContent() {
             <div className="mx-auto w-full max-w-sm">
               <ClerkSignIn.Root routing="path" path="/signin">
                 <ClerkSignIn.Step name="start" className="flex flex-col items-stretch w-full">
-                  {/* Header */}
-                  <div className="mb-12">
+                  {/* Header - centered */}
+                  <div className="mb-12 text-center">
                     <h1 className="text-2xl font-medium text-foreground">
                       Sign in to ASCII
                     </h1>
@@ -80,34 +79,26 @@ function SignInContent() {
           </div>
         </div>
         
-        {/* Right panel - ASCII Animation */}
-        <div className="flex-1 relative bg-muted/5 border-l border-border/50 overflow-hidden">
-          <AsciiMorph 
-            frames={geometricMorphData}
-            className="absolute inset-0" 
-            speed={150} 
-            interactive={true} 
-          />
-          
-          {/* Overlay with sample prompt */}
-          <div className="absolute bottom-8 left-8 right-8 p-6 backdrop-blur-sm bg-background/80 rounded-xl border border-border/50">
-            <p className="text-xs font-mono text-muted-foreground mb-2">Try asking:</p>
-            <p className="text-sm font-mono text-foreground">
-              "Create an ASCII animation of a flickering campfire with smoke rising into the stars"
-            </p>
+        {/* Right panel - Full-screen ASCII Animation */}
+        <div className="flex-1 relative bg-background overflow-hidden">
+          {/* Large-scale ASCII scatter animation */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="scale-125">
+              <AsciiScatter active={true} />
+            </div>
           </div>
+          
+          {/* Subtle gradient overlay for depth */}
+          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-background/20 to-background/40 pointer-events-none" />
         </div>
       </div>
       
       {/* Mobile: Centered layout */}
       <div className="flex lg:hidden w-full h-full flex-col">
-        {/* Full page ASCII morph background */}
-        <AsciiMorph 
-          frames={geometricMorphData}
-          className="absolute inset-0 z-0" 
-          speed={200} 
-          interactive={true} 
-        />
+        {/* Full page ASCII scatter background */}
+        <div className="absolute inset-0 z-0">
+          <AsciiScatter active={true} />
+        </div>
         
         {/* Sign-in content - bottom aligned */}
         <div className="relative z-10 flex flex-1 flex-col justify-end px-4 pb-8">

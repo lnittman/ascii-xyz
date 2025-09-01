@@ -4,7 +4,8 @@ import { useUser, useClerk } from '@repo/auth/client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gear, SignOut, Stack } from '@phosphor-icons/react';
+import { Gear, SignOut, Stack, Sun, Moon, Monitor } from '@phosphor-icons/react';
+import { useTheme } from 'next-themes';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +15,52 @@ import {
 } from '@repo/design/components/ui/dropdown-menu';
 import { cn } from '@repo/design/lib/utils';
 import Link from 'next/link';
+
+function ThemeOptions() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  if (!mounted) return null;
+  
+  return (
+    <div className="flex items-center gap-1 px-3 py-1">
+      <button
+        onClick={() => setTheme('light')}
+        className={cn(
+          "flex items-center justify-center p-1.5 rounded-md transition-all duration-200",
+          theme === 'light' ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+        )}
+        title="Light mode"
+      >
+        <Sun className="w-3.5 h-3.5" weight="duotone" />
+      </button>
+      <button
+        onClick={() => setTheme('dark')}
+        className={cn(
+          "flex items-center justify-center p-1.5 rounded-md transition-all duration-200",
+          theme === 'dark' ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+        )}
+        title="Dark mode"
+      >
+        <Moon className="w-3.5 h-3.5" weight="duotone" />
+      </button>
+      <button
+        onClick={() => setTheme('system')}
+        className={cn(
+          "flex items-center justify-center p-1.5 rounded-md transition-all duration-200",
+          theme === 'system' ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+        )}
+        title="System theme"
+      >
+        <Monitor className="w-3.5 h-3.5" weight="duotone" />
+      </button>
+    </div>
+  );
+}
 
 export function UserMenu() {
   const router = useRouter();
@@ -108,6 +155,14 @@ export function UserMenu() {
                 </DropdownMenuItem>
               </div>
 
+              <DropdownMenuSeparator className="my-1" />
+              
+              {/* Theme Switcher */}
+              <div className="py-1">
+                <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Theme</div>
+                <ThemeOptions />
+              </div>
+              
               <DropdownMenuSeparator className="my-1" />
 
               <DropdownMenuItem
