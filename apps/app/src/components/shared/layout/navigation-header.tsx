@@ -14,7 +14,7 @@ export function NavigationHeader() {
 
   // Determine active section based on pathname
   const isGallery = pathname === '/' || pathname?.includes('/art/');
-  const isGenerate = pathname === '/generate';
+  const isCreate = pathname === '/create';
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm border-b border-border/50">
@@ -41,16 +41,16 @@ export function NavigationHeader() {
               <span className="hidden sm:inline">Gallery</span>
             </Link>
             <Link
-              href="/generate"
+              href="/create"
               className={cn(
                 "flex items-center gap-2 px-4 h-full text-sm font-medium rounded-sm transition-all duration-200",
-                isGenerate
+                isCreate
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground/80 hover:text-foreground hover:bg-background/50"
               )}
             >
               <Sparkle className="w-4 h-4" />
-              <span className="hidden sm:inline">Generate</span>
+              <span className="hidden sm:inline">Create</span>
             </Link>
           </div>
         </div>
