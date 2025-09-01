@@ -12,6 +12,8 @@ export function AsciiScatter({ className = '', active = true, isDark = false }: 
   const [frame, setFrame] = useState(0);
   const [mounted, setMounted] = useState(false);
   const animationRef = useRef<number | undefined>(undefined);
+  const preRef = useRef<HTMLPreElement | null>(null);
+  const [dims, setDims] = useState<{ cols: number; rows: number }>({ cols: 200, rows: 150 });
   
   // ASCII-themed characters representing creation and art
   const asciiChars = [
@@ -27,11 +29,10 @@ export function AsciiScatter({ className = '', active = true, isDark = false }: 
     '┌', '┐', '└', '┘', '│', '─', // Box drawing
   ];
   
-  // Create a larger grid for full-screen effect
+  // Create a grid based on available space and font metrics
   const generateFrame = (frameNum: number) => {
-    // Calculate based on viewport - with 10px font size and line-height: 1, we need more rows
-    const width = 200;
-    const height = 150; // Increased significantly to ensure full coverage
+    const width = Math.max(40, Math.min(220, dims.cols));
+    const height = Math.max(20, Math.min(160, dims.rows));
     const grid = [];
     
     for (let y = 0; y < height; y++) {
@@ -91,6 +92,40 @@ export function AsciiScatter({ className = '', active = true, isDark = false }: 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Measure available space and estimate cols/rows
+  useEffect(() => {
+    if (!mounted) return;
+    const measure = () => {
+      const el = preRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const style = window.getComputedStyle(el);
+      const fontSizePx = parseFloat(style.fontSize || '10');
+      const lineHeightPx = (() => {
+        const lh = style.lineHeight;
+        if (!lh || lh === 'normal') return fontSizePx * 1.1;
+        const parsed = parseFloat(lh);
+        return Number.isFinite(parsed) ? parsed : fontSizePx * 1.1;
+      })();
+      // Approximate monospace char width (~0.6 of font size). Adjusted for our letter spacing.
+      const charWidth = fontSizePx * 0.6 + 0.5; // +0.5 to account for letterSpacing rounding
+      const cols = Math.max(40, Math.floor(rect.width / charWidth));
+      const rows = Math.max(20, Math.floor(rect.height / lineHeightPx));
+      setDims({ cols, rows });
+    };
+    measure();
+    const onResize = () => measure();
+    window.addEventListener('resize', onResize);
+    const ro = ('ResizeObserver' in window)
+      ? new ResizeObserver(() => measure())
+      : null;
+    if (ro && preRef.current) ro.observe(preRef.current);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      if (ro && preRef.current) ro.unobserve(preRef.current);
+    };
+  }, [mounted]);
   
   useEffect(() => {
     if (!active || !mounted) return;
@@ -128,6 +163,7 @@ export function AsciiScatter({ className = '', active = true, isDark = false }: 
   
   return (
     <pre 
+      ref={preRef}
       className={`font-mono text-xs leading-none select-none pointer-events-none ${className}`}
       style={{
         color: isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.15)',

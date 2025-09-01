@@ -11,6 +11,9 @@
     "@repo/typescript-config": "workspace:*",
     "next": "15.5.2"
   },
+  "peerDependencies": {
+    "next": "^15.5.2"
+  },
   "dependencies": {
     "@next/bundle-analyzer": "15.5.2",
     "@t3-oss/env-core": "^0.13.0",

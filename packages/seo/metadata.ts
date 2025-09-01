@@ -19,6 +19,7 @@ const twitterHandle = '@asciiapp';
 
 const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
 const productionUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+const fallbackHost = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
 export const createMetadata = ({
   title,
@@ -31,9 +32,9 @@ export const createMetadata = ({
     title: parsedTitle,
     description,
     applicationName,
-    metadataBase: productionUrl
-      ? new URL(`${protocol}://${productionUrl}`)
-      : undefined,
+    metadataBase: new URL(
+      productionUrl ? `${protocol}://${productionUrl}` : fallbackHost,
+    ),
     authors: [author],
     creator: author.name,
     formatDetection: {
