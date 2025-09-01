@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { cn } from '@repo/design/lib/utils';
 
 interface AsciiScatterProps {
   className?: string;
   active?: boolean;
+  isDark?: boolean;
 }
 
-export function AsciiScatter({ className, active = true }: AsciiScatterProps) {
+export function AsciiScatter({ className = '', active = true, isDark = false }: AsciiScatterProps) {
   const [frame, setFrame] = useState(0);
   const [mounted, setMounted] = useState(false);
   const animationRef = useRef<number | undefined>(undefined);
@@ -29,8 +29,8 @@ export function AsciiScatter({ className, active = true }: AsciiScatterProps) {
   
   // Create a larger grid for full-screen effect
   const generateFrame = (frameNum: number) => {
-    const width = 80;
-    const height = 40;
+    const width = 160;
+    const height = 80;
     const grid = [];
     
     for (let y = 0; y < height; y++) {
@@ -53,10 +53,10 @@ export function AsciiScatter({ className, active = true }: AsciiScatterProps) {
         
         // Combine waves for organic movement
         const combined = wave1 + wave2 + flow;
-        const threshold = 0.35 + Math.sin(frameNum * 0.01) * 0.15;
+        const threshold = 0.25 + Math.sin(frameNum * 0.01) * 0.15;
         
-        // Determine if we should show a character
-        const show = Math.random() < (combined > threshold ? combined * 0.6 : 0.1);
+        // Determine if we should show a character - increased density
+        const show = Math.random() < (combined > threshold ? combined * 0.8 : 0.2);
         
         if (show) {
           // Pick character based on position and intensity
@@ -114,11 +114,10 @@ export function AsciiScatter({ className, active = true }: AsciiScatterProps) {
   if (!mounted) {
     return (
       <pre 
-        className={cn(
-          "font-mono text-xs leading-none select-none pointer-events-none",
-          "text-foreground/10 dark:text-foreground/5",
-          className
-        )}
+        className={`font-mono text-xs leading-none select-none pointer-events-none ${className}`}
+        style={{
+          color: 'transparent'
+        }}
         aria-hidden="true"
       >
         {/* Empty space while loading */}
@@ -128,11 +127,17 @@ export function AsciiScatter({ className, active = true }: AsciiScatterProps) {
   
   return (
     <pre 
-      className={cn(
-        "font-mono text-xs leading-none select-none pointer-events-none",
-        "text-foreground/10 dark:text-foreground/5",
-        className
-      )}
+      className={`font-mono text-xs leading-none select-none pointer-events-none ${className}`}
+      style={{
+        color: isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.15)',
+        lineHeight: '1',
+        letterSpacing: '0.01em',
+        fontSize: '10px',
+        width: '100%',
+        height: '100%',
+        margin: 0,
+        padding: 0
+      }}
       aria-hidden="true"
     >
       {generateFrame(frame)}

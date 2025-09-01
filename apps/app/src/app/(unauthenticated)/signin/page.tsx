@@ -2,20 +2,29 @@
 
 import { useAuth } from '@repo/auth/client';
 import { useRouter } from 'next/navigation';
-import { useEffect, Suspense } from 'react';
+import { useEffect, Suspense, useState } from 'react';
 import * as Clerk from '@clerk/elements/common';
 import * as ClerkSignIn from '@clerk/elements/sign-in';
 import { AsciiScatter } from '@repo/ascii';
+import { useTheme } from 'next-themes';
 
 function SignInContent() {
   const router = useRouter();
   const { isSignedIn } = useAuth();
+  const { theme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
   useEffect(() => {
     if (isSignedIn) {
       router.push('/');
     }
   }, [isSignedIn, router]);
+  
+  const isDark = mounted ? (resolvedTheme === 'dark') : false;
 
   return (
     <div className="flex h-full w-full">
@@ -80,16 +89,18 @@ function SignInContent() {
         </div>
         
         {/* Right panel - Full-screen ASCII Animation */}
-        <div className="flex-1 relative bg-background overflow-hidden">
-          {/* Large-scale ASCII scatter animation */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="scale-125">
-              <AsciiScatter active={true} />
-            </div>
+        <div className="flex-1 relative bg-muted/5 overflow-hidden">
+          {/* Full-height ASCII scatter animation */}
+          <div className="absolute inset-0 w-full h-full">
+            <AsciiScatter 
+              active={true} 
+              isDark={isDark}
+              className="w-full h-full" 
+            />
           </div>
           
-          {/* Subtle gradient overlay for depth */}
-          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-background/20 to-background/40 pointer-events-none" />
+          {/* Very subtle gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-background/10 pointer-events-none" />
         </div>
       </div>
       
@@ -97,7 +108,11 @@ function SignInContent() {
       <div className="flex lg:hidden w-full h-full flex-col">
         {/* Full page ASCII scatter background */}
         <div className="absolute inset-0 z-0">
-          <AsciiScatter active={true} />
+          <AsciiScatter 
+            active={true} 
+            isDark={isDark}
+            className="w-full h-full" 
+          />
         </div>
         
         {/* Sign-in content - bottom aligned */}
