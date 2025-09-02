@@ -1,6 +1,6 @@
 import { v } from 'convex/values';
-import { mutation } from '../_generated/server';
-import { validateFrames } from '../lib/ascii';
+import { mutation } from '../../_generated/server';
+import { validateFrames } from '../../lib/ascii';
 
 // Save generated ASCII artwork
 export const save = mutation({

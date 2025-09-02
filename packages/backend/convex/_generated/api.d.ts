@@ -9,18 +9,22 @@
  */
 
 import type * as artworks_queries from "../artworks/queries.js";
-import type * as ascii_actions from "../ascii/actions.js";
-import type * as ascii_ai from "../ascii/ai.js";
-import type * as ascii_mutations from "../ascii/mutations.js";
-import type * as ascii_queries from "../ascii/queries.js";
-import type * as collections_queries from "../collections/queries.js";
-import type * as files from "../files.js";
+import type * as functions_actions_ascii from "../functions/actions/ascii.js";
+import type * as functions_internal_users from "../functions/internal/users.js";
+import type * as functions_mutations_ascii from "../functions/mutations/ascii.js";
+import type * as functions_mutations_files from "../functions/mutations/files.js";
+import type * as functions_mutations_settings from "../functions/mutations/settings.js";
+import type * as functions_queries_ascii from "../functions/queries/ascii.js";
+import type * as functions_queries_collections from "../functions/queries/collections.js";
+import type * as functions_queries_files from "../functions/queries/files.js";
+import type * as functions_queries_settings from "../functions/queries/settings.js";
+import type * as functions_queries_shares from "../functions/queries/shares.js";
+import type * as functions_queries_users from "../functions/queries/users.js";
 import type * as http from "../http.js";
+import type * as lib_ai from "../lib/ai.js";
 import type * as lib_ascii from "../lib/ascii.js";
-import type * as settings from "../settings.js";
-import type * as shares_queries from "../shares/queries.js";
+import type * as lib_auth from "../lib/auth.js";
 import type * as users_mutations from "../users/mutations.js";
-import type * as users_queries from "../users/queries.js";
 
 import type {
   ApiFromModules,
@@ -38,18 +42,22 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   "artworks/queries": typeof artworks_queries;
-  "ascii/actions": typeof ascii_actions;
-  "ascii/ai": typeof ascii_ai;
-  "ascii/mutations": typeof ascii_mutations;
-  "ascii/queries": typeof ascii_queries;
-  "collections/queries": typeof collections_queries;
-  files: typeof files;
+  "functions/actions/ascii": typeof functions_actions_ascii;
+  "functions/internal/users": typeof functions_internal_users;
+  "functions/mutations/ascii": typeof functions_mutations_ascii;
+  "functions/mutations/files": typeof functions_mutations_files;
+  "functions/mutations/settings": typeof functions_mutations_settings;
+  "functions/queries/ascii": typeof functions_queries_ascii;
+  "functions/queries/collections": typeof functions_queries_collections;
+  "functions/queries/files": typeof functions_queries_files;
+  "functions/queries/settings": typeof functions_queries_settings;
+  "functions/queries/shares": typeof functions_queries_shares;
+  "functions/queries/users": typeof functions_queries_users;
   http: typeof http;
+  "lib/ai": typeof lib_ai;
   "lib/ascii": typeof lib_ascii;
-  settings: typeof settings;
-  "shares/queries": typeof shares_queries;
+  "lib/auth": typeof lib_auth;
   "users/mutations": typeof users_mutations;
-  "users/queries": typeof users_queries;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

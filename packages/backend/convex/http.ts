@@ -19,7 +19,7 @@ http.route({
     switch (event.type) {
       case 'user.created':
       case 'user.updated':
-        await ctx.runMutation(internal.users.mutations.upsertFromClerk, {
+        await ctx.runMutation(internal.functions.internal.users.upsertFromClerk, {
           data: event.data,
         });
         break;
@@ -30,7 +30,7 @@ http.route({
         if (!clerkUserId) {
           break;
         }
-        await ctx.runMutation(internal.users.mutations.deleteFromClerk, {
+        await ctx.runMutation(internal.functions.internal.users.deleteFromClerk, {
           clerkUserId,
         });
         break;

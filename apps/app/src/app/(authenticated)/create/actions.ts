@@ -11,7 +11,7 @@ export async function generateAsciiArt(prompt: string, modelId?: string, apiKey?
     
     // Call the Convex action to generate ASCII art
     // This will throw an error if no API key is available
-    const result = await fetchAction(api.ascii.actions.generate, {
+    const result = await fetchAction(api.functions.actions.ascii.generate, {
       prompt,
       userId: userId || undefined,
       modelId: modelId || undefined, // Selected model from jotai atom
@@ -36,7 +36,7 @@ export async function generateVariation(originalFrames: string[], variationPromp
   try {
     const { userId } = await auth();
     
-    const result = await fetchAction(api.ascii.actions.generateVariation, {
+    const result = await fetchAction(api.functions.actions.ascii.generateVariation, {
       originalFrames,
       variationPrompt,
       userId: userId || undefined,
@@ -61,7 +61,7 @@ export async function enhanceAsciiArt(
   apiKey?: string
 ) {
   try {
-    const result = await fetchAction(api.ascii.actions.enhance, {
+    const result = await fetchAction(api.functions.actions.ascii.enhance, {
       frames,
       enhancementType,
       apiKey: apiKey || undefined

@@ -8,7 +8,7 @@ import { useConvexAuth } from "convex/react";
 export function useCurrentUser() {
   const { isAuthenticated } = useConvexAuth();
   const user = useQuery(
-    api.users.queries.current,
+    api.functions.queries.users.current,
     isAuthenticated ? {} : "skip"
   );
   return user;

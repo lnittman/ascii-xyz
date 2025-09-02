@@ -1,6 +1,6 @@
 // AI Model Configuration
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
-import type { LanguageModelV1 } from 'ai';
+import type { LanguageModel } from 'ai';
 
 // Available models configuration
 export const AVAILABLE_MODELS: Record<
@@ -89,7 +89,7 @@ function getOpenRouter(apiKey?: string) {
   });
 }
 
-type ChatModel = LanguageModelV1;
+type ChatModel = LanguageModel;
 
 export function getChatModel(modelId?: string, userApiKey?: string): ChatModel {
   const selectedModel = modelId || DEFAULT_MODEL;

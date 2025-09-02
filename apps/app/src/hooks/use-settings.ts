@@ -5,10 +5,10 @@ import { api } from "@repo/backend/convex/_generated/api";
 
 // Hook to get user settings
 export function useUserSettings() {
-  const settings = useQuery(api.settings.get);
-  const updateSettingsMutation = useMutation(api.settings.update);
-  const addKeyMutation = useMutation(api.settings.addApiKey);
-  const removeKeyMutation = useMutation(api.settings.removeApiKey);
+  const settings = useQuery(api.functions.queries.settings.get);
+  const updateSettingsMutation = useMutation(api.functions.mutations.settings.update);
+  const addKeyMutation = useMutation(api.functions.mutations.settings.addApiKey);
+  const removeKeyMutation = useMutation(api.functions.mutations.settings.removeApiKey);
   
   const updateSettings = async (updates: {
     theme?: 'light' | 'dark' | 'system';
@@ -38,8 +38,8 @@ export function useUserSettings() {
 
 // Hook to manage API keys
 export function useApiKeys() {
-  const addKeyMutation = useMutation(api.settings.addApiKey);
-  const removeKeyMutation = useMutation(api.settings.removeApiKey);
+  const addKeyMutation = useMutation(api.functions.mutations.settings.addApiKey);
+  const removeKeyMutation = useMutation(api.functions.mutations.settings.removeApiKey);
   
   const addApiKey = async (name: string, key: string, provider: string) => {
     await addKeyMutation({ name, key, provider });

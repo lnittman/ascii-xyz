@@ -1,7 +1,7 @@
-import { action } from "../_generated/server";
+import { action } from "../../_generated/server";
 import { v } from "convex/values";
 import { generateText } from 'ai';
-import { getAsciiModel, DEFAULT_MODEL } from "./ai";
+import { getAsciiModel, DEFAULT_MODEL } from "../../lib/ai";
 
 // Pure AI-driven ASCII generation
 export const generate = action({
