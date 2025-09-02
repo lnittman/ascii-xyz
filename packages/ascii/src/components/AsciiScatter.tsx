@@ -109,8 +109,23 @@ export function AsciiScatter({ className = '', active = true, isDark = false }: 
         const parsed = parseFloat(lh);
         return Number.isFinite(parsed) ? parsed : fontSizePx * 1.1;
       })();
-      // Approximate monospace char width (~0.6 of font size). Adjusted for our letter spacing.
-      const charWidth = fontSizePx * 0.6 + 0.5; // +0.5 to account for letterSpacing rounding
+      // Measure actual character width to avoid under/overshoot
+      const measureCharWidth = () => {
+        const span = document.createElement('span');
+        span.textContent = 'M'.repeat(200);
+        span.style.visibility = 'hidden';
+        span.style.position = 'absolute';
+        span.style.whiteSpace = 'pre';
+        span.style.fontFamily = style.fontFamily;
+        span.style.fontSize = style.fontSize;
+        span.style.fontWeight = style.fontWeight as string;
+        span.style.letterSpacing = style.letterSpacing;
+        el.appendChild(span);
+        const w = span.getBoundingClientRect().width / 200;
+        el.removeChild(span);
+        return w || fontSizePx * 0.6;
+      };
+      const charWidth = Math.max(1, measureCharWidth());
       const cols = Math.max(40, Math.floor(rect.width / charWidth));
       const rows = Math.max(20, Math.floor(rect.height / lineHeightPx));
       setDims({ cols, rows });
