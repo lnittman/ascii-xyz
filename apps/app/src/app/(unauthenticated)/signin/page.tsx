@@ -88,79 +88,51 @@ function SignInContent() {
           </div>
         </div>
         
-        {/* Right panel - Full-screen ASCII Animation */}
-        <div className="flex-1 relative bg-muted/5">
-          {/* Full-height ASCII scatter animation - no overflow hidden to allow full render */}
-          <div className="absolute inset-0">
-            <AsciiScatter 
-              active={true} 
-              isDark={isDark}
-              className="absolute inset-0" 
-            />
+        {/* Right panel - ASCII container with padding + rounded border */}
+        <div className="flex-1 relative bg-background">
+          {/* Container takes full right half with top/right/bottom padding */}
+          <div className="absolute inset-y-6 right-6 left-0">
+            <div className="relative h-full w-full rounded-lg border border-border/40 bg-muted/5 overflow-hidden">
+              <AsciiScatter 
+                active={true} 
+                isDark={isDark}
+                className="absolute inset-0" 
+              />
+              {/* Subtle gradient overlay inside container */}
+              <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-background/10 pointer-events-none" />
+            </div>
           </div>
-          
-          {/* Very subtle gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-background/10 pointer-events-none" />
         </div>
       </div>
       
-      {/* Mobile: Centered layout */}
-      <div className="flex lg:hidden w-full h-full flex-col">
-        {/* Full page ASCII scatter background */}
-        <div className="absolute inset-0 z-0">
-          <AsciiScatter 
-            active={true} 
-            isDark={isDark}
-            className="absolute inset-0" 
-          />
+      {/* Mobile layout */}
+      <div className="flex lg:hidden w-full h-full flex-col px-4 pt-4 pb-6 gap-4">
+        {/* ASCII panel on top with rounded border */}
+        <div className="relative w-full rounded-lg border border-border/40 bg-muted/5 overflow-hidden" style={{ minHeight: 220 }}>
+          <AsciiScatter active={true} isDark={isDark} className="absolute inset-0" />
         </div>
-        
-        {/* Sign-in content - bottom aligned */}
-        <div className="relative z-10 flex flex-1 flex-col justify-end px-4 pb-8">
+
+        {/* Sign-in buttons directly below (no extra card/container, no ASCII wordmark) */}
+        <div className="flex flex-col gap-2">
           <ClerkSignIn.Root routing="path" path="/signin">
             <ClerkSignIn.Step name="start" className="flex flex-col items-stretch w-full">
-              {/* Minimalist sign-in card */}
-              <div className="backdrop-blur-sm bg-background/90 rounded-xl border border-border/50 p-6">
-                {/* ASCII logo */}
-                <div className="mb-6 text-center">
-                  <pre className="font-mono text-[10px] text-foreground/60 inline-block">
-{`    ___   _____ _____ _____ _____ 
-   / _ \\ /  ___/  __ \\_   _|_   _|
-  / /_\\ \\\\ \`--.|  /  \\ | |   | |  
-  |  _  | \`--. \\ |    || |   | |  
-  | | | |/\\__/ / \\__/\\| |_ _| |_ 
-  \\_| |_/\\____/ \\____/\\___/ \\___/ `}
-                  </pre>
-                </div>
-                
-                {/* Apple Sign In Button */}
-                <Clerk.Connection
-                  name="apple"
-                  className="flex items-center justify-center gap-2 rounded-lg border border-border bg-foreground hover:bg-foreground/90 px-4 py-3 font-mono text-sm text-background transition-all duration-200 w-full mb-2"
-                >
-                  <Clerk.Icon className="h-4 w-4" />
-                  continue with Apple
-                </Clerk.Connection>
-                
-                {/* Google Sign In Button */}
-                <Clerk.Connection
-                  name="google"
-                  className="flex items-center justify-center gap-2 rounded-lg border border-border bg-background hover:bg-muted px-4 py-3 font-mono text-sm text-foreground transition-all duration-200 w-full"
-                >
-                  <Clerk.Icon className="h-4 w-4" />
-                  continue with Google
-                </Clerk.Connection>
-                
-                {/* Subtle text */}
-                <p className="mt-4 text-center text-xs font-mono text-muted-foreground">
-                  create AI-powered ASCII art
-                </p>
-              </div>
+              <Clerk.Connection
+                name="apple"
+                className="flex items-center justify-center gap-2 rounded-lg border border-border bg-foreground hover:bg-foreground/90 px-4 py-3 font-mono text-sm text-background transition-all duration-200 w-full"
+              >
+                <Clerk.Icon className="h-4 w-4" />
+                continue with Apple
+              </Clerk.Connection>
+              <Clerk.Connection
+                name="google"
+                className="mt-2 flex items-center justify-center gap-2 rounded-lg border border-border bg-background hover:bg-muted px-4 py-3 font-mono text-sm text-foreground transition-all duration-200 w-full"
+              >
+                <Clerk.Icon className="h-4 w-4" />
+                continue with Google
+              </Clerk.Connection>
             </ClerkSignIn.Step>
-            
-            {/* SSO Callback Step */}
             <ClerkSignIn.Step name="sso-callback">
-              <div className="flex flex-col items-center justify-center gap-4 backdrop-blur-sm bg-background/90 rounded-xl border border-border/50 p-6">
+              <div className="flex flex-col items-center justify-center gap-4">
                 <div className="animate-spin h-6 w-6 border-2 border-foreground border-t-transparent rounded-full" />
                 <p className="text-xs font-mono text-muted-foreground">authenticating...</p>
               </div>
