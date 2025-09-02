@@ -63,9 +63,9 @@ function SignInContent() {
                   
                   {/* Terms text */}
                   <p className="mt-8 text-xs text-muted-foreground text-center">
-                    By continuing, you agree to ASCII's{' '}
-                    <span className="underline">Terms of Service</span> and{' '}
-                    <span className="underline">Privacy Policy</span>
+                    By signing in, you agree to our{' '}
+                    <a href="/terms" className="underline">Terms of Service</a> and{' '}
+                    <a href="/privacy" className="underline">Privacy Policy</a>.
                   </p>
                 </ClerkSignIn.Step>
                 
@@ -105,8 +105,8 @@ function SignInContent() {
         </div>
       </div>
       
-      {/* Mobile layout */}
-      <div className="flex lg:hidden w-full h-full flex-col px-4 pt-4 pb-6 gap-4">
+        {/* Mobile layout */}
+        <div className="flex lg:hidden w-full h-full flex-col px-4 pt-4 pb-6 gap-4">
         {/* ASCII panel on top with rounded border */}
         <div className="relative w-full rounded-lg border border-border/40 bg-muted/5 overflow-hidden" style={{ minHeight: 220 }}>
           <AsciiScatter active={true} isDark={isDark} className="absolute inset-0" />
@@ -138,6 +138,12 @@ function SignInContent() {
               </div>
             </ClerkSignIn.Step>
           </ClerkSignIn.Root>
+          {/* Terms text */}
+          <p className="mt-2 text-center text-xs text-muted-foreground">
+            By signing in, you agree to our{' '}
+            <a href="/terms" className="underline">Terms of Service</a> and{' '}
+            <a href="/privacy" className="underline">Privacy Policy</a>.
+          </p>
         </div>
       </div>
     </div>
