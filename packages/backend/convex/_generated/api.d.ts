@@ -8,7 +8,6 @@
  * @module
  */
 
-import type * as artworks_queries from "../artworks/queries.js";
 import type * as functions_actions_ascii from "../functions/actions/ascii.js";
 import type * as functions_internal_users from "../functions/internal/users.js";
 import type * as functions_mutations_ascii from "../functions/mutations/ascii.js";
@@ -24,7 +23,6 @@ import type * as http from "../http.js";
 import type * as lib_ai from "../lib/ai.js";
 import type * as lib_ascii from "../lib/ascii.js";
 import type * as lib_auth from "../lib/auth.js";
-import type * as users_mutations from "../users/mutations.js";
 
 import type {
   ApiFromModules,
@@ -41,7 +39,6 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  "artworks/queries": typeof artworks_queries;
   "functions/actions/ascii": typeof functions_actions_ascii;
   "functions/internal/users": typeof functions_internal_users;
   "functions/mutations/ascii": typeof functions_mutations_ascii;
@@ -57,7 +54,6 @@ declare const fullApi: ApiFromModules<{
   "lib/ai": typeof lib_ai;
   "lib/ascii": typeof lib_ascii;
   "lib/auth": typeof lib_auth;
-  "users/mutations": typeof users_mutations;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

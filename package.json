@@ -36,12 +36,15 @@
     "remark": "^15.0.1",
     "remark-gfm": "^4.0.1",
     "remark-mdx": "^3.1.0",
+    "next": "15.5.2",
     "tsx": "^4.19.4",
     "turbo": "^2.5.2",
     "typescript": "^5.9.2",
     "ultracite": "^4.2.1",
     "unist-util-visit": "^5.0.0",
     "vitest": "^1.5.0"
+  },
+  "dependencies": {
   },
   "packageManager": "pnpm@9.10.0",
   "pnpm": {
