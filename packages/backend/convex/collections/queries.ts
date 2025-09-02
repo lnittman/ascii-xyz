@@ -7,14 +7,18 @@ export const list = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getUserId(ctx);
-    if (!userId) return [];
+    if (!userId) {
+      return [];
+    }
 
     const user = await ctx.db
       .query("users")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", userId))
       .unique();
     
-    if (!user) return [];
+    if (!user) {
+      return [];
+    }
 
     const collections = await ctx.db
       .query("collections")
@@ -180,7 +184,14 @@ export const update = mutation({
       throw new Error("Collection not found or unauthorized");
     }
 
-    const updates: any = {
+    type CollectionUpdate = Partial<{
+      name: string;
+      description?: string;
+      visibility: "public" | "private";
+      updatedAt: string;
+    }>;
+
+    const updates: CollectionUpdate = {
       updatedAt: new Date().toISOString(),
     };
 

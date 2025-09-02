@@ -1,6 +1,6 @@
-import { v } from "convex/values";
-import { internalMutation, query, QueryCtx } from "../_generated/server";
-import { UserJSON } from "@clerk/backend";
+import { UserJSON } from '@clerk/backend';
+import { v } from 'convex/values';
+import { internalMutation, query, type QueryCtx } from '../_generated/server';
 
 // Get current user
 export const current = query({
@@ -42,24 +42,24 @@ export const upsertFromClerk = internalMutation({
       // Update existing user
       await ctx.db.patch(existingUser._id, userAttributes);
       return existingUser._id;
-    } else {
-      // Create new user
-      const userId = await ctx.db.insert("users", {
-        ...userAttributes,
-        createdAt: new Date().toISOString(),
-      });
-      
-      // Create default settings for new user
-      await ctx.db.insert("userSettings", {
-        userId,
-        theme: "dark",
-        defaultVisibility: "private",
-        emailNotifications: true,
-        updatedAt: new Date().toISOString(),
-      });
-      
-      return userId;
     }
+
+    // Create new user
+    const userId = await ctx.db.insert('users', {
+      ...userAttributes,
+      createdAt: new Date().toISOString(),
+    });
+
+    // Create default settings for new user
+    await ctx.db.insert('userSettings', {
+      userId,
+      theme: 'dark',
+      defaultVisibility: 'private',
+      emailNotifications: true,
+      updatedAt: new Date().toISOString(),
+    });
+
+    return userId;
   },
 });
 
@@ -72,10 +72,7 @@ export const deleteFromClerk = internalMutation({
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkUserId))
       .unique();
 
-    if (!user) {
-      console.warn(`User not found for Clerk ID: ${clerkUserId}`);
-      return;
-    }
+    if (!user) return;
 
     // Delete user's artworks
     const artworks = await ctx.db

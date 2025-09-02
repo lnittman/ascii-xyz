@@ -5,7 +5,8 @@
     "ignore": [
       "packages/design/components/ui/**",
       "packages/design/lib/**",
-      "packages/design/hooks/**"
+      "packages/design/hooks/**",
+      "packages/backend/convex/_generated/**"
     ]
   }
 }

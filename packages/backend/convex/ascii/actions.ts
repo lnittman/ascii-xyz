@@ -11,7 +11,7 @@ export const generate = action({
     userId: v.optional(v.string()),
     modelId: v.optional(v.string()),
   },
-  handler: async (ctx, { prompt, apiKey, userId, modelId }) => {
+  handler: async (_ctx, { prompt, apiKey, userId, modelId }) => {
     // Use provided model or default
     const selectedModel = modelId || DEFAULT_MODEL;
 
@@ -20,7 +20,7 @@ export const generate = action({
       
       // Step 1: AI analyzes the prompt and creates a generation plan
       const planResponse = await generateText({
-        model: model as any,
+        model,
         prompt: `You are an ASCII art expert. Analyze this prompt and create a detailed plan for ASCII animation.
 
 User Prompt: "${prompt}"
@@ -53,16 +53,28 @@ Respond with ONLY valid JSON.`,
       });
 
       // Parse the generation plan
-      let plan;
+      type GenerationPlan = {
+        interpretation: string;
+        style: string;
+        movement: string;
+        frameCount: number;
+        width: number;
+        height: number;
+        fps: number;
+        characters: string[];
+        colorHints?: string;
+        metadata?: Record<string, unknown>;
+      };
+      let plan: GenerationPlan;
       try {
-        plan = JSON.parse(planResponse.text);
-      } catch (error) {
+        plan = JSON.parse(planResponse.text) as GenerationPlan;
+      } catch (_error) {
         throw new Error("Failed to create generation plan. Please try again.");
       }
 
       // Step 2: AI generates the actual ASCII frames based on the plan
       const framesResponse = await generateText({
-        model: model as any,
+        model,
         prompt: `You are creating ASCII art animation frames. Follow this exact plan:
 
 ${JSON.stringify(plan, null, 2)}
@@ -124,7 +136,7 @@ Generate the frames now:`,
           }).join('\n');
         });
 
-      } catch (error) {
+      } catch (_error) {
         throw new Error("Failed to generate valid frames. Please try again.");
       }
 
@@ -140,9 +152,9 @@ Generate the frames now:`,
         }
       };
 
-    } catch (error: any) {
-      console.error('ASCII generation error:', error);
-      throw new Error(error.message || 'Failed to generate ASCII art');
+      } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to generate ASCII art';
+      throw new Error(message);
     }
   },
 });
@@ -156,7 +168,7 @@ export const generateVariation = action({
     userId: v.optional(v.string()),
     modelId: v.optional(v.string()),
   },
-  handler: async (ctx, { originalFrames, variationPrompt, apiKey, userId, modelId }) => {
+  handler: async (_ctx, { originalFrames, variationPrompt, apiKey, userId, modelId }) => {
     // Use provided model or default
     const selectedModel = modelId || DEFAULT_MODEL;
 
@@ -165,7 +177,7 @@ export const generateVariation = action({
       
       // Analyze original and create variation
       const response = await generateText({
-        model: model as any,
+        model,
         prompt: `You are modifying existing ASCII art based on a new request.
 
 Original frames (first 3 for context):
@@ -198,9 +210,10 @@ Return a JSON array of all ${originalFrames.length} modified frames.`,
           userId,
         }
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Variation generation error:', error);
-      throw new Error(error.message || 'Failed to generate variation');
+      const message = error instanceof Error ? error.message : 'Failed to generate variation';
+      throw new Error(message);
     }
   },
 });
@@ -234,7 +247,7 @@ export const enhance = action({
     };
 
     const response = await generateText({
-      model: model as any,
+      model,
       prompt: `Enhance these ASCII art frames.
 
 Enhancement type: ${enhancementType}

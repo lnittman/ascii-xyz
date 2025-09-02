@@ -3,7 +3,7 @@
  * Utility functions for ASCII art operations
  */
 
-import type { Id } from "../_generated/dataModel";
+import type { Doc } from "../_generated/dataModel";
 
 /**
  * Generate a unique token for sharing
@@ -28,35 +28,43 @@ export function validateFrames(frames: string[]): boolean {
 /**
  * Parse AI response to extract frames
  */
-export function parseAIResponse(response: any): string[] {
-  if (!response) {
+export function parseAIResponse(response: unknown): string[] {
+  const r = response as Record<string, unknown> | null | undefined;
+  interface ResponseLike {
+    frames?: unknown;
+    text?: unknown;
+    content?: unknown;
+  }
+  if (!r) {
     return ["ERROR: No response from AI"];
   }
 
   // Try to parse frames from various response formats
-  if (Array.isArray(response.frames)) {
-    return response.frames;
+  const framesField = (r as ResponseLike).frames;
+  if (Array.isArray(framesField)) {
+    return framesField as string[];
   }
 
-  if (typeof response.frames === "string") {
+  if (typeof framesField === "string") {
     try {
-      const parsed = JSON.parse(response.frames);
+      const parsed = JSON.parse(framesField);
       if (Array.isArray(parsed)) {
         return parsed;
       }
     } catch {
       // If not JSON, treat as single frame
-      return [response.frames];
+      return [framesField];
     }
   }
 
   // Fallback to text/content fields
-  if (response.text) {
-    return [response.text];
+  const textField = (r as ResponseLike).text;
+  if (typeof textField === "string") {
+    return [textField];
   }
-  
-  if (response.content) {
-    return [response.content];
+  const contentField = (r as ResponseLike).content;
+  if (typeof contentField === "string") {
+    return [contentField];
   }
 
   return ["ERROR: Unable to parse AI response"];
@@ -65,18 +73,18 @@ export function parseAIResponse(response: any): string[] {
 /**
  * Format artwork metadata for export
  */
-export function formatArtworkForExport(artwork: any) {
+export function formatArtworkForExport(artwork: Doc<"artworks">) {
   return {
     id: artwork._id,
     prompt: artwork.prompt,
     frames: artwork.frames,
     metadata: {
-      width: artwork.width,
-      height: artwork.height,
-      fps: artwork.fps,
-      frameCount: artwork.frameCount,
-      generator: artwork.generator,
-      model: artwork.model,
+      width: artwork.metadata.width,
+      height: artwork.metadata.height,
+      fps: artwork.metadata.fps,
+      frameCount: artwork.frames.length,
+      generator: artwork.metadata.generator,
+      model: artwork.metadata.model,
     },
     createdAt: artwork._creationTime,
     visibility: artwork.visibility,
@@ -91,7 +99,7 @@ export function formatArtworkForExport(artwork: any) {
  * Check if user owns artwork
  */
 export function canUserAccessArtwork(
-  artwork: any,
+  artwork: Doc<"artworks">,
   userId: string | null
 ): boolean {
   // Public artworks are accessible to everyone

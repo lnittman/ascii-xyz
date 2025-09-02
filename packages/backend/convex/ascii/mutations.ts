@@ -1,6 +1,6 @@
-import { mutation } from "../_generated/server";
-import { v } from "convex/values";
-import { validateFrames, formatArtworkForExport } from "../lib/ascii";
+import { v } from 'convex/values';
+import { mutation } from '../_generated/server';
+import { validateFrames } from '../lib/ascii';
 
 // Save generated ASCII artwork
 export const save = mutation({
@@ -110,7 +110,9 @@ export const incrementViews = mutation({
   },
   handler: async (ctx, args) => {
     const artwork = await ctx.db.get(args.id);
-    if (!artwork) return;
+    if (!artwork) {
+      return;
+    }
 
     await ctx.db.patch(args.id, {
       views: (artwork.views || 0) + 1,
@@ -127,7 +129,9 @@ export const toggleLike = mutation({
   },
   handler: async (ctx, args) => {
     const artwork = await ctx.db.get(args.id);
-    if (!artwork) return;
+    if (!artwork) {
+      return;
+    }
 
     const increment = args.liked ? 1 : -1;
     await ctx.db.patch(args.id, {

@@ -50,7 +50,17 @@ export const update = mutation({
       .withIndex("by_user", (q) => q.eq("userId", user._id))
       .unique();
 
-    const updates: any = {
+    type UserSettingsUpdate = Partial<{
+      theme: "light" | "dark" | "system";
+      defaultVisibility: "public" | "private";
+      emailNotifications: boolean;
+      preferredModel?: string;
+      preferredProvider?: string;
+      apiKeys: Array<{ name: string; key: string; provider: string; createdAt: string }>;
+      updatedAt: string;
+    }>;
+
+    const updates: UserSettingsUpdate = {
       updatedAt: new Date().toISOString(),
     };
 
