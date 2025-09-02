@@ -1,0 +1,40 @@
+name: Deploy Convex (production)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node + PNPM
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - run: corepack enable
+
+      - name: Install Convex CLI
+        run: npx convex --version
+
+      - name: Configure Convex env (production)
+        if: ${{ secrets.OPENROUTER_API_KEY != '' || secrets.CLERK_WEBHOOK_SECRET != '' }}
+        run: |
+          if [ -n "${{ secrets.OPENROUTER_API_KEY }}" ]; then npx convex env set prod OPENROUTER_API_KEY "${{ secrets.OPENROUTER_API_KEY }}"; fi
+          if [ -n "${{ secrets.CLERK_WEBHOOK_SECRET }}" ]; then npx convex env set prod CLERK_WEBHOOK_SECRET "${{ secrets.CLERK_WEBHOOK_SECRET }}"; fi
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+
+      - name: Deploy Convex (production)
+        run: npx convex deploy --prod --yes
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+
