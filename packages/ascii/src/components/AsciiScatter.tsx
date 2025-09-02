@@ -31,8 +31,9 @@ export function AsciiScatter({ className = '', active = true, isDark = false }: 
   
   // Create a grid based on available space and font metrics
   const generateFrame = (frameNum: number) => {
-    const width = Math.max(40, Math.min(220, dims.cols));
-    const height = Math.max(20, Math.min(160, dims.rows));
+    // Use ceil to avoid undershoot gaps and raise caps for tall screens
+    const width = Math.max(40, Math.min(240, Math.ceil(dims.cols)));
+    const height = Math.max(20, Math.min(320, Math.ceil(dims.rows)));
     const grid = [];
     
     for (let y = 0; y < height; y++) {
