@@ -92,7 +92,7 @@ function SignInContent() {
         <div className="flex-1 relative bg-background">
           {/* Container takes full right half with top/right/bottom padding */}
           <div className="absolute inset-y-6 right-6 left-0">
-            <div className="relative h-full w-full rounded-lg border border-border/40 bg-muted/5 overflow-hidden">
+            <div className="relative h-full w-full rounded-lg border border-border/40 bg-muted/5 dark:bg-white/[0.04] overflow-hidden">
               <AsciiScatter 
                 active={true} 
                 isDark={isDark}

@@ -128,7 +128,8 @@ export function AsciiScatter({ className = '', active = true, isDark = false }: 
       const charWidth = Math.max(1, measureCharWidth());
       const cols = Math.max(40, Math.floor(rect.width / charWidth));
       const rows = Math.max(20, Math.floor(rect.height / lineHeightPx));
-      setDims({ cols, rows });
+      // Overscan by +1 row/col so content always overflows and gets neatly clipped
+      setDims({ cols: cols + 1, rows: rows + 1 });
     };
     measure();
     const onResize = () => measure();
