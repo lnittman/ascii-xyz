@@ -12,12 +12,33 @@ export const AVAILABLE_MODELS: Record<
     description: string;
   }
 > = {
+  // Preferred defaults
+  'openrouter/gpt-5': {
+    provider: 'openrouter',
+    model: 'openai/gpt-5',
+    name: 'GPT-5',
+    description: 'OpenAI GPT-5 via OpenRouter',
+  },
+  // Direct model id support (UI may send this)
+  'openai/gpt-5': {
+    provider: 'openrouter',
+    model: 'openai/gpt-5',
+    name: 'GPT-5',
+    description: 'OpenAI GPT-5 via OpenRouter',
+  },
   // OpenRouter models
   'openrouter/gpt-4': {
     provider: 'openrouter',
     model: 'openai/gpt-4',
     name: 'GPT-4',
     description: 'Most capable GPT-4 model',
+  },
+  // Direct model id alias for backward compatibility
+  'openai/gpt-4': {
+    provider: 'openrouter',
+    model: 'openai/gpt-4',
+    name: 'GPT-4',
+    description: 'OpenAI GPT-4 via OpenRouter',
   },
   'openrouter/gpt-4-turbo': {
     provider: 'openrouter',
@@ -75,8 +96,8 @@ export const AVAILABLE_MODELS: Record<
   },
 };
 
-// Default model - using OpenAI GPT-4 via OpenRouter
-export const DEFAULT_MODEL = 'openrouter/gpt-4';
+// Default model - use OpenAI GPT-5 via OpenRouter
+export const DEFAULT_MODEL = 'openrouter/gpt-5';
 
 // Get OpenRouter instance
 function getOpenRouter(apiKey?: string) {
@@ -94,7 +115,7 @@ type ChatModel = LanguageModel;
 export function getChatModel(modelId?: string, userApiKey?: string): ChatModel {
   const selectedModel = modelId || DEFAULT_MODEL;
   const modelConfig = AVAILABLE_MODELS[selectedModel];
-  
+
   if (!modelConfig) {
     throw new Error(`Unknown model: ${selectedModel}`);
   }
@@ -106,7 +127,7 @@ export function getChatModel(modelId?: string, userApiKey?: string): ChatModel {
 export function getEmbeddingModel(): ChatModel {
   // OpenRouter doesn't support embeddings, use OpenAI via OpenRouter
   const openrouter = getOpenRouter();
-  return openrouter.chat("openai/text-embedding-3-small");
+  return openrouter.chat('openai/text-embedding-3-small');
 }
 
 // For ASCII generation - use selected model or default
