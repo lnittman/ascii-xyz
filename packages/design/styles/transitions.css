@@ -66,3 +66,42 @@
 .duration-out-150:hover {
   transition-duration: 0ms;
 }
+
+/* Global interaction policy (Linear-style):
+   - 0ms in (hover/focus/active), 150ms out for most transitions
+   - Linear timing
+   - Menu-like surfaces (Radix portals) 0ms in/out
+*/
+
+:root {
+  --motion-in: 0ms;
+  --motion-out: 150ms;
+}
+
+/* Use linear timing everywhere by default */
+* {
+  transition-timing-function: linear;
+}
+
+/* Fast-in on interactive states; components control which properties transition */
+*:hover,
+*:focus-visible,
+*:active {
+  transition-duration: var(--motion-in) !important;
+}
+
+/* Animate utility policy */
+.animate-in {
+  animation-duration: var(--motion-in) !important;
+  animation-timing-function: linear !important;
+}
+.animate-out {
+  animation-duration: var(--motion-out) !important;
+  animation-timing-function: linear !important;
+}
+
+/* Menus/Modals/Sheets rendered under Radix portal: 0ms/0ms */
+[data-radix-portal] .animate-in,
+[data-radix-portal] .animate-out {
+  animation-duration: 0ms !important;
+}
