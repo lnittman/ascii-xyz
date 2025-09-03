@@ -105,15 +105,15 @@ function SignInContent() {
         </div>
       </div>
       
-        {/* Mobile layout */}
-        <div className="flex lg:hidden w-full h-full flex-col px-4 pt-4 pb-6 gap-4">
-        {/* ASCII panel on top with rounded border */}
-        <div className="relative w-full rounded-lg border border-border/40 bg-muted/5 overflow-hidden" style={{ minHeight: 220 }}>
+      {/* Mobile layout */}
+      <div className="lg:hidden flex w-full min-h-dvh flex-col px-4 pt-4 pb-6">
+        {/* ASCII panel grows to fill remaining space above buttons */}
+        <div className="relative w-full rounded-lg border border-border/40 bg-muted/5 dark:bg-white/[0.04] overflow-hidden flex-1" style={{ minHeight: 220 }}>
           <AsciiScatter active={true} isDark={isDark} className="absolute inset-0" />
         </div>
 
-        {/* Sign-in buttons directly below (no extra card/container, no ASCII wordmark) */}
-        <div className="flex flex-col gap-2">
+        {/* Bottom-oriented sign-in buttons with padding from page edge */}
+        <div className="mt-4 flex flex-col gap-2">
           <ClerkSignIn.Root routing="path" path="/signin">
             <ClerkSignIn.Step name="start" className="flex flex-col items-stretch w-full">
               <Clerk.Connection
