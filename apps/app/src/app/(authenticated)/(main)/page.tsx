@@ -92,10 +92,10 @@ export default function AsciiGalleryPage() {
                 <button
                   onClick={() => setView('my-art')}
                   className={cn(
-                    "flex items-center justify-center gap-2 h-full transition-colors duration-150 rounded-[8px] text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500",
+                    "flex items-center justify-center gap-2 h-full transition-colors duration-150 rounded-[8px] text-sm font-medium px-3.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500",
                     view === 'my-art'
-                      ? "bg-background text-foreground px-3.5"
-                      : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40 px-3"
+                      ? "bg-background text-foreground"
+                      : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40"
                   )}
                 >
                   <GridFour className="w-3.5 h-3.5" />
@@ -106,10 +106,10 @@ export default function AsciiGalleryPage() {
                 <button
                   onClick={() => setView('public')}
                   className={cn(
-                    "flex items-center justify-center gap-2 h-full transition-colors duration-150 rounded-[8px] text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500",
+                    "flex items-center justify-center gap-2 h-full transition-colors duration-150 rounded-[8px] text-sm font-medium px-3.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500",
                     view === 'public'
-                      ? "bg-background text-foreground px-3.5"
-                      : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40 px-3"
+                      ? "bg-background text-foreground"
+                      : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40"
                   )}
                 >
                   <Globe className="w-3.5 h-3.5" />
