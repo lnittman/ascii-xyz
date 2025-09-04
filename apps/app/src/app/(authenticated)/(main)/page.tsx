@@ -87,12 +87,12 @@ export default function AsciiGalleryPage() {
             </div>
             
             {/* Filter Toggle */}
-            <div className="flex items-center h-10 bg-muted/40 border border-border/60 rounded-md p-1 gap-1">
+            <div className="flex items-center h-10 bg-muted/30 border border-border/60 rounded-md p-0.5 gap-0.5">
               <div className="relative h-full">
                 <button
                   onClick={() => setView('my-art')}
                   className={cn(
-                    "flex items-center justify-center gap-2 h-full px-3 transition-colors duration-150 rounded-md text-sm font-medium",
+                    "flex items-center justify-center gap-2 h-full px-3 transition-colors duration-150 rounded-[8px] text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500",
                     view === 'my-art'
                       ? "bg-background text-foreground"
                       : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40"
@@ -106,7 +106,7 @@ export default function AsciiGalleryPage() {
                 <button
                   onClick={() => setView('public')}
                   className={cn(
-                    "flex items-center justify-center gap-2 h-full px-3 transition-colors duration-150 rounded-md text-sm font-medium",
+                    "flex items-center justify-center gap-2 h-full px-3 transition-colors duration-150 rounded-[8px] text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500",
                     view === 'public'
                       ? "bg-background text-foreground"
                       : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40"
