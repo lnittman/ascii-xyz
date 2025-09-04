@@ -87,15 +87,15 @@ export default function AsciiGalleryPage() {
             </div>
             
             {/* Filter Toggle */}
-            <div className="flex items-center h-10 bg-muted/50 backdrop-blur-sm border border-border/60 rounded-md shadow-sm px-1">
+            <div className="flex items-center h-10 bg-muted/40 border border-border/60 rounded-md overflow-hidden p-0.5">
               <div className="relative h-full">
                 <button
                   onClick={() => setView('my-art')}
                   className={cn(
-                    "flex items-center justify-center gap-2 h-full px-3 transition-all duration-200 rounded-sm text-sm font-medium",
+                    "flex items-center justify-center gap-2 h-full px-3 transition-colors duration-150 rounded-none first:rounded-l-md text-sm font-medium",
                     view === 'my-art'
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground/80 hover:text-foreground hover:bg-background/50"
+                      ? "bg-background text-foreground"
+                      : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40"
                   )}
                 >
                   <GridFour className="w-3.5 h-3.5" />
@@ -106,10 +106,10 @@ export default function AsciiGalleryPage() {
                 <button
                   onClick={() => setView('public')}
                   className={cn(
-                    "flex items-center justify-center gap-2 h-full px-3 transition-all duration-200 rounded-sm text-sm font-medium",
+                    "flex items-center justify-center gap-2 h-full px-3 transition-colors duration-150 rounded-none last:rounded-r-md text-sm font-medium",
                     view === 'public'
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground/80 hover:text-foreground hover:bg-background/50"
+                      ? "bg-background text-foreground"
+                      : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40"
                   )}
                 >
                   <Globe className="w-3.5 h-3.5" />

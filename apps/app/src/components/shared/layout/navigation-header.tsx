@@ -27,14 +27,14 @@ export function NavigationHeader() {
 
         {/* Center Navigation Toggle */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-          <div className="bg-muted/80 backdrop-blur-sm border border-border/60 rounded-md shadow-sm h-10 p-1 flex items-center gap-0.5">
+          <div className="bg-muted/40 border border-border/60 rounded-md h-10 p-0.5 overflow-hidden flex items-center">
             <Link
               href="/"
               className={cn(
-                "flex items-center gap-2 px-4 h-full text-sm font-medium rounded-sm transition-all duration-200",
+                "flex items-center gap-2 px-3 h-full text-sm font-medium rounded-none first:rounded-l-md transition-colors duration-150",
                 isGallery
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground/80 hover:text-foreground hover:bg-background/50"
+                  ? "bg-background text-foreground"
+                  : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40"
               )}
             >
               <Stack className="w-4 h-4" />
@@ -43,10 +43,10 @@ export function NavigationHeader() {
             <Link
               href="/create"
               className={cn(
-                "flex items-center gap-2 px-4 h-full text-sm font-medium rounded-sm transition-all duration-200",
+                "flex items-center gap-2 px-3 h-full text-sm font-medium rounded-none last:rounded-r-md transition-colors duration-150",
                 isCreate
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground/80 hover:text-foreground hover:bg-background/50"
+                  ? "bg-background text-foreground"
+                  : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40"
               )}
             >
               <Sparkle className="w-4 h-4" />
