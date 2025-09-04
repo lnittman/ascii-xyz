@@ -3,7 +3,7 @@
 import { useUser, useClerk } from '@repo/auth/client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Gear, SignOut, Stack, Sun, Moon, Monitor } from '@phosphor-icons/react';
 import { useTheme } from 'next-themes';
 import {
@@ -68,6 +68,7 @@ export function UserMenu() {
   const { user } = useUser();
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const prefersReduced = useReducedMotion();
 
   useEffect(() => {
     setMounted(true);
@@ -112,14 +113,41 @@ export function UserMenu() {
 
       <AnimatePresence>
         {menuOpen && (
-          <DropdownMenuContent align="end" className="w-56 bg-popover border-border/50" forceMount>
+          <DropdownMenuContent
+            align="end"
+            className={cn(
+              // Disable built-in menu animations for this instance
+              'data-[state=open]:animate-none data-[state=closed]:animate-none',
+              // Subtle glass + shadow styling
+              'w-56 bg-popover/95 backdrop-blur-[6px] saturate-150 border-border/50 shadow-xl',
+            )}
+            forceMount
+          >
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              style={{
+                // Respect Radix transform origin for a from-trigger feel
+                transformOrigin: 'var(--radix-dropdown-menu-content-transform-origin)'
+              }}
+              initial={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4, x: 2, scale: 0.98, filter: 'blur(6px)' }}
+              animate={prefersReduced ? { opacity: 1 } : { opacity: 1, y: 0, x: 0, scale: 1, filter: 'blur(0px)' }}
+              exit={
+                prefersReduced
+                  ? { opacity: 0 }
+                  : {
+                      opacity: 0,
+                      y: -2,
+                      x: 0,
+                      scale: 0.98,
+                      filter: 'blur(4px)',
+                      transition: { duration: 0.15, ease: [0.2, 0.8, 0.2, 1] }
+                    }
+              }
               transition={{
-                duration: 0.3,
-                ease: [0.32, 0.72, 0, 1]
+                // Fast, subtle open; slightly slower, graceful close
+                duration: prefersReduced ? 0.0 : 0.12,
+                ease: [0.2, 0.8, 0.2, 1],
+                // Provide separate exit timing
+                type: 'tween'
               }}
             >
               <div className="flex items-center justify-start gap-3 px-2 py-2 border-b border-border/50">
