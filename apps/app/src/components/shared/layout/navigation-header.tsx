@@ -27,11 +27,11 @@ export function NavigationHeader() {
 
         {/* Center Navigation Toggle */}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-          <div className="bg-muted/40 border border-border/60 rounded-md h-10 p-0.5 overflow-hidden flex items-center">
+          <div className="bg-muted/40 border border-border/60 rounded-md h-10 p-1 flex items-center gap-1">
             <Link
               href="/"
               className={cn(
-                "flex items-center gap-2 px-3 h-full text-sm font-medium rounded-none first:rounded-l-md transition-colors duration-150",
+                "flex items-center gap-2 px-3 h-full text-sm font-medium rounded-md transition-colors duration-150",
                 isGallery
                   ? "bg-background text-foreground"
                   : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40"
@@ -43,7 +43,7 @@ export function NavigationHeader() {
             <Link
               href="/create"
               className={cn(
-                "flex items-center gap-2 px-3 h-full text-sm font-medium rounded-none last:rounded-r-md transition-colors duration-150",
+                "flex items-center gap-2 px-3 h-full text-sm font-medium rounded-md transition-colors duration-150",
                 isCreate
                   ? "bg-background text-foreground"
                   : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40"
