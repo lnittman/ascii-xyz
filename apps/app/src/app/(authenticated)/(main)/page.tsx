@@ -1,7 +1,7 @@
 'use client';
 
 import { Heart, Eye, Plus, MagnifyingGlass, GridFour, Globe } from '@phosphor-icons/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { cn } from '@repo/design/lib/utils';
@@ -15,6 +15,8 @@ export const dynamic = 'force-dynamic';
 export default function AsciiGalleryPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [view, setView] = useState<'my-art' | 'public' | 'search'>('my-art');
+  const [searchFocused, setSearchFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   
   const myArtworks = useArtworks();
   const publicArtworks = usePublicGallery(50);
@@ -35,13 +37,37 @@ export default function AsciiGalleryPage() {
               <MagnifyingGlass className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
               <Input
                 placeholder="Search artworks..."
-                className="pl-10 w-full h-10 bg-muted/30 border-border/50 focus:bg-background focus:border-border transition-all duration-200 rounded-md hidden sm:block"
+                ref={inputRef}
+                className="pl-10 pr-14 w-full h-10 bg-muted/30 border-border/50 focus:bg-background focus:border-border transition-all duration-200 rounded-md hidden sm:block"
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
                   if (e.target.value) setView('search');
                 }}
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setSearchFocused(false)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') {
+                    // Clear the field and unfocus immediately
+                    if (searchQuery) {
+                      setSearchQuery('');
+                      // Return view to default when clearing
+                      setView('my-art');
+                    }
+                    // Blur the input
+                    inputRef.current?.blur();
+                  }
+                }}
               />
+              {/* Desktop ESC keycap hint (right-aligned). 0ms in/out visibility */}
+              {(searchFocused || !!searchQuery) && (
+                <span
+                  className="hidden sm:inline-flex items-center h-6 px-2 rounded-md border border-border/60 bg-background/80 text-[11px] font-medium text-muted-foreground absolute right-2 top-1/2 -translate-y-1/2 select-none pointer-events-none shadow-sm"
+                  aria-hidden="true"
+                >
+                  Esc
+                </span>
+              )}
               {/* Mobile search button */}
               <button
                 className="sm:hidden flex items-center gap-2 px-4 py-2 h-10 bg-muted/30 border border-border/50 hover:bg-muted/50 transition-all duration-200 rounded-md text-sm font-medium text-muted-foreground"
