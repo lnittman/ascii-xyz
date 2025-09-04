@@ -19,6 +19,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
+  const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com';
+  const posthogAssets = 'https://us-assets.i.posthog.com';
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -28,6 +31,18 @@ export default function RootLayout({
         {/* DNS Prefetch as a fallback */}
         <link rel="dns-prefetch" href="//cdn.clerk.com" />
         <link rel="dns-prefetch" href="//api.clerk.com" />
+        {/* Preconnect to Convex (if url present) */}
+        {convexUrl ? (
+          <>
+            <link rel="preconnect" href={convexUrl} crossOrigin="anonymous" />
+            <link rel="dns-prefetch" href={convexUrl.replace('https://', '//')} />
+          </>
+        ) : null}
+        {/* Preconnect to PostHog (analytics) */}
+        <link rel="preconnect" href={posthogHost} crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href={posthogHost.replace('https://', '//')} />
+        <link rel="preconnect" href={posthogAssets} crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href={posthogAssets.replace('https://', '//')} />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=cover"
