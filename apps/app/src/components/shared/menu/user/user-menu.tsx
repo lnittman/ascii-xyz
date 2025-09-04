@@ -69,6 +69,7 @@ export function UserMenu() {
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const prefersReduced = useReducedMotion();
+  const [willChange, setWillChange] = useState<'auto' | string>('auto');
 
   useEffect(() => {
     setMounted(true);
@@ -126,29 +127,48 @@ export function UserMenu() {
             <motion.div
               style={{
                 // Respect Radix transform origin for a from-trigger feel
-                transformOrigin: 'var(--radix-dropdown-menu-content-transform-origin)'
+                transformOrigin: 'var(--radix-dropdown-menu-content-transform-origin)',
+                // GPU hint + will-change only during animation
+                willChange,
+                transform: 'translateZ(0)'
               }}
-              initial={prefersReduced ? { opacity: 0 } : { opacity: 0, y: -4, x: 2, scale: 0.98, filter: 'blur(6px)' }}
-              animate={prefersReduced ? { opacity: 1 } : { opacity: 1, y: 0, x: 0, scale: 1, filter: 'blur(0px)' }}
-              exit={
+              variants={
                 prefersReduced
-                  ? { opacity: 0 }
+                  ? {
+                      open: { opacity: 1, transition: { duration: 0 } },
+                      closed: { opacity: 0, transition: { duration: 0 } },
+                    }
                   : {
-                      opacity: 0,
-                      y: -2,
-                      x: 0,
-                      scale: 0.98,
-                      filter: 'blur(4px)',
-                      transition: { duration: 0.15, ease: [0.2, 0.8, 0.2, 1] }
+                      // Mirrorable path for open/close
+                      open: {
+                        opacity: 1,
+                        x: 0,
+                        y: 0,
+                        scale: 1,
+                        filter: 'blur(0px)',
+                        transition: {
+                          duration: 0.16,
+                          ease: [0.2, 0.8, 0.2, 1], // smooth ease-out
+                        },
+                      },
+                      closed: {
+                        opacity: 0,
+                        x: 2,
+                        y: -4,
+                        scale: 0.98,
+                        filter: 'blur(6px)',
+                        transition: {
+                          duration: 0.14,
+                          ease: [0.4, 0, 0.2, 1], // ease-in for reverse
+                        },
+                      },
                     }
               }
-              transition={{
-                // Fast, subtle open; slightly slower, graceful close
-                duration: prefersReduced ? 0.0 : 0.12,
-                ease: [0.2, 0.8, 0.2, 1],
-                // Provide separate exit timing
-                type: 'tween'
-              }}
+              initial="closed"
+              animate="open"
+              exit="closed"
+              onAnimationStart={() => setWillChange('transform, opacity, filter')}
+              onAnimationComplete={() => setWillChange('auto')}
             >
               <div className="flex items-center justify-start gap-3 px-2 py-2 border-b border-border/50">
                 <div className="flex-1">
