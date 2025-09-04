@@ -22,6 +22,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Preconnects to speed up Clerk resources */}
+        <link rel="preconnect" href="https://cdn.clerk.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://api.clerk.com" crossOrigin="anonymous" />
+        {/* DNS Prefetch as a fallback */}
+        <link rel="dns-prefetch" href="//cdn.clerk.com" />
+        <link rel="dns-prefetch" href="//api.clerk.com" />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, viewport-fit=cover"

@@ -4,6 +4,7 @@ import { useAuth } from '@repo/auth/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, Suspense, useState } from 'react';
 import * as Clerk from '@clerk/elements/common';
+import { ClerkLoaded, ClerkLoading } from '@clerk/nextjs';
 import * as ClerkSignIn from '@clerk/elements/sign-in';
 import { AsciiScatter } from '@repo/ascii';
 import { useTheme } from 'next-themes';
@@ -43,23 +44,33 @@ function SignInContent() {
                     </h1>
                   </div>
                   
-                  {/* Apple Sign In Button */}
-                  <Clerk.Connection
-                    name="apple"
-                    className="flex items-center justify-center gap-2 rounded-lg border border-border bg-foreground hover:bg-foreground/90 px-4 py-3 font-medium text-sm text-background transition-all duration-200 w-full mb-3"
-                  >
-                    <Clerk.Icon className="h-5 w-5" />
-                    Continue with Apple
-                  </Clerk.Connection>
-                  
-                  {/* Google Sign In Button */}
-                  <Clerk.Connection
-                    name="google"
-                    className="flex items-center justify-center gap-2 rounded-lg border border-border bg-background hover:bg-muted px-4 py-3 font-medium text-sm text-foreground transition-all duration-200 w-full"
-                  >
-                    <Clerk.Icon className="h-5 w-5" />
-                    Continue with Google
-                  </Clerk.Connection>
+                  {/* OAuth Providers with reserved space + skeletons to prevent layout shift */}
+                  <div className="space-y-2 min-h-[120px]">
+                    <ClerkLoading>
+                      <div className="space-y-2">
+                        <div className="h-11 rounded-lg border border-border bg-muted animate-pulse" />
+                        <div className="h-11 rounded-lg border border-border bg-muted animate-pulse" />
+                      </div>
+                    </ClerkLoading>
+                    <ClerkLoaded>
+                      {/* Apple Sign In Button */}
+                      <Clerk.Connection
+                        name="apple"
+                        className="flex items-center justify-center gap-2 rounded-lg border border-border bg-foreground hover:bg-foreground/90 px-4 py-3 font-medium text-sm text-background transition-all duration-200 w-full"
+                      >
+                        <Clerk.Icon className="h-5 w-5" />
+                        Continue with Apple
+                      </Clerk.Connection>
+                      {/* Google Sign In Button */}
+                      <Clerk.Connection
+                        name="google"
+                        className="flex items-center justify-center gap-2 rounded-lg border border-border bg-background hover:bg-muted px-4 py-3 font-medium text-sm text-foreground transition-all duration-200 w-full"
+                      >
+                        <Clerk.Icon className="h-5 w-5" />
+                        Continue with Google
+                      </Clerk.Connection>
+                    </ClerkLoaded>
+                  </div>
                   
                   {/* Terms text */}
                   <p className="mt-8 text-xs text-muted-foreground text-center">
@@ -116,20 +127,30 @@ function SignInContent() {
         <div className="mt-4 flex flex-col gap-2">
           <ClerkSignIn.Root routing="path" path="/signin">
             <ClerkSignIn.Step name="start" className="flex flex-col items-stretch w-full">
-              <Clerk.Connection
-                name="apple"
-                className="flex items-center justify-center gap-2 rounded-lg border border-border bg-foreground hover:bg-foreground/90 px-4 py-3 font-mono text-sm text-background transition-all duration-200 w-full"
-              >
-                <Clerk.Icon className="h-4 w-4" />
-                continue with Apple
-              </Clerk.Connection>
-              <Clerk.Connection
-                name="google"
-                className="mt-2 flex items-center justify-center gap-2 rounded-lg border border-border bg-background hover:bg-muted px-4 py-3 font-mono text-sm text-foreground transition-all duration-200 w-full"
-              >
-                <Clerk.Icon className="h-4 w-4" />
-                continue with Google
-              </Clerk.Connection>
+              <div className="space-y-2 min-h-[120px] flex flex-col justify-end">
+                <ClerkLoading>
+                  <div className="space-y-2">
+                    <div className="h-11 rounded-lg border border-border bg-muted animate-pulse" />
+                    <div className="h-11 rounded-lg border border-border bg-muted animate-pulse" />
+                  </div>
+                </ClerkLoading>
+                <ClerkLoaded>
+                  <Clerk.Connection
+                    name="apple"
+                    className="flex items-center justify-center gap-2 rounded-lg border border-border bg-foreground hover:bg-foreground/90 px-4 py-3 font-mono text-sm text-background transition-all duration-200 w-full"
+                  >
+                    <Clerk.Icon className="h-4 w-4" />
+                    continue with Apple
+                  </Clerk.Connection>
+                  <Clerk.Connection
+                    name="google"
+                    className="flex items-center justify-center gap-2 rounded-lg border border-border bg-background hover:bg-muted px-4 py-3 font-mono text-sm text-foreground transition-all duration-200 w-full"
+                  >
+                    <Clerk.Icon className="h-4 w-4" />
+                    continue with Google
+                  </Clerk.Connection>
+                </ClerkLoaded>
+              </div>
             </ClerkSignIn.Step>
             <ClerkSignIn.Step name="sso-callback">
               <div className="flex flex-col items-center justify-center gap-4">
