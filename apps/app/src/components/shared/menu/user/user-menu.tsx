@@ -95,7 +95,7 @@ export function UserMenu() {
     <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
       <DropdownMenuTrigger asChild>
         <button className={cn(
-          "h-8 w-8 bg-muted text-foreground flex items-center justify-center text-xs font-medium flex-shrink-0 border border-border transition-all duration-300 rounded-lg overflow-hidden",
+          "h-8 w-8 bg-muted text-foreground flex items-center justify-center text-xs font-medium flex-shrink-0 border border-border hover-transition rounded-lg overflow-hidden",
           "hover:bg-accent hover:border-foreground/20",
           "focus:outline-none select-none",
           menuOpen ? "bg-accent/80 border-foreground/30" : ""

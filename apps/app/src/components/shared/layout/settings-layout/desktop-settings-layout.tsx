@@ -50,7 +50,7 @@ export function DesktopSettingsLayout({
                       <button
                         onClick={() => handleNavigation(item.href)}
                         className={cn(
-                          'group flex max-h-[32px] w-full items-center gap-3 rounded-none px-2 py-6 transition-all duration-200',
+                          'group flex max-h-[32px] w-full items-center gap-3 rounded-none px-2 py-6 menu-item',
                           isActive
                             ? 'bg-accent text-foreground'
                             : 'text-muted-foreground hover:bg-accent/60 hover:text-foreground'
@@ -58,7 +58,7 @@ export function DesktopSettingsLayout({
                       >
                         <span
                           className={cn(
-                            'transition-colors duration-200',
+                            'transition-none',
                             isActive
                               ? 'text-foreground'
                               : 'text-muted-foreground group-hover:text-foreground'

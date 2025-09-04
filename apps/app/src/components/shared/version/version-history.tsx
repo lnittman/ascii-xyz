@@ -108,7 +108,7 @@ export function VersionHistory({
               <div
                 key={version.version}
                 className={cn(
-                  'cursor-pointer rounded-lg border p-3 transition-colors',
+                  'cursor-pointer rounded-lg border p-3 hover-bg',
                   comparing.includes(version.version)
                     ? 'border-primary bg-primary/5'
                     : 'border-transparent hover:bg-accent/50'

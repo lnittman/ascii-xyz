@@ -65,14 +65,14 @@ export function Tab({ value, children, className }: TabProps) {
     <button
       onClick={() => onValueChange(value)}
       className={cn(
-        'group relative rounded-none px-3 py-2 text-sm transition-all',
+        'group relative rounded-none px-3 py-2 text-sm hover-all',
         className
       )}
     >
       {/* Hover background */}
       <div
         className={cn(
-          'absolute inset-0 rounded-none transition-colors duration-200',
+          'absolute inset-0 rounded-none hover-bg',
           'group-hover:bg-accent/60'
         )}
       />
@@ -80,7 +80,7 @@ export function Tab({ value, children, className }: TabProps) {
       {/* Text content */}
       <span
         className={cn(
-          'relative z-10 transition-colors duration-200',
+          'relative z-10 hover-bg',
           isSelected
             ? 'font-medium text-foreground'
             : 'text-muted-foreground group-hover:text-foreground'

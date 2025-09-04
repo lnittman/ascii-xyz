@@ -27,20 +27,20 @@ export const SignUpVerificationsStep: React.FC<
           <Clerk.Label className="mb-2 block font-medium text-foreground text-sm">
             verification code
           </Clerk.Label>
-          <Clerk.Input className="w-full rounded-none border border-border bg-card p-3 text-base transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-ring" />
+          <Clerk.Input className="w-full rounded-none border border-border bg-card p-3 text-base hover-transition focus:outline-none focus:ring-1 focus:ring-ring" />
           <Clerk.FieldError className="mt-2 text-destructive text-xs" />
         </Clerk.Field>
 
         <ClerkSignUp.Action
           submit
-          className="mb-3 w-full rounded-none border border-primary/20 bg-primary p-3 font-medium text-primary-foreground text-sm transition-all duration-200 hover:bg-primary/90"
+          className="mb-3 w-full rounded-none border border-primary/20 bg-primary p-3 font-medium text-primary-foreground text-sm hover-transition hover:bg-primary/90"
         >
           verify
         </ClerkSignUp.Action>
 
         <ClerkSignUp.Action
           navigate="start"
-          className="block w-full cursor-pointer text-center text-muted-foreground text-sm transition-all duration-200 hover:text-foreground"
+          className="block w-full cursor-pointer text-center text-muted-foreground text-sm hover-transition hover:text-foreground"
         >
           go back
         </ClerkSignUp.Action>
@@ -59,20 +59,20 @@ export const SignUpVerificationsStep: React.FC<
           <Clerk.Label className="mb-2 block font-medium text-foreground text-sm">
             verification code
           </Clerk.Label>
-          <Clerk.Input className="w-full rounded-none border border-border bg-card p-3 text-base transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-ring" />
+          <Clerk.Input className="w-full rounded-none border border-border bg-card p-3 text-base hover-transition focus:outline-none focus:ring-1 focus:ring-ring" />
           <Clerk.FieldError className="mt-2 text-destructive text-xs" />
         </Clerk.Field>
 
         <ClerkSignUp.Action
           submit
-          className="mb-3 w-full rounded-none border border-primary/20 bg-primary p-3 font-medium text-primary-foreground text-sm transition-all duration-200 hover:bg-primary/90"
+          className="mb-3 w-full rounded-none border border-primary/20 bg-primary p-3 font-medium text-primary-foreground text-sm hover-transition hover:bg-primary/90"
         >
           verify
         </ClerkSignUp.Action>
 
         <ClerkSignUp.Action
           navigate="start"
-          className="block w-full cursor-pointer text-center text-muted-foreground text-sm transition-all duration-200 hover:text-foreground"
+          className="block w-full cursor-pointer text-center text-muted-foreground text-sm hover-transition hover:text-foreground"
         >
           go back
         </ClerkSignUp.Action>

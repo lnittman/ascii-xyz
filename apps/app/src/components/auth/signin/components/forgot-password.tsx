@@ -20,20 +20,20 @@ export const SignInForgotPasswordStep: React.FC = () => {
         <Clerk.Label className="mb-2 block font-medium text-foreground text-sm">
           email
         </Clerk.Label>
-        <Clerk.Input className="w-full rounded-none border border-border bg-card p-3 text-base transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-ring" />
+        <Clerk.Input className="w-full rounded-none border border-border bg-card p-3 text-base hover-transition focus:outline-none focus:ring-1 focus:ring-ring" />
         <Clerk.FieldError className="mt-2 text-destructive text-xs" />
       </Clerk.Field>
 
       {/* Email reset strategy */}
       <ClerkSignIn.SupportedStrategy name="reset_password_email_code" asChild>
-        <button className="mb-4 w-full rounded-none border border-primary/20 bg-primary px-4 py-3 font-medium text-primary-foreground text-sm transition-colors hover:bg-primary/90">
+        <button className="mb-4 w-full rounded-none border border-primary/20 bg-primary px-4 py-3 font-medium text-primary-foreground text-sm hover-bg hover:bg-primary/90">
           send reset code
         </button>
       </ClerkSignIn.SupportedStrategy>
 
       {/* Back to start */}
       <ClerkSignIn.Action navigate="start" asChild>
-        <button className="w-full rounded-none px-4 py-3 text-muted-foreground text-sm transition-colors hover:text-foreground">
+        <button className="w-full rounded-none px-4 py-3 text-muted-foreground text-sm hover-bg hover:text-foreground">
           back to sign in
         </button>
       </ClerkSignIn.Action>

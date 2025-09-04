@@ -102,12 +102,12 @@ export function ThemeSwitcher({
       <TabsList className="relative grid h-9 w-[120px] grid-cols-3 gap-1 rounded-none border border-border bg-accent/30 p-1">
         <TabsTrigger
           value="light"
-          className="z-10 flex h-full w-full items-center justify-center rounded-none transition-all duration-200 hover:bg-background/60 focus:outline-none data-[state=active]:bg-background data-[state=active]:shadow-sm"
+          className="z-10 flex h-full w-full items-center justify-center rounded-none hover-bg hover:bg-background/60 focus:outline-none data-[state=active]:bg-background data-[state=active]:shadow-sm"
         >
           <Sun
             weight="duotone"
             className={cn(
-              'h-4 w-4 transition-colors duration-200',
+              'h-4 w-4 hover-bg',
               currentTheme === 'light'
                 ? 'text-foreground'
                 : 'text-muted-foreground'
@@ -116,12 +116,12 @@ export function ThemeSwitcher({
         </TabsTrigger>
         <TabsTrigger
           value="dark"
-          className="z-10 flex h-full w-full items-center justify-center rounded-none transition-all duration-200 hover:bg-background/60 focus:outline-none data-[state=active]:bg-background data-[state=active]:shadow-sm"
+          className="z-10 flex h-full w-full items-center justify-center rounded-none hover-bg hover:bg-background/60 focus:outline-none data-[state=active]:bg-background data-[state=active]:shadow-sm"
         >
           <Moon
             weight="duotone"
             className={cn(
-              'h-4 w-4 transition-colors duration-200',
+              'h-4 w-4 hover-bg',
               currentTheme === 'dark'
                 ? 'text-foreground'
                 : 'text-muted-foreground'
@@ -130,12 +130,12 @@ export function ThemeSwitcher({
         </TabsTrigger>
         <TabsTrigger
           value="system"
-          className="z-10 flex h-full w-full items-center justify-center rounded-none transition-all duration-200 hover:bg-background/60 focus:outline-none data-[state=active]:bg-background data-[state=active]:shadow-sm"
+          className="z-10 flex h-full w-full items-center justify-center rounded-none hover-bg hover:bg-background/60 focus:outline-none data-[state=active]:bg-background data-[state=active]:shadow-sm"
         >
           <Desktop
             weight="duotone"
             className={cn(
-              'h-4 w-4 transition-colors duration-200',
+              'h-4 w-4 hover-bg',
               currentTheme === 'system'
                 ? 'text-foreground'
                 : 'text-muted-foreground'

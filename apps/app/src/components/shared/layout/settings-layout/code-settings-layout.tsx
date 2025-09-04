@@ -43,7 +43,7 @@ export function CodeSettingsLayout({
                   <button
                     onClick={() => handleNavigation(item.href)}
                     className={cn(
-                      'group flex max-h-[32px] w-full items-center gap-3 rounded-none px-2 py-2 transition-all duration-200',
+                      'group flex max-h-[32px] w-full items-center gap-3 rounded-none px-2 py-2 menu-item',
                       isActive
                         ? 'bg-accent text-foreground'
                         : 'text-muted-foreground hover:bg-accent/60 hover:text-foreground'
@@ -56,7 +56,7 @@ export function CodeSettingsLayout({
                   >
                     <span
                       className={cn(
-                        'flex-shrink-0 transition-colors duration-200',
+                        'flex-shrink-0 transition-none',
                         isActive
                           ? 'text-foreground'
                           : 'text-muted-foreground group-hover:text-foreground'

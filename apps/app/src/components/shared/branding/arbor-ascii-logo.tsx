@@ -40,7 +40,7 @@ export function ArborAsciiLogo({
         'user-select-none select-none font-mono text-foreground/80',
         sizeClasses[size],
         onClick &&
-          '-mx-8 -my-1 rounded-md py-1 transition-all duration-200 hover:opacity-70 active:scale-[0.98] active:opacity-50',
+          '-mx-8 -my-1 rounded-md py-1 hover-transition hover:opacity-70 active:scale-[0.98] active:opacity-50',
         className
       )}
     >

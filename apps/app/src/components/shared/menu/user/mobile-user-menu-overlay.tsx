@@ -147,27 +147,27 @@ function MobileUserMenuOverlayContent() {
                 <div className="space-y-0.5">
                   <button
                     onClick={handleOpenDashboard}
-                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 hover:bg-muted/30 text-sm group"
+                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-none text-sm group hover:bg-muted/30"
                   >
-                    <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-200">
+                    <span className="text-muted-foreground group-hover:text-foreground transition-none">
                       Gallery
                     </span>
-                    <House className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-200" />
+                    <House className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-none" />
                   </button>
 
                   <button
                     onClick={handleOpenSettings}
-                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 hover:bg-muted/30 text-sm group"
+                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-none text-sm group hover:bg-muted/30"
                   >
-                    <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-200">
+                    <span className="text-muted-foreground group-hover:text-foreground transition-none">
                       Settings
                     </span>
-                    <Gear className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-200" />
+                    <Gear className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-none" />
                   </button>
 
                   {/* Theme selector */}
-                  <div className="flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group">
-                    <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-200">
+                  <div className="flex items-center justify-between px-4 py-3 rounded-xl transition-none group">
+                    <span className="text-sm text-muted-foreground group-hover:text-foreground transition-none">
                       Theme
                     </span>
                     <ModeToggle />
@@ -175,11 +175,11 @@ function MobileUserMenuOverlayContent() {
 
                   {/* Sign out button */}
                   <SignOutButton>
-                    <button className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 hover:bg-red-500/10 text-sm group">
-                      <span className="text-red-500/70 group-hover:text-red-600 transition-colors duration-200">
+                    <button className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-none hover:bg-red-500/10 text-sm group">
+                      <span className="text-red-500/70 group-hover:text-red-600 transition-none">
                         Log Out
                       </span>
-                      <SignOut className="w-4 h-4 text-red-500/70 group-hover:text-red-600 transition-colors duration-200" />
+                      <SignOut className="w-4 h-4 text-red-500/70 group-hover:text-red-600 transition-none" />
                     </button>
                   </SignOutButton>
                 </div>
@@ -190,24 +190,24 @@ function MobileUserMenuOverlayContent() {
                     href="https://github.com/yourusername/ascii-xyz"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 hover:bg-muted/30 text-sm group"
+                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-none hover:bg-muted/30 text-sm group"
                   >
-                    <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-200">
+                    <span className="text-muted-foreground group-hover:text-foreground transition-none">
                       GitHub
                     </span>
-                    <GithubLogo className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-200" />
+                    <GithubLogo className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-none" />
                   </a>
 
                   <a
                     href="https://twitter.com/yourusername"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 hover:bg-muted/30 text-sm group"
+                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-none hover:bg-muted/30 text-sm group"
                   >
-                    <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-200">
+                    <span className="text-muted-foreground group-hover:text-foreground transition-none">
                       Twitter
                     </span>
-                    <TwitterLogo className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors duration-200" />
+                    <TwitterLogo className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-none" />
                   </a>
                 </div>
               </div>

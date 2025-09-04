@@ -120,7 +120,15 @@
 /* Override Tailwind defaults to use our corner radius system */
 @layer components {
   .btn {
-    @apply rounded-md transition-all duration-200;
+    @apply rounded-md;
+    transition-property: all;
+    transition-duration: var(--motion-out);
+    transition-timing-function: linear;
+  }
+  .btn:hover,
+  .btn:focus-visible,
+  .btn:active {
+    transition-duration: var(--motion-in);
   }
   
   .card {

@@ -101,7 +101,7 @@ export function MobileSettingsLayout({
                   key={item.id}
                   onClick={() => handleNavigation(item.href)}
                   className={cn(
-                    'mx-1 flex items-center gap-2 whitespace-nowrap rounded-none px-3 py-2 transition-all duration-200',
+                    'mx-1 flex items-center gap-2 whitespace-nowrap rounded-none px-3 py-2 menu-item',
                     isActive
                       ? 'bg-accent text-foreground'
                       : 'text-muted-foreground hover:bg-accent/60 hover:text-foreground'
@@ -109,7 +109,7 @@ export function MobileSettingsLayout({
                 >
                   <span
                     className={cn(
-                      'transition-colors duration-200',
+                      'transition-none',
                       isActive ? 'text-foreground' : 'text-muted-foreground'
                     )}
                   >

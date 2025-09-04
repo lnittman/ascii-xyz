@@ -269,7 +269,7 @@ export function CustomScrollbar({
   return (
     <motion.div
       ref={scrollbarRef}
-      className={`fixed top-0 right-0 bottom-0 w-3 bg-border/40 transition-all hover:bg-border/60 ${className}`}
+      className={`fixed top-0 right-0 bottom-0 w-3 bg-border/40 hover-bg hover:bg-border/60 ${className}`}
       style={{
         top: containerBounds.top,
         height: containerBounds.height,
@@ -283,7 +283,7 @@ export function CustomScrollbar({
       {/* Scrollbar thumb */}
       <motion.div
         ref={thumbRef}
-        className={`absolute right-0 w-full rounded-none transition-colors ${
+        className={`absolute right-0 w-full rounded-none hover-bg ${
           hasScrollableContent
             ? 'cursor-pointer bg-foreground/40 hover:bg-foreground/60'
             : 'cursor-default bg-foreground/20'

@@ -35,7 +35,7 @@ export const SignInSsoCallbackStep: React.FC<SignInSsoCallbackStepProps> = ({
       <div className="mt-4 text-center">
         <Button
           onClick={goToHome}
-          className="mt-4 rounded-none border border-slate-300 bg-muted p-2 font-medium text-sm transition-all duration-200 hover:bg-muted/80 dark:border-slate-700"
+          className="mt-4 rounded-none border border-slate-300 bg-muted p-2 font-medium text-sm hover-transition hover:bg-muted/80 dark:border-slate-700"
         >
           Go to Home Page
         </Button>

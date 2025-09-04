@@ -20,7 +20,7 @@ export const SignInResetPasswordStep: React.FC = () => {
         <Clerk.Label className="mb-2 block font-medium text-foreground text-sm">
           new password
         </Clerk.Label>
-        <Clerk.Input className="w-full rounded-none border border-border bg-card p-3 text-base transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-ring" />
+        <Clerk.Input className="w-full rounded-none border border-border bg-card p-3 text-base hover-transition focus:outline-none focus:ring-1 focus:ring-ring" />
         <Clerk.FieldError className="mt-2 text-destructive text-xs" />
       </Clerk.Field>
 
@@ -28,13 +28,13 @@ export const SignInResetPasswordStep: React.FC = () => {
         <Clerk.Label className="mb-2 block font-medium text-foreground text-sm">
           confirm password
         </Clerk.Label>
-        <Clerk.Input className="w-full rounded-none border border-border bg-card p-3 text-base transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-ring" />
+        <Clerk.Input className="w-full rounded-none border border-border bg-card p-3 text-base hover-transition focus:outline-none focus:ring-1 focus:ring-ring" />
         <Clerk.FieldError className="mt-2 text-destructive text-xs" />
       </Clerk.Field>
 
       <ClerkSignIn.Action
         submit
-        className="w-full rounded-none bg-primary p-3 font-medium text-primary-foreground text-sm transition-all duration-200 hover:bg-primary/90"
+        className="w-full rounded-none bg-primary p-3 font-medium text-primary-foreground text-sm hover-transition hover:bg-primary/90"
       >
         reset password
       </ClerkSignIn.Action>
