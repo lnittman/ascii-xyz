@@ -221,3 +221,15 @@ import { cn } from '@/lib/utils';
 ```
 
 Remember: Components should be reusable, accessible, and follow Arbor's minimalist design philosophy. When in doubt, keep it simple.
+
+## ⚡ Motion Checklist (Linear-style)
+
+- Timing policy: 0ms in / 150ms out for general UI; menu-like items are 0ms/0ms.
+- Use utilities from `packages/design/styles/transitions.css`:
+  - `hover-transition`, `hover-bg`, `hover-transform`, `hover-all` (general UI)
+  - `menu-item`, `hover-instant` (menus, command palettes)
+- Animate cheap properties only: `transform`, `opacity` (optional subtle `filter`).
+- Reduced motion: support `prefers-reduced-motion` with opacity-only or instant paths.
+- Dropdowns with Radix: keep `Content` mounted (`forceMount`), animate a nested Motion panel; set `transform-origin` to Radix var for origin-true motion.
+- `will-change`: set during motion; revert to `auto` afterwards to avoid long-lived costs.
+- Reference: `docs/linear-ux.md` for patterns and code snippets.

@@ -281,3 +281,15 @@ if (!chats?.length) {
 ```
 
 Remember: Components should be focused, reusable, and follow React best practices. Keep business logic in hooks and services.
+
+## ⚡ Motion Checklist (Linear-style)
+
+- General UI: use `hover-transition` (0ms in / 150ms out). Prefer `hover-bg`, `hover-transform`, or `hover-all` when scoping properties.
+- Menus/rows: use `menu-item` or `transition-none` for 0ms in/out; feedback via color only.
+- Properties: animate `transform` and `opacity` (optional subtle `filter`); avoid layout-affecting props.
+- Reduced motion: gate motion with `prefers-reduced-motion`; fall back to opacity-only or instant.
+- Dropdowns (Radix): keep `Content` mounted (`forceMount`), animate an inner `motion.div` via variants; set `transformOrigin` to Radix’s `--radix-*-transform-origin`.
+- Performance: apply `will-change` only during animation; reset to `auto` on complete.
+- Durations/easing: tight open (~160ms ease-out), mirrored close (~140–150ms ease-in).
+
+See `docs/linear-ux.md` for examples and rationale.
