@@ -31,7 +31,7 @@ function ThemeOptions() {
       <button
         onClick={() => setTheme('light')}
         className={cn(
-          "flex items-center justify-center p-1.5 rounded-md transition-all duration-200",
+          "flex items-center justify-center p-1.5 rounded-md transition-none",
           theme === 'light' ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
         )}
         title="Light mode"
@@ -41,7 +41,7 @@ function ThemeOptions() {
       <button
         onClick={() => setTheme('dark')}
         className={cn(
-          "flex items-center justify-center p-1.5 rounded-md transition-all duration-200",
+          "flex items-center justify-center p-1.5 rounded-md transition-none",
           theme === 'dark' ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
         )}
         title="Dark mode"
@@ -51,7 +51,7 @@ function ThemeOptions() {
       <button
         onClick={() => setTheme('system')}
         className={cn(
-          "flex items-center justify-center p-1.5 rounded-md transition-all duration-200",
+          "flex items-center justify-center p-1.5 rounded-md transition-none",
           theme === 'system' ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
         )}
         title="System theme"
@@ -112,16 +112,16 @@ export function UserMenu() {
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent
-        align="end"
-        className={cn(
-          // Disable built-in menu animations for this instance
-          'data-[state=open]:animate-none data-[state=closed]:animate-none',
-          // Keep container lightweight; style the inner motion panel instead
-          'p-0 m-0 bg-transparent border-0 shadow-none'
-        )}
-        forceMount
-      >
+          <DropdownMenuContent
+            align="end"
+            className={cn(
+              // Disable built-in menu animations for this instance
+              'data-[state=open]:animate-none data-[state=closed]:animate-none',
+              // Keep container lightweight; style the inner motion panel instead
+              'p-0 m-0 bg-transparent border-0 shadow-none'
+            )}
+            forceMount
+          >
         <motion.div
               style={{
                 // Respect Radix transform origin for a from-trigger feel
@@ -166,9 +166,7 @@ export function UserMenu() {
               animate={menuOpen ? 'open' : 'closed'}
               onAnimationStart={() => setWillChange('transform, opacity, filter')}
               onAnimationComplete={() => setWillChange('auto')}
-              className={cn(
-                'w-56 bg-popover/95 backdrop-blur-[6px] saturate-150 border border-border/50 shadow-xl rounded-md',
-              )}
+              className={cn('w-56 rounded-md border border-border/50 bg-popover')}
         >
               <div className="flex items-center justify-start gap-3 px-2 py-2 border-b border-border/50">
                 <div className="flex-1">
@@ -184,20 +182,20 @@ export function UserMenu() {
               <div className="py-1">
                 <DropdownMenuItem
                   onClick={() => router.push('/')}
-                  className="mx-1 px-2 py-1.5 rounded-md hover:bg-muted/30 transition-all duration-300 group cursor-pointer"
+                  className="mx-1 px-2 py-1.5 rounded-[8px] hover:bg-muted/30 transition-none group cursor-pointer"
                 >
                   <div className="flex items-center w-full">
-                    <Stack className="w-4 h-4 mr-2 text-muted-foreground group-hover:text-foreground transition-all duration-300" />
+                    <Stack className="w-4 h-4 mr-2 text-muted-foreground" />
                     <span className="flex-1 text-sm">My Gallery</span>
                   </div>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
                   onClick={() => router.push('/settings')}
-                  className="mx-1 px-2 py-1.5 rounded-md hover:bg-muted/30 transition-all duration-300 group cursor-pointer"
+                  className="mx-1 px-2 py-1.5 rounded-[8px] hover:bg-muted/30 transition-none group cursor-pointer"
                 >
                   <div className="flex items-center w-full">
-                    <Gear className="w-4 h-4 mr-2 text-muted-foreground group-hover:text-foreground transition-all duration-300" />
+                    <Gear className="w-4 h-4 mr-2 text-muted-foreground" />
                     <span className="flex-1 text-sm">Settings</span>
                   </div>
                 </DropdownMenuItem>
@@ -215,11 +213,11 @@ export function UserMenu() {
 
               <DropdownMenuItem
                 onClick={handleSignOut}
-                className="mx-1 px-2 py-1.5 rounded-md hover:bg-muted/30 transition-all duration-300 group cursor-pointer"
+                className="mx-1 px-2 py-1.5 rounded-[8px] hover:bg-muted/30 transition-none group cursor-pointer"
               >
                 <div className="flex items-center w-full">
-                  <SignOut className="w-4 h-4 mr-2 text-red-500/70 group-hover:text-red-600 transition-all duration-300" />
-                  <span className="flex-1 text-sm text-red-500/70 group-hover:text-red-600 transition-all duration-300">Sign out</span>
+                  <SignOut className="w-4 h-4 mr-2 text-red-500/70" />
+                  <span className="flex-1 text-sm text-red-500/70">Sign out</span>
                 </div>
               </DropdownMenuItem>
         </motion.div>

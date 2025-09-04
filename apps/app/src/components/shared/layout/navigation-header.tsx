@@ -31,10 +31,10 @@ export function NavigationHeader() {
             <Link
               href="/"
               className={cn(
-                "flex items-center gap-2 px-3 h-full text-sm font-medium rounded-[8px] transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500",
+                "flex items-center gap-2 h-full text-sm font-medium rounded-[8px] transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500",
                 isGallery
-                  ? "bg-background text-foreground"
-                  : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40"
+                  ? "bg-background text-foreground px-3.5"
+                  : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40 px-3"
               )}
             >
               <Stack className="w-4 h-4" />
@@ -43,10 +43,10 @@ export function NavigationHeader() {
             <Link
               href="/create"
               className={cn(
-                "flex items-center gap-2 px-3 h-full text-sm font-medium rounded-[8px] transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500",
+                "flex items-center gap-2 h-full text-sm font-medium rounded-[8px] transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500",
                 isCreate
-                  ? "bg-background text-foreground"
-                  : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40"
+                  ? "bg-background text-foreground px-3.5"
+                  : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40 px-3"
               )}
             >
               <Sparkle className="w-4 h-4" />
