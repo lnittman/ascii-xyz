@@ -48,14 +48,15 @@ export default function AsciiGalleryPage() {
                 onBlur={() => setSearchFocused(false)}
                 onKeyDown={(e) => {
                   if (e.key === 'Escape') {
-                    // Clear the field and unfocus immediately
-                    if (searchQuery) {
-                      setSearchQuery('');
-                      // Return view to default when clearing
-                      setView('my-art');
+                    // Clear and blur instantly; prevent any parent handlers
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setSearchQuery('');
+                    setView('my-art');
+                    if (inputRef.current) {
+                      inputRef.current.value = '';
+                      inputRef.current.blur();
                     }
-                    // Blur the input
-                    inputRef.current?.blur();
                   }
                 }}
               />
@@ -86,12 +87,12 @@ export default function AsciiGalleryPage() {
             </div>
             
             {/* Filter Toggle */}
-            <div className="flex items-center bg-muted/50 backdrop-blur-sm border border-border/60 rounded-md shadow-sm">
-              <div className="relative p-1">
+            <div className="flex items-center h-10 bg-muted/50 backdrop-blur-sm border border-border/60 rounded-md shadow-sm px-1">
+              <div className="relative h-full">
                 <button
                   onClick={() => setView('my-art')}
                   className={cn(
-                    "flex items-center justify-center gap-2 px-4 py-2 transition-all duration-200 rounded-md text-sm font-medium",
+                    "flex items-center justify-center gap-2 h-full px-3 transition-all duration-200 rounded-sm text-sm font-medium",
                     view === 'my-art'
                       ? "bg-background text-foreground shadow-sm"
                       : "text-muted-foreground/80 hover:text-foreground hover:bg-background/50"
@@ -101,11 +102,11 @@ export default function AsciiGalleryPage() {
                   <span className="hidden sm:inline">my art</span>
                 </button>
               </div>
-              <div className="relative pr-1">
+              <div className="relative h-full">
                 <button
                   onClick={() => setView('public')}
                   className={cn(
-                    "flex items-center justify-center gap-2 px-4 py-2 transition-all duration-200 rounded-md text-sm font-medium",
+                    "flex items-center justify-center gap-2 h-full px-3 transition-all duration-200 rounded-sm text-sm font-medium",
                     view === 'public'
                       ? "bg-background text-foreground shadow-sm"
                       : "text-muted-foreground/80 hover:text-foreground hover:bg-background/50"
