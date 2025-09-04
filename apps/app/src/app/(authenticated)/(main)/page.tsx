@@ -60,12 +60,12 @@ export default function AsciiGalleryPage() {
                 }}
               />
               {/* Desktop ESC keycap hint (right-aligned). 0ms in/out visibility */}
-              {(searchFocused || !!searchQuery) && (
+              {!!searchQuery && (
                 <span
-                  className="hidden sm:inline-flex items-center h-6 px-2 rounded-md border border-border/60 bg-background/80 text-[11px] font-medium text-muted-foreground absolute right-2 top-1/2 -translate-y-1/2 select-none pointer-events-none shadow-sm"
+                  className="hidden sm:inline-flex items-center h-6 px-2 rounded-sm border border-border/60 bg-background/80 text-[11px] font-medium text-muted-foreground absolute right-2 top-1/2 -translate-y-1/2 select-none pointer-events-none"
                   aria-hidden="true"
                 >
-                  Esc
+                  esc
                 </span>
               )}
               {/* Mobile search button */}
