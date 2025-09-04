@@ -112,19 +112,17 @@ export function UserMenu() {
         </button>
       </DropdownMenuTrigger>
 
-      <AnimatePresence>
-        {menuOpen && (
-          <DropdownMenuContent
-            align="end"
-            className={cn(
-              // Disable built-in menu animations for this instance
-              'data-[state=open]:animate-none data-[state=closed]:animate-none',
-              // Subtle glass + shadow styling
-              'w-56 bg-popover/95 backdrop-blur-[6px] saturate-150 border-border/50 shadow-xl',
-            )}
-            forceMount
-          >
-            <motion.div
+      <DropdownMenuContent
+        align="end"
+        className={cn(
+          // Disable built-in menu animations for this instance
+          'data-[state=open]:animate-none data-[state=closed]:animate-none',
+          // Keep container lightweight; style the inner motion panel instead
+          'p-0 m-0 bg-transparent border-0 shadow-none'
+        )}
+        forceMount
+      >
+        <motion.div
               style={{
                 // Respect Radix transform origin for a from-trigger feel
                 transformOrigin: 'var(--radix-dropdown-menu-content-transform-origin)',
@@ -164,12 +162,14 @@ export function UserMenu() {
                       },
                     }
               }
-              initial="closed"
-              animate="open"
-              exit="closed"
+              initial={false}
+              animate={menuOpen ? 'open' : 'closed'}
               onAnimationStart={() => setWillChange('transform, opacity, filter')}
               onAnimationComplete={() => setWillChange('auto')}
-            >
+              className={cn(
+                'w-56 bg-popover/95 backdrop-blur-[6px] saturate-150 border border-border/50 shadow-xl rounded-md',
+              )}
+        >
               <div className="flex items-center justify-start gap-3 px-2 py-2 border-b border-border/50">
                 <div className="flex-1">
                   {user.fullName && (
@@ -222,10 +222,8 @@ export function UserMenu() {
                   <span className="flex-1 text-sm text-red-500/70 group-hover:text-red-600 transition-all duration-300">Sign out</span>
                 </div>
               </DropdownMenuItem>
-            </motion.div>
-          </DropdownMenuContent>
-        )}
-      </AnimatePresence>
+        </motion.div>
+      </DropdownMenuContent>
     </DropdownMenu>
   );
 }
