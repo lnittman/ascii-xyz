@@ -1,11 +1,10 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useMemo, useState, useRef } from 'react'
 import { useAtomValue } from 'jotai'
 import { selectedModelIdAtom } from '@/atoms/models'
 import { AsciiEngine } from '@/lib/ascii/engine'
 import { generateAsciiArt } from './create/actions'
-import { ArtsyAscii } from '@/components/shared/artsy-ascii'
 import { useIsMobile } from '@/hooks/useIsMobile'
 
 interface AsciiGeneration {
@@ -16,6 +15,28 @@ interface AsciiGeneration {
 }
 
 export default function GeneratePage() {
+  // Generate a subtle starfield animation for the idle hero
+  const starsFrames = useMemo(() => {
+    function gen(width: number, height: number, frames: number, density = 0.02) {
+      const out: string[] = []
+      for (let f = 0; f < frames; f++) {
+        let frame = ''
+        for (let y = 0; y < height; y++) {
+          let row = ''
+          for (let x = 0; x < width; x++) {
+            // Random twinkle based on frame, position
+            const r = Math.random() + (Math.sin((x + f) * 0.37) + Math.cos((y - f) * 0.23)) * 0.15
+            row += r < density ? (r < density * 0.4 ? '✦' : '*') : ' '
+          }
+          frame += row + (y < height - 1 ? '\n' : '')
+        }
+        out.push(frame)
+      }
+      return out
+    }
+    // tuned for ~max-w-2xl card
+    return gen(64, 16, 64, 0.015)
+  }, [])
   const [prompt, setPrompt] = useState('')
   const [generations, setGenerations] = useState<AsciiGeneration[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -90,13 +111,8 @@ export default function GeneratePage() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)]">
-      <div className="px-6 py-12">
+      <div className="px-6 pt-12 pb-40">
         <div className="max-w-3xl mx-auto">
-          {/* Header */}
-          <div className="mb-10">
-            <h1 className="text-3xl font-mono font-medium tracking-tight text-foreground">generate ascii</h1>
-            <p className="text-sm text-muted-foreground mt-1">Transform your ideas into ASCII art</p>
-          </div>
           {/* Prompt bar moved to bottom sticky; see bottom of page */}
 
           {/* Main content area */}
@@ -139,10 +155,22 @@ export default function GeneratePage() {
                 </div>
               </div>
             ) : (
-              <div className="pt-16">
+              <div className="pt-8">
                 <div className="mx-auto max-w-2xl">
-                  <div className="rounded-[12px] border border-border bg-muted/30 p-6">
-                    <ArtsyAscii />
+                  <div className="rounded-[12px] border border-border bg-muted/30 p-6 overflow-hidden">
+                    <AsciiEngine
+                      frames={starsFrames}
+                      fps={10}
+                      loop
+                      autoPlay
+                      style={{
+                        fontSize: '12px',
+                        lineHeight: '14px',
+                        color: 'hsl(var(--foreground))',
+                        fontFamily: 'monospace',
+                        opacity: 0.8,
+                      }}
+                    />
                   </div>
                 </div>
               </div>
@@ -152,10 +180,9 @@ export default function GeneratePage() {
       </div>
 
       {/* Bottom-aligned composer (no suggestions row) */}
-      <div className="sticky bottom-0 left-0 right-0 border-t border-border/60 bg-background/95 backdrop-blur-sm">
+      <div className="fixed bottom-6 left-0 right-0 z-40">
         <div className="mx-auto max-w-3xl px-6 py-3">
-          {/* Input row */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 rounded-[12px] border border-border/60 bg-background/95 backdrop-blur-sm px-3 py-2">
             {/* Left controls */}
             <div className="flex gap-2">
               <input
