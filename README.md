@@ -1,6 +1,6 @@
 # ascii-xyz
 
-Minimal, AI‑powered ASCII art studio. Monorepo with a Next.js app, a small design system, and auth wired through Clerk. The app focuses on fast, distraction‑free creation with a utilitarian UI.
+Minimal, AI‑powered ASCII art studio. Monorepo with a Next.js app, a small design system, and auth wired through Clerk.
 
 ## Quick Start
 
@@ -33,23 +33,3 @@ Visit http://localhost:3000
   - `pnpm test` — run tests (if present)
   - `pnpm lint` / `pnpm format` — code quality
 - App only: `pnpm -C apps/app dev` or `pnpm -C apps/app build`
-
-## Auth & Routing
-
-- Public: `/`, `/signin`, `/signup`, `/share/[token]`
-- Private: everything else (guarded by Clerk middleware)
-- Middleware redirects signed‑in users away from `/signin|/signup` before paint
-
-## Styling & Motion
-
-- Tailwind v4 + tokens in `packages/design/styles/globals.css`
-- Motion policy: 0ms in / 150ms out for general UI; 0/0 for menu‑like items. Utilities live in `packages/design/styles/transitions.css`.
-
-## Security
-
-- Do not commit secrets; use `.env.local`
-- `.env.production` is ignored and was removed from history
-
-## License
-
-Proprietary — internal use for the ascii‑xyz project.
