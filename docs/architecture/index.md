@@ -198,168 +198,67 @@ Functions grouped by domain
   - getByCode({ shareCode }) → artwork | null
   - list() → share[] (for current user)
   - revoke({ shareId })
-- functions/queries/users.ts
-  - current(), get({ userId })
-  - helpers: getCurrentUser(ctx), getCurrentUserOrThrow(ctx)
-- functions/mutations/files.ts
-  - generateUploadUrl(), createFileRecord({ storageId, filename, mimeType, size, artworkId? }) → fileId
-  - deleteFile({ fileId })
-- functions/mutations/settings.ts
-  - update({ theme?, defaultVisibility?, emailNotifications?, preferredModel?, preferredProvider? })
-  - addApiKey({ name, key, provider }), removeApiKey({ name })
-- functions/internal/users.ts
-  - upsertFromClerk({ data }), deleteFromClerk({ clerkUserId })
-
-HTTP endpoints
-- Convex `http.ts`: `POST /clerk-users-webhook` (Clerk webhook, Svix signature verified via `CLERK_WEBHOOK_SECRET`).
-- Next.js rewrites (from `@repo/next-config`) proxy PostHog under `/ingest/*`.
 
 ---
 
 ## 6) State management patterns
 
-UI/Client state
-- Jotai atoms under `apps/app/src/atoms`:
-  - `mobileUserMenuOpenAtom: atom<boolean>` — mobile user menu visibility.
-  - Model selection/enablement (`models.ts`):
-    - `enabledModelsByProviderAtom: atomWithStorage<{ openrouter: string[] }>`
-    - `selectedModelIdAtom: atomWithStorage<string>`
-    - `availableModelsAtom: atom<AIModel[]>` (static defaults)
-    - Derived and action atoms: `isModelEnabledAtom`, `toggleModelAtom`, `enabledModelsAtom`, `selectedModelAtom`.
-
-Server data
-- The app uses Convex React hooks for real‑time server state (not SWR):
-  - `useQuery(api.functions.queries.settings.get)` → user settings
-  - `useMutation(api.functions.mutations.settings.update | addApiKey | removeApiKey)`
-  - Shares hooks (`apps/app/src/hooks/use-shares.ts`): create/list/revoke via Convex.
-
-Cache/real‑time characteristics
-- Convex queries are live: subscribed components re‑render on backend changes.
-- Prefer small, focused queries per view; mutations are optimistic when appropriate at the app layer.
+- Client state: Jotai atoms for UI state, model selection, preferences.
+- Server state: Convex live queries/mutations via `convex/react`.
+- No SWR for server state — Convex provides real‑time subscriptions.
 
 ---
 
 ## 7) Environment variables and configuration
 
-Primary variables (see `.env.example` for full list):
-
-- App (Next.js)
-  - `NEXT_PUBLIC_APP_URL` — base URL for the app.
-  - Clerk: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, `CLERK_WEBHOOK_SECRET`.
-  - Convex: `NEXT_PUBLIC_CONVEX_URL` (set by Convex/Vercel integration).
-  - Analytics (optional): `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`.
-- Backend (Convex)
-  - OpenRouter: `OPENROUTER_API_KEY` (server default if user doesn’t BYOK).
-- Optional services
-  - Email: `RESEND_API_KEY`.
-  - Storage (R2): `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`.
-
-Next.js config
-- `@repo/next-config/index.ts` defines PostHog rewrites (`/ingest/*`) and sets `skipTrailingSlashRedirect`.
+See `../ENVIRONMENT.md` for full details, including Clerk/Convex/OpenRouter/PostHog configuration and where each value is consumed in the codebase.
 
 ---
 
 ## 8) Database/schema summary (Convex)
 
-Defined in `packages/backend/convex/schema.ts`.
-
-- `users`: Clerk‑synced users (indexed by `clerkId`, `email`).
-- `artworks`: userId (string, Clerk id), `prompt`, `frames: string[]`, `metadata { width, height, fps, generator, model, style?, createdAt }`, `visibility`, `featured?`, `likes?`, `views?`, timestamps. Indexes by user, visibility, created, featured; search index on `prompt`.
-- `artworkEmbeddings`: `artworkId`, `embedding: float64[]`, `model`, `createdAt`; vector index.
-- `collections`: `userId: Id<'users'>`, `name`, `description?`, `artworkIds: Id<'artworks'>[]`, `visibility`, timestamps.
-- `shares`: `artworkId`, `shareCode`, `expiresAt?`, `maxViews?`, `viewCount`, `createdAt`; indexes on shareCode, artwork.
-- `userSettings`: per‑user theme, defaultVisibility, emailNotifications, preferences, optional `apiKeys: { name, key, provider, createdAt }[]`.
-- `generations`: prompt runs for analytics/diagnostics.
-- `files`: Convex storage linkage (`storageId`), file metadata, optional `artworkId` join.
-
-Relationships
-- `artworks.userId` is a string (Clerk id) rather than a foreign key to `users`.
-- Collections embed an array of `artworkIds`.
+Schema overview, tables, and relationships are documented in `../api/schema.md`.
 
 ---
 
-## 9) ASCII generation pipeline and data formats
+## 9) ASCII art generation pipeline and data formats
 
-Client components
-- `AsciiEngine` renders frames at a given FPS and supports `loop`, `reverse`, `pingPong`, `autoPlay`, `visibilityOptimized`, and event callbacks. Rendering uses a monospace font with `white-space: pre`.
-
-Backend actions
-- `actions.ascii.generate`:
-  1) Builds a “generation plan” via AI (`generateText`) describing dimensions, fps, characters, and style.
-  2) Requests the frames array from the model following the plan.
-  3) Returns `{ frames: string[]; metadata: { prompt, width, height, fps, frameCount, model, ... } }`.
-
-Storage formats
-- Animation frames: JSON array of strings; each string is a single frame with `\n` newlines.
-- Example
-
-```json
-[
-  "line1\nline2\n…",
-  "line1\nline2\n…"
-]
-```
-
-Validation
-- `lib/ascii.validateFrames(frames: string[]): boolean` checks that a non‑empty string array is provided. The action also normalizes frame dimensions to the planned width/height.
+- Frames are stored/transferred as a JSON array of strings. Each string is a multi‑line ASCII frame.
+- The engine (`@repo/ascii`) can render frames at 12–24 fps with visibility-optimized updates.
+- Keep frames small for mobile; prefer caching static frames and pausing when off‑screen.
 
 ---
 
-## 10) BYOK (Bring Your Own Key) AI support
+## 10) Bring Your Own Key (BYOK) AI support
 
-Where it shows up
-- Settings UI: `apps/app/src/app/(authenticated)/(settings)/settings/models/page.tsx` lets users add API keys (`userSettings.apiKeys[]`) and select/enable models.
-- Convex mutations: `mutations.settings.addApiKey/removeApiKey` persist keys; `mutations.settings.update` stores preferences.
-- Generation action: `actions.ascii.generate` accepts an `apiKey` and `modelId`. If `apiKey` is omitted, the backend uses `OPENROUTER_API_KEY`.
-
-UI atoms relevant to BYOK
-- `selectedModelIdAtom`, `enabledModelsByProviderAtom`, derived `selectedModelAtom` and `enabledModelsAtom` drive model selection.
+- Users can supply an OpenRouter API key for generation/enhancement.
+- The app prefers the user key when provided and falls back to `OPENROUTER_API_KEY`.
 
 ---
 
 ## 11) Linear‑inspired design system usage
 
-- Package: `@repo/design`
-  - Components are exported from `packages/design/components/ui/*` through `components/index.ts`.
-  - Motion policy (Linear‑style): 0ms in / 150ms out for general UI; 0/0 for menu‑like portals. See `packages/design/styles/transitions.css` and `docs/linear-ux.md`.
-  - Utilities: `cn`, `capitalize`, `handleError`, `srOnly` in `packages/design/lib/utils.ts`.
-  - Provider: `packages/design/providers/theme.tsx` sets theme and updates mobile chrome color.
-
-Consumption patterns
-- Import UI as `@repo/design/components/ui/*` and utilities from `@repo/design/lib/*`.
-- Keep business logic in app hooks; components are presentational with accessible defaults and Tailwind tokens.
+- Design components are sourced from `@repo/design` with motion utilities.
+- Motion policy (Linear‑style): 0ms in / 150ms out for general UI; 0/0 for menu‑like portals. See `packages/design/styles/transitions.css` and `../linear-ux.md`.
 
 ---
 
 ## 12) App routes inventory (apps/app/src/app)
 
-Route groups and pages discovered on 2025‑09‑05:
+This inventory reflects the latest default‑branch structure. Key routes:
 
-- Root level
-  - `/` → generation UI (Create as home) at `(authenticated)/page.tsx`. Global error boundaries: `error.tsx`, `global-error.tsx`, `not-found.tsx`. App icon/manifest: `icon.tsx`, `manifest.ts`.
-  - `/share/[token]` → publicly accessible shared artwork page.
-  - Middleware: `apps/app/src/middleware.ts` enforces auth; public routes include `/`, `/signin`, `/signup`, `/share/*`, assets.
+- `/` — Create (home)
+- `/gallery` — Gallery list
+- `/art/[id]` — Artwork detail (under `(authenticated)/(main)/art/[id]`)
+- `/share/[token]` — Public share view
 
-- Group: `(unauthenticated)`
-  - `/signin` → sign‑in page.
-  - `/signup` → sign‑up page.
-
-- Group: `(authenticated)`
-  - Layout: `client-layout.tsx`, group `layout.tsx`.
-  - `/` (home) → ASCII creation UI (`(authenticated)/page.tsx` uses `create/actions.ts`).
-  - Sub‑group `(main)`
-    - `/art/[id]` → artwork detail page.
-  - Sub‑group `(settings)`
-    - `/settings` → redirected to `/settings/models` by middleware.
-    - `/settings/models` → model selection and BYOK management UI.
-
-If new pages are added under `apps/app/src/app`, update this section and the `docs/user-flows/*` diagrams accordingly.
+If new pages are added under `apps/app/src/app`, update this section and the `../user-flows/*` diagrams accordingly.
 
 ---
 
 ## 13) Navigation to additional docs
 
-- User flows (Mermaid): `docs/user-flows/`
-- Component library docs: `docs/components/`
-- API/backend docs: `docs/api/`
-- Onboarding and environment setup: `docs/ONBOARDING.md`, `docs/ENVIRONMENT.md`
+- User flows (Mermaid): `../user-flows/`
+- Component library docs: `../components/`
+- API/backend docs: `../api/`
+- Onboarding and environment setup: `../ONBOARDING.md`, `../ENVIRONMENT.md`

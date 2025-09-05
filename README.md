@@ -4,7 +4,7 @@ AI-native ASCII art studio
 
 ## Documentation
 
-- Architecture: `ARCHITECTURE.md`
+- Architecture: `docs/architecture/index.md`
 - User flows: `docs/user-flows/`
 - Components: `docs/components/`
 - API & schema: `docs/api/`

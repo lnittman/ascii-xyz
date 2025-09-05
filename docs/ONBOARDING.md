@@ -48,7 +48,7 @@ pnpm test
 
 ## Docs
 
-- Architecture: `ARCHITECTURE.md`
+- Architecture: `architecture/index.md`
 - User flows: `docs/user-flows/`
 - Component library: `docs/components/`
 - Backend/API: `docs/api/`
