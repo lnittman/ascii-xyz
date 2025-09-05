@@ -43,7 +43,7 @@ Visit http://localhost:3000
 ## Styling & Motion
 
 - Tailwind v4 + tokens in `packages/design/styles/globals.css`
-- Motion policy (0ms in / 150ms out general; 0/0 for menu‑like) and usage: see `docs/linear-ux.md`
+- Motion policy: 0ms in / 150ms out for general UI; 0/0 for menu‑like items. Utilities live in `packages/design/styles/transitions.css`.
 
 ## Security
 
