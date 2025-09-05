@@ -27,6 +27,18 @@ export default clerkMiddleware(
       return Response.redirect(new URL('/settings/profile', req.url));
     }
 
+    // If user is already signed in, redirect away from auth pages before paint
+    if (pathName.startsWith('/signin') || pathName.startsWith('/signup')) {
+      try {
+        const { userId } = await auth();
+        if (userId) {
+          return Response.redirect(new URL('/', req.url));
+        }
+      } catch (_) {
+        // ignore and continue to auth page
+      }
+    }
+
     // For API routes, we need to validate the token but handle errors differently
     if (isApiRoute(req)) {
       try {

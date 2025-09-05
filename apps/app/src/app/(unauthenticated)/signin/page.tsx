@@ -7,6 +7,7 @@ import * as Clerk from '@clerk/elements/common';
 import { ClerkLoaded, ClerkLoading } from '@clerk/nextjs';
 import * as ClerkSignIn from '@clerk/elements/sign-in';
 import { AsciiScatter } from '@repo/ascii';
+import { MiniAsciiLoader } from '@/components/shared/mini-ascii-loader';
 import { useTheme } from 'next-themes';
 
 function SignInContent() {
@@ -44,12 +45,13 @@ function SignInContent() {
                     </h1>
                   </div>
                   
-                  {/* OAuth Providers with reserved space + skeletons to prevent layout shift */}
-                  <div className="space-y-2 min-h-[120px]">
+                  {/* OAuth Providers in a transparent reserved container to prevent layout shift */}
+                  <div className="space-y-2 min-h-[110px] bg-transparent">
                     <ClerkLoading>
-                      <div className="space-y-2">
-                        <div className="h-11 rounded-lg border border-border bg-muted animate-pulse" />
-                        <div className="h-11 rounded-lg border border-border bg-muted animate-pulse" />
+                      {/* Keep vertical space; no visible skeletons */}
+                      <div className="space-y-2 invisible">
+                        <div className="h-11 rounded-lg border border-transparent" />
+                        <div className="h-11 rounded-lg border border-transparent" />
                       </div>
                     </ClerkLoading>
                     <ClerkLoaded>
@@ -93,13 +95,13 @@ function SignInContent() {
           
           {/* Bottom section - keep empty for clean minimal design */}
           <div className="px-8 pb-8">
-            <div className="mx-auto max-w-sm text-center">
-              {/* Intentionally empty for minimal aesthetic */}
-            </div>
+          <div className="mx-auto max-w-sm text-center">
+            {/* Intentionally empty for minimal aesthetic */}
           </div>
         </div>
-        
-        {/* Right panel - ASCII container with padding + rounded border */}
+      </div>
+      
+      {/* Right panel - ASCII container with padding + rounded border */}
         <div className="flex-1 relative bg-background">
           {/* Container takes full right half with top/right/bottom padding */}
           <div className="absolute inset-y-6 right-6 left-0">
@@ -127,11 +129,11 @@ function SignInContent() {
         <div className="mt-4 flex flex-col gap-2">
           <ClerkSignIn.Root routing="path" path="/signin">
             <ClerkSignIn.Step name="start" className="flex flex-col items-stretch w-full">
-              <div className="space-y-2 min-h-[120px] flex flex-col justify-end">
+              <div className="space-y-2 min-h-[110px] flex flex-col justify-end bg-transparent">
                 <ClerkLoading>
-                  <div className="space-y-2">
-                    <div className="h-11 rounded-lg border border-border bg-muted animate-pulse" />
-                    <div className="h-11 rounded-lg border border-border bg-muted animate-pulse" />
+                  <div className="space-y-2 invisible">
+                    <div className="h-11 rounded-lg border border-transparent" />
+                    <div className="h-11 rounded-lg border border-transparent" />
                   </div>
                 </ClerkLoading>
                 <ClerkLoaded>
@@ -173,11 +175,19 @@ function SignInContent() {
 
 export default function SignInPage() {
   return (
-    <Suspense fallback={
-      <div className="flex h-full w-full items-center justify-center px-4 bg-background">
-        <div className="animate-spin h-6 w-6 border-2 border-foreground border-t-transparent rounded-full" />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="flex h-dvh w-full items-center justify-center bg-background">
+          <MiniAsciiLoader />
+        </div>
+      }
+    >
+      {/* Show a tiny loader while Clerk is mounting to avoid flash */}
+      <ClerkLoading>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80">
+          <MiniAsciiLoader />
+        </div>
+      </ClerkLoading>
       <SignInContent />
     </Suspense>
   );
