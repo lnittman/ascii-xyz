@@ -173,6 +173,7 @@ Functions grouped by domain
 - functions/actions/ascii.ts
   - generate(args: { prompt, apiKey?, userId?, modelId? }) → { frames: string[]; metadata: {...} }
   - generateVariation(args: { originalFrames, variationPrompt, apiKey?, userId?, modelId? }) → { frames, metadata }
+  - enhance(args: { frames, enhancementType, apiKey? }) → { frames, enhancementType }
 - functions/mutations/ascii.ts
   - save({ userId, prompt, frames, metadata, visibility? }) → artworkId
   - updateVisibility({ id, visibility }) → { success: true }
@@ -335,7 +336,7 @@ Consumption patterns
 Route groups and pages discovered on 2025‑09‑05:
 
 - Root level
-  - `/` → `(authenticated)/(main)/page.tsx` via app routing (home set to Create per recent commits). Global error boundaries: `error.tsx`, `global-error.tsx`, `not-found.tsx`. App icon/manifest: `icon.tsx`, `manifest.ts`.
+  - `/` → generation UI (Create as home) at `(authenticated)/page.tsx`. Global error boundaries: `error.tsx`, `global-error.tsx`, `not-found.tsx`. App icon/manifest: `icon.tsx`, `manifest.ts`.
   - `/share/[token]` → publicly accessible shared artwork page.
   - Middleware: `apps/app/src/middleware.ts` enforces auth; public routes include `/`, `/signin`, `/signup`, `/share/*`, assets.
 
@@ -345,9 +346,8 @@ Route groups and pages discovered on 2025‑09‑05:
 
 - Group: `(authenticated)`
   - Layout: `client-layout.tsx`, group `layout.tsx`.
-  - `/create` → ASCII creation UI (`create/page.tsx` + `create/actions.ts`).
+  - `/` (home) → ASCII creation UI (`(authenticated)/page.tsx` uses `create/actions.ts`).
   - Sub‑group `(main)`
-    - `/` (home) → main landing/gallery hub (`(main)/page.tsx`).
     - `/art/[id]` → artwork detail page.
   - Sub‑group `(settings)`
     - `/settings` → redirected to `/settings/models` by middleware.

@@ -25,6 +25,12 @@ generateVariation(args: {
   variationPrompt: string;
   apiKey?: string; userId?: string; modelId?: string;
 }): Promise<{ frames: string[]; metadata: { prompt: string; originalFrameCount: number; generatedAt: string; model: string; userId?: string } }>
+
+enhance(args: {
+  frames: string[];
+  enhancementType: 'double-resolution' | 'add-detail' | 'smooth-animation' | 'stylize';
+  apiKey?: string;
+}): Promise<{ frames: string[]; enhancementType: string }>
 ```
 
 ## mutations/ascii.ts
@@ -131,5 +137,4 @@ deleteFromClerk({ clerkUserId: string }): void
 ```
 
 Notes and caveats
-- The app references an `actions.ascii.enhance` in `apps/app/src/app/(authenticated)/create/actions.ts`, but no such action exists in the backend. If needed, add it under `functions/actions/ascii.ts` and expose it in the generated API.
 - Some mutations live in `queries/*` files (e.g., `shares.ts`), so their generated path is under `api.functions.queries.shares.*`.

@@ -34,8 +34,8 @@ This project uses a Next.js app with a Convex backend and Clerk authentication. 
 
 ```bash
 pnpm install
-pnpm dev:backend   # starts Convex dev server (hot reload)
-pnpm dev:app       # starts Next.js app at http://localhost:3006
+pnpm dev           # starts Convex dev server and the Next.js app together
+# App: http://localhost:3000
 ```
 
 ## Deployment notes

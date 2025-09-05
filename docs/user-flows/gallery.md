@@ -4,7 +4,7 @@ Covers public gallery, user’s own list, detail views, and CRUD.
 
 ```mermaid
 flowchart TD
-  Home[/\n(main)/page] -->|list public| Q1[queries.ascii.getPublic]
+  Home[/\n(authenticated)/page] -->|list public| Q1[queries.ascii.getPublic]
   MyArt[User list] -->|list mine| Q2[queries.ascii.list(userId)]
   Item[Detail /art/[id]] -->|get| Q3[queries.ascii.get]
   Q1-->UI

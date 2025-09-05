@@ -21,7 +21,7 @@ pnpm install
 # Develop app + backend together
 pnpm dev
 
-# App only / Backend only
+# App only / Backend only (optional)
 pnpm dev:app
 pnpm dev:backend
 
@@ -35,7 +35,7 @@ pnpm test
 
 1) Create `.env.local` by copying `.env.example` and fill required keys (see `docs/ENVIRONMENT.md`).
 2) Start Convex dev server: `pnpm dev:backend` (in a split terminal).
-3) Start Next.js app: `pnpm dev:app` → open `http://localhost:3006`.
+3) Start dev servers: `pnpm dev` → open `http://localhost:3000`.
 4) Sign in via Clerk; confirm a user record appears in Convex (via live queries).
 5) Try `/create` to generate an ASCII animation. If you don’t set `OPENROUTER_API_KEY`, add a user API key in Settings → Models.
 
