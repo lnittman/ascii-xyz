@@ -22,8 +22,8 @@ Visit http://localhost:3000
   - Auth: `/signin`, `/signup` (Clerk Elements)
   - Middleware: protects private routes and redirects signed‑in users away from auth pages
 - `packages/design` — Tailwind v4 tokens/utilities and shared UI
-- `packages/auth` — Clerk helpers
-- `packages/backend` — Convex (optional)
+- `packages/auth` — Clerk 
+- `packages/backend` — Convex
 
 ## Commands
 
