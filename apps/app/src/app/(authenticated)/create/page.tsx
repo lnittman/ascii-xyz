@@ -96,128 +96,7 @@ export default function GeneratePage() {
             <h1 className="text-3xl font-mono font-medium tracking-tight text-foreground">generate ascii</h1>
             <p className="text-sm text-muted-foreground mt-1">Transform your ideas into ASCII art</p>
           </div>
-          
-          {/* Prompt bar */}
-          <div className="bg-card/50 backdrop-blur-sm border border-border/60 rounded-md p-5 mb-8 shadow-sm">
-            {/* Full width input */}
-            <div className="flex items-center border border-border/50 rounded-md px-4 h-12 bg-background/50 relative mb-4 transition-all duration-200 focus-within:border-border focus-within:bg-background">
-              <input
-                ref={inputRef}
-                type="text"
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault()
-                    handleGenerate()
-                  }
-                }}
-                placeholder="Describe the ASCII art you want to create..."
-                className="w-full bg-transparent border-none outline-none text-sm font-mono placeholder:text-muted-foreground/60"
-                disabled={isGenerating}
-              />
-              {prompt && (
-                <button
-                  onClick={() => setPrompt('')}
-                  className="absolute right-3 text-lg opacity-60 hover:opacity-100 transition-opacity duration-200"
-                >
-                  ×
-                </button>
-              )}
-            </div>
-
-            {/* Control row */}
-            <div className="flex justify-between items-center gap-2">
-              {/* Left controls */}
-              <div className="flex gap-2">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isGenerating}
-                  className="flex items-center justify-center w-10 h-9 border border-border/50 rounded-md hover:bg-muted/50 hover:border-border transition-all duration-200 font-mono text-sm disabled:opacity-50"
-                  title="Upload image"
-                >
-                  □
-                </button>
-
-                {currentGeneration && (
-                  <>
-                    <button
-                      onClick={copyToClipboard}
-                      className="flex items-center justify-center w-10 h-9 border border-border/50 rounded-md hover:bg-muted/50 hover:border-border transition-all duration-200 font-mono text-sm"
-                      title="Copy to clipboard"
-                    >
-                      {isMobile ? '⊡' : 'CPY'}
-                    </button>
-
-                    <button
-                      onClick={downloadAscii}
-                      className="flex items-center justify-center w-10 h-9 border border-border/50 rounded-md hover:bg-muted/50 hover:border-border transition-all duration-200 font-mono text-sm"
-                      title="Download ASCII"
-                    >
-                      {isMobile ? '↓' : 'DL'}
-                    </button>
-                  </>
-                )}
-
-                {generations.length > 1 && (
-                  <>
-                    <button
-                      onClick={() => setCurrentIndex((prev) => (prev > 0 ? prev - 1 : generations.length - 1))}
-                      disabled={generations.length === 0}
-                      className="flex items-center justify-center w-10 h-9 border border-border/50 rounded-md hover:bg-muted/50 hover:border-border transition-all duration-200 font-mono text-sm"
-                      title="Previous"
-                    >
-                      ←
-                    </button>
-
-                    <button
-                      onClick={() => setCurrentIndex((prev) => (prev < generations.length - 1 ? prev + 1 : 0))}
-                      disabled={generations.length === 0}
-                      className="flex items-center justify-center w-10 h-9 border border-border/50 rounded-md hover:bg-muted/50 hover:border-border transition-all duration-200 font-mono text-sm"
-                      title="Next"
-                    >
-                      →
-                    </button>
-                  </>
-                )}
-
-                {generations.length > 0 && (
-                  <button
-                    onClick={clearHistory}
-                    className="flex items-center justify-center w-10 h-9 border border-border/50 rounded-md hover:bg-muted/50 hover:border-border transition-all duration-200 font-mono text-sm"
-                    title="Clear history"
-                  >
-                    {isMobile ? '○' : 'CLR'}
-                  </button>
-                )}
-              </div>
-
-              {/* Right controls */}
-              <div className="flex gap-2 items-center">
-                {generations.length > 0 && (
-                  <span className="text-xs text-muted-foreground font-mono mr-2">
-                    {currentIndex + 1}/{generations.length}
-                  </span>
-                )}
-
-                <button
-                  onClick={handleGenerate}
-                  disabled={!prompt.trim() || isGenerating}
-                  className="flex items-center justify-center px-4 h-8 bg-foreground text-background border border-foreground disabled:bg-transparent disabled:text-muted-foreground disabled:border-border transition-colors font-mono text-sm gap-2"
-                >
-                  {isGenerating ? '◌' : '▶'}
-                  {!isMobile && <span>{isGenerating ? 'GENERATING' : 'RUN'}</span>}
-                </button>
-              </div>
-            </div>
-          </div>
+          {/* Prompt bar moved to bottom sticky; see bottom of page */}
 
           {/* Main content area */}
           <div className="">
@@ -309,6 +188,122 @@ export default function GeneratePage() {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom-aligned composer */}
+      <div className="sticky bottom-0 left-0 right-0 border-t border-border/60 bg-background/95 backdrop-blur-sm">
+        <div className="mx-auto max-w-3xl px-6 py-3">
+          {/* Suggestions carousel */}
+          <div className="relative">
+            <div className="pointer-events-none absolute left-0 top-0 h-full w-8 bg-gradient-to-r from-background to-transparent" />
+            <div className="pointer-events-none absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-background to-transparent" />
+            <div className="scrollbar-none flex items-center gap-2 overflow-x-auto py-1">
+              {[
+                'Matrix rain effect with falling green characters',
+                'Ocean waves crashing on a beach',
+                'Fire flames dancing and flickering',
+                'Geometric patterns pulsing and morphing',
+              ].map((s) => (
+                <button
+                  key={s}
+                  onClick={() => {
+                    setPrompt(s)
+                    inputRef.current?.focus()
+                  }}
+                  className="rounded-[8px] border border-border bg-background px-3 py-1.5 text-xs font-mono hover-bg"
+                  title={s}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Input row */}
+          <div className="mt-2 flex items-center gap-2">
+            {/* Left controls */}
+            <div className="flex gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isGenerating}
+                className="flex items-center justify-center w-10 h-10 border border-border/50 rounded-[8px] hover:bg-muted/50 hover:border-border transition-colors font-mono text-sm disabled:opacity-50"
+                title="Upload image"
+              >
+                □
+              </button>
+              {currentGeneration && (
+                <>
+                  <button
+                    onClick={copyToClipboard}
+                    className="flex items-center justify-center w-10 h-10 border border-border/50 rounded-[8px] hover:bg-muted/50 hover:border-border transition-colors font-mono text-sm"
+                    title="Copy to clipboard"
+                  >
+                    {isMobile ? '⊡' : 'CPY'}
+                  </button>
+                  <button
+                    onClick={downloadAscii}
+                    className="flex items-center justify-center w-10 h-10 border border-border/50 rounded-[8px] hover:bg-muted/50 hover:border-border transition-colors font-mono text-sm"
+                    title="Download ASCII"
+                  >
+                    {isMobile ? '↓' : 'DL'}
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Text input */}
+            <div className="relative flex-1">
+              <input
+                ref={inputRef}
+                type="text"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault()
+                    handleGenerate()
+                  }
+                }}
+                placeholder="Describe the ASCII art you want to create..."
+                className="w-full bg-background border border-border/60 rounded-[8px] px-4 h-12 outline-none text-sm font-mono placeholder:text-muted-foreground/60"
+                disabled={isGenerating}
+              />
+              {prompt && (
+                <button
+                  onClick={() => setPrompt('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-lg opacity-60 hover:opacity-100 transition-none"
+                  aria-label="Clear"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+
+            {/* Run button and index */}
+            <div className="flex items-center gap-2">
+              {generations.length > 0 && (
+                <span className="text-xs text-muted-foreground font-mono mr-1">
+                  {currentIndex + 1}/{generations.length}
+                </span>
+              )}
+              <button
+                onClick={handleGenerate}
+                disabled={!prompt.trim() || isGenerating}
+                className="flex items-center justify-center px-4 h-10 bg-foreground text-background border border-foreground disabled:bg-transparent disabled:text-muted-foreground disabled:border-border transition-colors font-mono text-sm gap-2 rounded-[8px]"
+              >
+                {isGenerating ? '◌' : '▶'}
+                {!isMobile && <span>{isGenerating ? 'GENERATING' : 'RUN'}</span>}
+              </button>
+            </div>
           </div>
         </div>
       </div>
