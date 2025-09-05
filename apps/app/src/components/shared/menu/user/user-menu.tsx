@@ -27,7 +27,7 @@ function ThemeOptions() {
   if (!mounted) return null;
   
   return (
-    <div className="flex items-center gap-1 px-3 py-1">
+    <div className="flex w-full items-center justify-end gap-1 px-3 py-1">
       <button
         onClick={() => setTheme('light')}
         className={cn(
