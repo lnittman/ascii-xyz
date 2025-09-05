@@ -17,7 +17,7 @@ export function NavigationHeader() {
   const isCreate = pathname === '/';
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm border-b border-border/50">
+    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm">
       <div className="mx-auto max-w-7xl">
         <div className="flex h-16 items-center justify-between px-6 relative">
         {/* Logo */}

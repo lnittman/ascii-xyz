@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { cn } from '@repo/design/lib/utils';
 import { NavigationHeader } from '@/components/shared/layout/navigation-header';
+import { PageGradientOverlay } from '@/components/shared/layout/page-gradient-overlay';
 import { MobileUserMenuOverlay } from '@/components/shared/menu/user/mobile-user-menu-overlay';
 import { mobileUserMenuOpenAtom } from '@/atoms/menus';
 
@@ -36,6 +37,9 @@ export function ClientLayout({ children }: ClientLayoutProps) {
     <div className="min-h-screen bg-background antialiased">
       {/* Sticky navigation header */}
       <NavigationHeader />
+      
+      {/* Page edge gradient overlays */}
+      <PageGradientOverlay />
       
       {/* Main content */}
       <main className="flex-1">
