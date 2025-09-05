@@ -181,7 +181,7 @@ export function UserMenu() {
 
               <div className="py-1">
                 <DropdownMenuItem
-                  onClick={() => router.push('/')}
+                  onClick={() => router.push('/gallery')}
                   className="mx-1 px-2 py-1.5 rounded-[8px] hover:bg-muted/30 transition-none group cursor-pointer"
                 >
                   <div className="flex items-center w-full">

@@ -78,7 +78,7 @@ function MobileUserMenuOverlayContent() {
   // Navigate to dashboard
   const handleOpenDashboard = () => {
     setIsOpen(false);
-    router.push('/');
+    router.push('/gallery');
   };
 
   const handleClose = () => {

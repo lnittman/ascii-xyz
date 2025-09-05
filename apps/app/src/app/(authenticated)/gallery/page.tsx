@@ -188,7 +188,7 @@ export default function AsciiGalleryPage() {
                view === 'public' ? 'Check back later for community creations' :
                'Generate beautiful ASCII art from text prompts'}
             </p>
-            <Link href="/create">
+    <Link href="/">
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
                 Create ASCII Art

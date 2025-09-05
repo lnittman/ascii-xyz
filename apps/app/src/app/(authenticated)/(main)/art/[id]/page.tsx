@@ -35,7 +35,7 @@ export default function ArtworkPage() {
           <p className="text-muted-foreground mb-4">
             This artwork may have been deleted or you don't have permission to view it.
           </p>
-          <Link href="/">
+          <Link href="/gallery">
             <Button>Back to Gallery</Button>
           </Link>
         </div>

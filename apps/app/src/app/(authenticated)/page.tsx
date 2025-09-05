@@ -4,7 +4,7 @@ import { useState, useRef } from 'react'
 import { useAtomValue } from 'jotai'
 import { selectedModelIdAtom } from '@/atoms/models'
 import { AsciiEngine } from '@/lib/ascii/engine'
-import { generateAsciiArt } from './actions'
+import { generateAsciiArt } from './create/actions'
 import { useIsMobile } from '@/hooks/useIsMobile'
 
 interface AsciiGeneration {

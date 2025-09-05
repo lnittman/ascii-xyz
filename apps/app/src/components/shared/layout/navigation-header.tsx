@@ -13,8 +13,8 @@ export function NavigationHeader() {
   const pathname = usePathname();
 
   // Determine active section based on pathname
-  const isGallery = pathname === '/' || pathname?.includes('/art/');
-  const isCreate = pathname === '/create';
+  const isGallery = pathname === '/gallery' || pathname?.includes('/art/');
+  const isCreate = pathname === '/';
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm border-b border-border/50">
@@ -29,7 +29,7 @@ export function NavigationHeader() {
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
           <div className="bg-muted/30 border border-border/60 rounded-md h-10 p-0.5 flex items-center gap-0.5">
             <Link
-              href="/"
+              href="/gallery"
               className={cn(
                 "flex items-center gap-2 h-full text-sm font-medium rounded-[8px] hover-bg px-3.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500",
                 isGallery
@@ -41,7 +41,7 @@ export function NavigationHeader() {
               <span className="hidden sm:inline">gallery</span>
             </Link>
             <Link
-              href="/create"
+              href="/"
               className={cn(
                 "flex items-center gap-2 h-full text-sm font-medium rounded-[8px] hover-bg px-3.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500",
                 isCreate
