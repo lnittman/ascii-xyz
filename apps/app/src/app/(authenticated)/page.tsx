@@ -5,6 +5,7 @@ import { useAtomValue } from 'jotai'
 import { selectedModelIdAtom } from '@/atoms/models'
 import { AsciiEngine } from '@/lib/ascii/engine'
 import { generateAsciiArt } from './create/actions'
+import { ArtsyAscii } from '@/components/shared/artsy-ascii'
 import { useIsMobile } from '@/hooks/useIsMobile'
 
 interface AsciiGeneration {
@@ -139,51 +140,9 @@ export default function GeneratePage() {
               </div>
             ) : (
               <div className="pt-16">
-                <div className="text-center max-w-2xl mx-auto">
-                  <h2 className="text-2xl font-mono mb-4">
-                    ASCII ART GENERATOR
-                  </h2>
-                  <p className="text-sm text-muted-foreground font-mono leading-relaxed mb-8">
-                    Create unique ASCII animations with AI. Describe what you want to see, 
-                    upload an image, or try one of the examples below.
-                  </p>
-                  <div className="flex gap-3 justify-center flex-wrap">
-                    <button
-                      onClick={() => {
-                        setPrompt('Matrix rain effect with falling green characters')
-                        inputRef.current?.focus()
-                      }}
-                      className="px-4 py-2 text-xs border border-border bg-transparent hover:bg-muted transition-colors font-mono"
-                    >
-                      MATRIX RAIN
-                    </button>
-                    <button
-                      onClick={() => {
-                        setPrompt('Ocean waves crashing on a beach')
-                        inputRef.current?.focus()
-                      }}
-                      className="px-4 py-2 text-xs border border-border bg-transparent hover:bg-muted transition-colors font-mono"
-                    >
-                      OCEAN WAVES
-                    </button>
-                    <button
-                      onClick={() => {
-                        setPrompt('Fire flames dancing and flickering')
-                        inputRef.current?.focus()
-                      }}
-                      className="px-4 py-2 text-xs border border-border bg-transparent hover:bg-muted transition-colors font-mono"
-                    >
-                      FIRE DANCE
-                    </button>
-                    <button
-                      onClick={() => {
-                        setPrompt('Geometric patterns pulsing and morphing')
-                        inputRef.current?.focus()
-                      }}
-                      className="px-4 py-2 text-xs border border-border bg-transparent hover:bg-muted transition-colors font-mono"
-                    >
-                      GEOMETRY
-                    </button>
+                <div className="mx-auto max-w-2xl">
+                  <div className="rounded-[12px] border border-border bg-muted/30 p-6">
+                    <ArtsyAscii />
                   </div>
                 </div>
               </div>
@@ -192,37 +151,11 @@ export default function GeneratePage() {
         </div>
       </div>
 
-      {/* Bottom-aligned composer */}
+      {/* Bottom-aligned composer (no suggestions row) */}
       <div className="sticky bottom-0 left-0 right-0 border-t border-border/60 bg-background/95 backdrop-blur-sm">
         <div className="mx-auto max-w-3xl px-6 py-3">
-          {/* Suggestions carousel */}
-          <div className="relative">
-            <div className="pointer-events-none absolute left-0 top-0 h-full w-8 bg-gradient-to-r from-background to-transparent" />
-            <div className="pointer-events-none absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-background to-transparent" />
-            <div className="scrollbar-none flex items-center gap-2 overflow-x-auto py-1">
-              {[
-                'Matrix rain effect with falling green characters',
-                'Ocean waves crashing on a beach',
-                'Fire flames dancing and flickering',
-                'Geometric patterns pulsing and morphing',
-              ].map((s) => (
-                <button
-                  key={s}
-                  onClick={() => {
-                    setPrompt(s)
-                    inputRef.current?.focus()
-                  }}
-                  className="rounded-[8px] border border-border bg-background px-3 py-1.5 text-xs font-mono hover-bg"
-                  title={s}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Input row */}
-          <div className="mt-2 flex items-center gap-2">
+          <div className="flex items-center gap-2">
             {/* Left controls */}
             <div className="flex gap-2">
               <input
