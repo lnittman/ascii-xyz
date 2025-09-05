@@ -38,7 +38,7 @@ export function NavigationHeader() {
               )}
             >
               <Stack className="w-4 h-4" />
-              <span className="hidden sm:inline">Gallery</span>
+              <span className="hidden sm:inline">gallery</span>
             </Link>
             <Link
               href="/create"
@@ -50,7 +50,7 @@ export function NavigationHeader() {
               )}
             >
               <Sparkle className="w-4 h-4" />
-              <span className="hidden sm:inline">Create</span>
+              <span className="hidden sm:inline">create</span>
             </Link>
           </div>
         </div>
