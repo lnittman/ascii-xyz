@@ -27,6 +27,12 @@ export default defineSchema({
       model: v.string(),
       style: v.optional(v.string()),
       createdAt: v.string(),
+      // Remix/combination tracking
+      remixedFrom: v.optional(v.id("artworks")),
+      remixType: v.optional(v.string()),
+      combinedFrom: v.optional(v.array(v.id("artworks"))),
+      combinationType: v.optional(v.string()),
+      blendRatio: v.optional(v.number()),
     }),
     visibility: v.union(v.literal("public"), v.literal("private"), v.literal("unlisted")),
     featured: v.optional(v.boolean()),
@@ -126,4 +132,30 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_artwork", ["artworkId"]),
+  
+  // Track remixes
+  remixes: defineTable({
+    sourceArtworkId: v.id("artworks"),
+    remixArtworkId: v.id("artworks"),
+    userId: v.string(),
+    remixType: v.string(),
+    prompt: v.string(),
+    createdAt: v.string(),
+  })
+    .index("by_source", ["sourceArtworkId"])
+    .index("by_remix", ["remixArtworkId"])
+    .index("by_user", ["userId"]),
+  
+  // Track combinations
+  combinations: defineTable({
+    sourceArtworkIds: v.array(v.id("artworks")),
+    combinedArtworkId: v.id("artworks"),
+    userId: v.string(),
+    combinationType: v.string(),
+    blendRatio: v.optional(v.number()),
+    prompt: v.string(),
+    createdAt: v.string(),
+  })
+    .index("by_combined", ["combinedArtworkId"])
+    .index("by_user", ["userId"]),
 });

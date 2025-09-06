@@ -9,9 +9,11 @@
  */
 
 import type * as functions_actions_ascii from "../functions/actions/ascii.js";
+import type * as functions_actions_combine from "../functions/actions/combine.js";
 import type * as functions_internal_users from "../functions/internal/users.js";
 import type * as functions_mutations_ascii from "../functions/mutations/ascii.js";
 import type * as functions_mutations_files from "../functions/mutations/files.js";
+import type * as functions_mutations_remix from "../functions/mutations/remix.js";
 import type * as functions_mutations_settings from "../functions/mutations/settings.js";
 import type * as functions_queries_ascii from "../functions/queries/ascii.js";
 import type * as functions_queries_collections from "../functions/queries/collections.js";
@@ -40,9 +42,11 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   "functions/actions/ascii": typeof functions_actions_ascii;
+  "functions/actions/combine": typeof functions_actions_combine;
   "functions/internal/users": typeof functions_internal_users;
   "functions/mutations/ascii": typeof functions_mutations_ascii;
   "functions/mutations/files": typeof functions_mutations_files;
+  "functions/mutations/remix": typeof functions_mutations_remix;
   "functions/mutations/settings": typeof functions_mutations_settings;
   "functions/queries/ascii": typeof functions_queries_ascii;
   "functions/queries/collections": typeof functions_queries_collections;

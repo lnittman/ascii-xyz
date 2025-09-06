@@ -5,13 +5,17 @@ import { useAtomValue } from 'jotai'
 import { selectedModelIdAtom } from '@/atoms/models'
 import { AsciiEngine } from '@/lib/ascii/engine'
 import { generateAsciiArt } from './create/actions'
+import { saveAsciiArt } from './create/save-actions'
 import { useIsMobile } from '@/hooks/useIsMobile'
+import { useUser } from '@repo/auth/client'
 
 interface AsciiGeneration {
   id: string
   prompt: string
   frames: string[]
   timestamp: Date
+  saved?: boolean
+  artworkId?: string
 }
 
 export default function GeneratePage() {
@@ -53,11 +57,28 @@ export default function GeneratePage() {
     try {
       const result = await generateAsciiArt(prompt, selectedModelId)
       
+      // Auto-save to gallery
+      let savedId = undefined
+      try {
+        const saveResult = await saveAsciiArt(
+          prompt,
+          result.frames,
+          result.metadata,
+          'private' // Default to private
+        )
+        savedId = saveResult?.id
+      } catch (saveError) {
+        console.error('Failed to save artwork:', saveError)
+        // Continue even if save fails
+      }
+      
       const generation: AsciiGeneration = {
         id: crypto.randomUUID(),
         prompt,
         frames: result.frames,
-        timestamp: new Date()
+        timestamp: new Date(),
+        saved: !!savedId,
+        artworkId: savedId
       }
       
       setGenerations(prev => [...prev, generation])
