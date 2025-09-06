@@ -12,19 +12,19 @@ export const AVAILABLE_MODELS: Record<
     description: string;
   }
 > = {
-  // Preferred defaults
-  'openrouter/gpt-5': {
+  // Preferred defaults (GPT-4o is the latest available)
+  'openrouter/gpt-4o': {
     provider: 'openrouter',
-    model: 'openai/gpt-5',
-    name: 'GPT-5',
-    description: 'OpenAI GPT-5 via OpenRouter',
+    model: 'openai/gpt-4o',
+    name: 'GPT-4o',
+    description: 'Latest multimodal GPT-4',
   },
   // Direct model id support (UI may send this)
-  'openai/gpt-5': {
+  'openai/gpt-4o': {
     provider: 'openrouter',
-    model: 'openai/gpt-5',
-    name: 'GPT-5',
-    description: 'OpenAI GPT-5 via OpenRouter',
+    model: 'openai/gpt-4o',
+    name: 'GPT-4o',
+    description: 'OpenAI GPT-4o via OpenRouter',
   },
   // OpenRouter models
   'openrouter/gpt-4': {
@@ -45,12 +45,6 @@ export const AVAILABLE_MODELS: Record<
     model: 'openai/gpt-4-turbo',
     name: 'GPT-4 Turbo',
     description: 'Fast GPT-4 with 128k context',
-  },
-  'openrouter/gpt-4o': {
-    provider: 'openrouter',
-    model: 'openai/gpt-4o',
-    name: 'GPT-4o',
-    description: 'Latest multimodal GPT-4',
   },
   'openrouter/gpt-4o-mini': {
     provider: 'openrouter',
@@ -96,8 +90,8 @@ export const AVAILABLE_MODELS: Record<
   },
 };
 
-// Default model - use OpenAI GPT-5 via OpenRouter
-export const DEFAULT_MODEL = 'openrouter/gpt-5';
+// Default model - use GPT-4o which is the latest available
+export const DEFAULT_MODEL = 'openrouter/gpt-4o';
 
 // Get OpenRouter instance
 function getOpenRouter(apiKey?: string) {
