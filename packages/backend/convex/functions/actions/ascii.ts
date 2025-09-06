@@ -229,15 +229,12 @@ export const enhance = action({
       v.literal("stylize")
     ),
     apiKey: v.optional(v.string()),
+    modelId: v.optional(v.string()),
   },
-  handler: async (ctx, { frames, enhancementType, apiKey }) => {
-    const key = apiKey || process.env.OPENAI_API_KEY;
-    
-    if (!key) {
-      throw new Error("API key required for enhancement.");
-    }
-
-    const model = getAsciiModel(key);
+  handler: async (_ctx, { frames, enhancementType, apiKey, modelId }) => {
+    // Match other actions: prefer provided model, else default; prefer user key, else OPENROUTER_API_KEY (handled in getAsciiModel)
+    const selectedModel = modelId || DEFAULT_MODEL;
+    const model = getAsciiModel(selectedModel, apiKey);
     
     const enhancementPrompts = {
       "double-resolution": "Double the resolution while maintaining the essence",
