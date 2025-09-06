@@ -239,7 +239,7 @@ Schema overview, tables, and relationships are documented in `../api/schema.md`.
 ## 11) Linear‑inspired design system usage
 
 - Design components are sourced from `@repo/design` with motion utilities.
-- Motion policy (Linear‑style): 0ms in / 150ms out for general UI; 0/0 for menu‑like portals. See `packages/design/styles/transitions.css` and `../linear-ux.md`.
+- Motion policy (Linear‑style): 0ms in / 150ms out for general UI; 0/0 for menu‑like portals. See `packages/design/styles/transitions.css`.
 
 ---
 

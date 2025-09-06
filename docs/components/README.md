@@ -63,7 +63,7 @@ Utilities and providers
 ## Motion and interaction policy
 
 - General UI: 0ms in / 150ms out (linear timing). Menus/sheets/modals rendered in portals: 0ms / 0ms.
-- Use provided utility classes: `hover-transition`, `hover-bg`, `menu-item`, etc. See `packages/design/styles/transitions.css` and `docs/linear-ux.md`.
+- Use provided utility classes: `hover-transition`, `hover-bg`, `menu-item`, etc. See `packages/design/styles/transitions.css`.
 
 ## Component details and props
 
