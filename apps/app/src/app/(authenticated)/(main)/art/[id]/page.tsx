@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Heart, Eye, Share, Download, ArrowLeft, Play, Pause, Trash } from '@phosphor-icons/react';
+import { Heart, Eye, Share, Download, ArrowLeft, Play, Pause, Trash, SkipBack } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { Button } from '@repo/design/components/ui/button';
@@ -21,6 +21,7 @@ export default function ArtworkPage() {
   const { user } = useUser();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentFrame, setCurrentFrame] = useState(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
   
   const artworkId = params?.id as Id<"artworks">;
   const artwork = useArtwork(artworkId!, user?.id);
@@ -80,69 +81,123 @@ export default function ArtworkPage() {
     URL.revokeObjectURL(url);
   };
 
+  // Handle animation playback
+  useEffect(() => {
+    if (!artwork || artwork.frames.length <= 1) return;
+    
+    if (isPlaying) {
+      const fps = artwork.metadata.fps || 12;
+      intervalRef.current = setInterval(() => {
+        setCurrentFrame((prev) => {
+          const next = prev + 1;
+          return next >= artwork.frames.length ? 0 : next;
+        });
+      }, 1000 / fps);
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    }
+    
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [isPlaying, artwork]);
+
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleReset = () => {
+    setIsPlaying(false);
+    setCurrentFrame(0);
+  };
+
   return (
     <div className="min-h-[calc(100vh-4rem)]">
       {/* Header */}
-      <div className="border-b border-border/50">
-        <div className="max-w-6xl mx-auto px-6 py-5">
-          <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+      <div className="max-w-5xl mx-auto px-6 py-6 space-y-4">
+        {/* Top row with back button, title, and action buttons */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            {/* Back button */}
             <Link href="/">
-              <Button variant="ghost" size="icon" className="rounded-md hover:bg-muted/50">
-                <ArrowLeft className="h-4 w-4" weight="bold" />
+              <Button 
+                variant="ghost" 
+                size="icon"
+                className="h-8 w-8 border border-border hover:border-primary/20 rounded-md"
+              >
+                <ArrowLeft size={16} weight="duotone" />
               </Button>
             </Link>
-            <div>
-              <h1 className="text-xl font-medium line-clamp-1">{artwork.prompt}</h1>
-              <p className="text-sm text-muted-foreground/80 mt-0.5">
-                Created {format(new Date(artwork.createdAt), 'MMM d, yyyy · h:mm a')}
-              </p>
-            </div>
+            
+            {/* Title */}
+            <h1 className="text-2xl font-medium truncate">
+              {artwork.prompt}
+            </h1>
           </div>
           
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-4 text-sm text-muted-foreground/80 mr-3">
-              <div className="flex items-center gap-1.5">
-                <Eye className="h-4 w-4" weight="duotone" />
-                <span>{artwork.views || 0}</span>
-              </div>
-              {artwork.visibility === 'public' && (
-                <div className="flex items-center gap-1.5">
-                  <Heart className="h-4 w-4" weight="duotone" />
-                  <span>{artwork.likes || 0}</span>
-                </div>
-              )}
-            </div>
-            
-            <Button variant="ghost" size="icon" onClick={handleDownload} className="rounded-md hover:bg-muted/50">
-              <Download className="h-4 w-4" weight="bold" />
-            </Button>
-            
-            <Button variant="ghost" size="icon" onClick={() => {}} className="rounded-md hover:bg-muted/50">
-              <Share className="h-4 w-4" weight="bold" />
+          {/* Right-aligned action buttons */}
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={handleDownload}
+              className="h-8 w-8 hover:bg-muted/50 rounded-md"
+            >
+              <Download size={16} weight="duotone" />
             </Button>
             
             <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleVisibilityToggle}
-              className="rounded-md border-border/50 hover:bg-muted/50"
+              variant="ghost" 
+              size="icon" 
+              onClick={() => {}}
+              className="h-8 w-8 hover:bg-muted/50 rounded-md"
             >
-              <Badge variant={artwork.visibility === 'public' ? 'default' : 'secondary'} className="rounded-md">
-                {artwork.visibility}
-              </Badge>
+              <Share size={16} weight="duotone" />
             </Button>
             
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={handleDelete}
-              className="rounded-md text-destructive/70 hover:text-destructive hover:bg-destructive/10"
+              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 border border-border hover:border-destructive/20 rounded-md"
             >
-              <Trash className="h-4 w-4" weight="bold" />
+              <Trash size={16} />
             </Button>
           </div>
         </div>
+        
+        {/* Metadata row */}
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <div className="flex items-center gap-4">
+            <span>Created {format(new Date(artwork.createdAt), 'MMM d, yyyy · h:mm a')}</span>
+            <div className="flex items-center gap-1.5">
+              <Eye className="h-4 w-4" weight="duotone" />
+              <span>{artwork.views || 0}</span>
+            </div>
+            {artwork.visibility === 'public' && (
+              <div className="flex items-center gap-1.5">
+                <Heart className="h-4 w-4" weight="duotone" />
+                <span>{artwork.likes || 0}</span>
+              </div>
+            )}
+          </div>
+          
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleVisibilityToggle}
+            className="h-7 px-3 rounded-md border-border/50 hover:bg-muted/50"
+          >
+            <Badge variant={artwork.visibility === 'public' ? 'default' : 'secondary'} className="rounded-md">
+              {artwork.visibility}
+            </Badge>
+          </Button>
         </div>
       </div>
 
@@ -152,17 +207,28 @@ export default function ArtworkPage() {
           {/* Animation Controls */}
           {artwork.frames.length > 1 && (
             <div className="mb-4 flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsPlaying(!isPlaying)}
-              >
-                {isPlaying ? <Pause className="h-4 w-4" weight="fill" /> : <Play className="h-4 w-4" weight="fill" />}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handlePlayPause}
+                  className="rounded-md hover:bg-muted/50"
+                >
+                  {isPlaying ? <Pause className="h-4 w-4" weight="fill" /> : <Play className="h-4 w-4" weight="fill" />}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleReset}
+                  className="rounded-md hover:bg-muted/50"
+                >
+                  <SkipBack className="h-4 w-4" weight="fill" />
+                </Button>
+              </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <span>Frame {currentFrame + 1} of {artwork.frames.length}</span>
                 <span>•</span>
-                <span>{artwork.metadata.fps} FPS</span>
+                <span>{artwork.metadata.fps || 12} FPS</span>
               </div>
             </div>
           )}

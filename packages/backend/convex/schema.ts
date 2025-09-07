@@ -94,14 +94,17 @@ export default defineSchema({
     theme: v.union(v.literal("light"), v.literal("dark"), v.literal("system")),
     defaultVisibility: v.union(v.literal("public"), v.literal("private")),
     emailNotifications: v.boolean(),
-    preferredModel: v.optional(v.string()),
-    preferredProvider: v.optional(v.string()),
-    apiKeys: v.optional(v.array(v.object({
-      name: v.string(),
-      key: v.string(),
-      provider: v.string(),
-      createdAt: v.string(),
-    }))),
+    
+    // API Keys (BYOK)
+    openrouterApiKey: v.optional(v.string()),
+    openaiApiKey: v.optional(v.string()),
+    anthropicApiKey: v.optional(v.string()),
+    googleApiKey: v.optional(v.string()),
+    
+    // Model settings
+    enabledModels: v.optional(v.any()), // Record<provider, modelIds[]>
+    defaultModelId: v.optional(v.string()),
+    
     updatedAt: v.string(),
   })
     .index("by_user", ["userId"]),

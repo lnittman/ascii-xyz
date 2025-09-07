@@ -5,52 +5,37 @@ import { api } from "@repo/backend/convex/_generated/api";
 
 // Hook to get user settings
 export function useUserSettings() {
-  const settings = useQuery(api.functions.queries.settings.get);
-  const updateSettingsMutation = useMutation(api.functions.mutations.settings.update);
-  const addKeyMutation = useMutation(api.functions.mutations.settings.addApiKey);
-  const removeKeyMutation = useMutation(api.functions.mutations.settings.removeApiKey);
+  const settings = useQuery(api.functions.settings.get);
+  const updateSettingsMutation = useMutation(api.functions.settings.update);
+  const toggleModelMutation = useMutation(api.functions.settings.toggleModel);
+  const verifyApiKeyMutation = useMutation(api.functions.settings.verifyApiKey);
   
   const updateSettings = async (updates: {
     theme?: 'light' | 'dark' | 'system';
     defaultVisibility?: 'public' | 'private';
     emailNotifications?: boolean;
-    preferredModel?: string;
-    preferredProvider?: string;
+    openrouterApiKey?: string;
+    openaiApiKey?: string;
+    anthropicApiKey?: string;
+    googleApiKey?: string;
+    enabledModels?: any;
+    defaultModelId?: string;
   }) => {
     await updateSettingsMutation(updates);
   };
 
-  const addApiKey = async (keyData: { name: string; key: string; provider: string }) => {
-    await addKeyMutation(keyData);
+  const toggleModel = async (provider: string, modelId: string, enabled: boolean) => {
+    await toggleModelMutation({ provider, modelId, enabled });
   };
   
-  const removeApiKey = async (name: string) => {
-    await removeKeyMutation({ name });
+  const verifyApiKey = async (provider: string, apiKey: string) => {
+    return await verifyApiKeyMutation({ provider, apiKey });
   };
 
   return {
     settings,
     updateSettings,
-    addApiKey,
-    removeApiKey,
-  };
-}
-
-// Hook to manage API keys
-export function useApiKeys() {
-  const addKeyMutation = useMutation(api.functions.mutations.settings.addApiKey);
-  const removeKeyMutation = useMutation(api.functions.mutations.settings.removeApiKey);
-  
-  const addApiKey = async (name: string, key: string, provider: string) => {
-    await addKeyMutation({ name, key, provider });
-  };
-  
-  const removeApiKey = async (name: string) => {
-    await removeKeyMutation({ name });
-  };
-  
-  return {
-    addApiKey,
-    removeApiKey,
+    toggleModel,
+    verifyApiKey,
   };
 }

@@ -1,7 +1,8 @@
-import { action } from "../../_generated/server";
+import { action, internalAction } from "../../_generated/server";
 import { v } from "convex/values";
 import { generateText } from 'ai';
 import { getAsciiModel, DEFAULT_MODEL } from "../../lib/ai";
+import { internal } from "../../_generated/api";
 
 // Pure AI-driven ASCII generation
 export const generate = action({
@@ -11,12 +12,37 @@ export const generate = action({
     userId: v.optional(v.string()),
     modelId: v.optional(v.string()),
   },
-  handler: async (_ctx, { prompt, apiKey, userId, modelId }) => {
+  handler: async (ctx, { prompt, apiKey, userId, modelId }) => {
     // Use provided model or default
     const selectedModel = modelId || DEFAULT_MODEL;
 
     try {
-      const model = getAsciiModel(selectedModel, apiKey);
+      // Get user's API key from settings if not provided
+      let userApiKey = apiKey;
+      if (!userApiKey && userId) {
+        try {
+          // Get user from database
+          const user = await ctx.runQuery(internal.functions.users.getByClerkId, { 
+            clerkId: userId 
+          });
+          
+          if (user) {
+            const keys = await ctx.runQuery(internal.functions.settings.getUserApiKeys, { 
+              userId: user._id 
+            });
+            // Use OpenRouter key by default, or specific provider key based on model
+            userApiKey = keys?.openrouterApiKey || keys?.openaiApiKey || keys?.anthropicApiKey;
+          } else {
+            console.log('User not found in database, will use server key if available');
+          }
+        } catch (error) {
+          console.log('Could not fetch user API key:', error);
+          // Continue without user key - will fall back to server key
+        }
+      }
+
+      // If still no API key, it will fall back to server environment key in getAsciiModel
+      const model = getAsciiModel(selectedModel, userApiKey);
       
       // Step 1: AI analyzes the prompt and creates a generation plan
       const planResponse = await generateText({
@@ -72,73 +98,54 @@ Respond with ONLY valid JSON.`,
         throw new Error("Failed to create generation plan. Please try again.");
       }
 
-      // Step 2: AI generates the actual ASCII frames based on the plan
-      const framesResponse = await generateText({
-        model,
-        prompt: `You are creating ASCII art animation frames. Follow this exact plan:
-
-${JSON.stringify(plan, null, 2)}
-
-Generate exactly ${plan.frameCount} frames of ASCII art.
-Each frame must be:
-- Exactly ${plan.width} characters wide
-- Exactly ${plan.height} lines tall
-- Use only these characters: ${plan.characters.join('')}
-- Follow the movement pattern: ${plan.movement}
-- Maintain consistent style: ${plan.style}
-
-Create smooth animation transitions between frames.
-Think about physics, motion, and visual continuity.
-
-Output format:
-Return a JSON array where each element is a complete frame as a single string.
-Each frame string should contain newlines (\\n) between rows.
-
-Example structure:
-[
-  "first frame line 1\\nfirst frame line 2\\n...",
-  "second frame line 1\\nsecond frame line 2\\n...",
-  ...
-]
-
-Generate the frames now:`,
-        temperature: 0.8,
-        maxRetries: 2,
-      });
-
-      // Parse the frames
-      let frames;
-      try {
-        frames = JSON.parse(framesResponse.text);
+      // Step 2: Generate frames one by one with snowballed context
+      console.log(`Generating ${plan.frameCount} frames with workflow...`);
+      
+      const frames: string[] = [];
+      
+      // Generate frames sequentially with context
+      for (let i = 0; i < plan.frameCount; i++) {
+        console.log(`Generating frame ${i + 1}/${plan.frameCount}...`);
         
-        if (!Array.isArray(frames) || frames.length === 0) {
-          throw new Error("Invalid frames format");
-        }
-
-        // Validate frame dimensions
-        frames = frames.map(frame => {
-          const lines = frame.split('\n').filter((line: string) => line.length > 0);
+        try {
+          // Generate a single frame with context from previous frames
+          const frame = await ctx.runAction(internal.functions.actions.ascii.generateSingleFrame, {
+            plan,
+            frameIndex: i,
+            previousFrames: frames.slice(-3), // Use last 3 frames as context
+            apiKey: userApiKey,
+            modelId: selectedModel,
+          });
           
-          // Ensure correct height
-          while (lines.length < plan.height) {
-            lines.push(' '.repeat(plan.width));
+          frames.push(frame);
+        } catch (error) {
+          console.error(`Failed to generate frame ${i + 1}:`, error);
+          // If frame generation fails, try once more with a simpler prompt
+          try {
+            const fallbackFrame = await ctx.runAction(internal.functions.actions.ascii.generateSingleFrame, {
+              plan: {
+                ...plan,
+                interpretation: `Frame ${i + 1} of ${plan.interpretation}`,
+              },
+              frameIndex: i,
+              previousFrames: frames.slice(-1), // Use only last frame for fallback
+              apiKey: userApiKey,
+              modelId: selectedModel,
+            });
+            frames.push(fallbackFrame);
+          } catch (fallbackError) {
+            console.error(`Fallback generation also failed for frame ${i + 1}:`, fallbackError);
+            // Add a placeholder frame to maintain count
+            const placeholderFrame = Array(plan.height)
+              .fill(null)
+              .map(() => ' '.repeat(plan.width))
+              .join('\n');
+            frames.push(placeholderFrame);
           }
-          if (lines.length > plan.height) {
-            lines.splice(plan.height);
-          }
-
-          // Ensure correct width
-          return lines.map((line: string) => {
-            if (line.length > plan.width) {
-              return line.substring(0, plan.width);
-            }
-            return line.padEnd(plan.width, ' ');
-          }).join('\n');
-        });
-
-      } catch (_error) {
-        throw new Error("Failed to generate valid frames. Please try again.");
+        }
       }
+      
+      console.log(`Successfully generated ${frames.length} frames`);
 
       // Return the complete result
       return {
@@ -219,6 +226,115 @@ Return a JSON array of all ${originalFrames.length} modified frames.`,
 });
 
 // Upscale/enhance existing ASCII art
+// Internal action to generate a single frame with context
+export const generateSingleFrame = internalAction({
+  args: {
+    plan: v.object({
+      interpretation: v.string(),
+      style: v.string(),
+      movement: v.any(), // Changed to v.any() to accept both string and object
+      frameCount: v.number(),
+      width: v.number(),
+      height: v.number(),
+      fps: v.number(),
+      characters: v.array(v.string()),
+      colorHints: v.optional(v.any()), // Changed to v.any() to accept both string and object
+      metadata: v.optional(v.any()),
+    }),
+    frameIndex: v.number(),
+    previousFrames: v.array(v.string()),
+    apiKey: v.optional(v.string()),
+    modelId: v.optional(v.string()),
+  },
+  handler: async (_ctx, { plan, frameIndex, previousFrames, apiKey, modelId }) => {
+    const model = getAsciiModel(modelId || DEFAULT_MODEL, apiKey);
+    
+    // Calculate animation progress
+    const progress = frameIndex / (plan.frameCount - 1);
+    const isFirstFrame = frameIndex === 0;
+    const isLastFrame = frameIndex === plan.frameCount - 1;
+    
+    // Build context from previous frames
+    let contextPrompt = '';
+    if (previousFrames.length > 0) {
+      contextPrompt = `Previous frames for context (maintain continuity):\n`;
+      previousFrames.forEach((frame, idx) => {
+        const frameNum = frameIndex - previousFrames.length + idx + 1;
+        contextPrompt += `\nFrame ${frameNum}:\n${frame}\n`;
+      });
+    }
+    
+    // Generate the frame
+    const response = await generateText({
+      model,
+      prompt: `You are generating frame ${frameIndex + 1} of ${plan.frameCount} for an ASCII animation.
+
+Animation Details:
+- Subject: ${plan.interpretation}
+- Style: ${plan.style}
+- Movement: ${typeof plan.movement === 'string' ? plan.movement : JSON.stringify(plan.movement)}
+- Dimensions: ${plan.width}x${plan.height} characters
+- Characters to use: ${plan.characters.join('')}
+- Animation progress: ${Math.round(progress * 100)}%
+${plan.colorHints ? `- Color hints: ${typeof plan.colorHints === 'string' ? plan.colorHints : JSON.stringify(plan.colorHints)}` : ''}
+
+${contextPrompt}
+
+Instructions:
+1. Generate ONLY frame ${frameIndex + 1}
+2. The frame must be EXACTLY ${plan.width} characters wide and ${plan.height} lines tall
+3. Use ONLY these characters: ${plan.characters.join('')}
+4. ${isFirstFrame ? 'This is the FIRST frame - establish the starting position' : ''}
+5. ${isLastFrame ? 'This is the LAST frame - complete the animation cycle' : ''}
+6. ${!isFirstFrame && !isLastFrame ? `Continue the ${typeof plan.movement === 'string' ? plan.movement : 'animation'} movement smoothly from the previous frame` : ''}
+7. Maintain the ${plan.style} style throughout
+
+Think step by step:
+1. What should be happening at ${Math.round(progress * 100)}% through the animation?
+2. How does this frame connect to the previous frame?
+3. What subtle changes create smooth motion?
+
+Return ONLY the ASCII art frame as plain text (no JSON, no markdown, no explanation).
+Each line must be exactly ${plan.width} characters (use spaces for empty areas).
+The frame must have exactly ${plan.height} lines.`,
+      temperature: 0.7,
+      maxRetries: 2,
+    });
+    
+    // Process and validate the frame
+    let frame = response.text.trim();
+    
+    // Remove any markdown code blocks if present
+    if (frame.includes('```')) {
+      const match = frame.match(/```[\s\S]*?\n([\s\S]*?)```/);
+      if (match) {
+        frame = match[1].trim();
+      }
+    }
+    
+    // Ensure correct dimensions
+    const lines = frame.split('\n');
+    
+    // Pad or trim to correct height
+    while (lines.length < plan.height) {
+      lines.push(' '.repeat(plan.width));
+    }
+    if (lines.length > plan.height) {
+      lines.splice(plan.height);
+    }
+    
+    // Ensure each line is correct width
+    const validatedFrame = lines.map(line => {
+      if (line.length > plan.width) {
+        return line.substring(0, plan.width);
+      }
+      return line.padEnd(plan.width, ' ');
+    }).join('\n');
+    
+    return validatedFrame;
+  },
+});
+
 export const enhance = action({
   args: {
     frames: v.array(v.string()),

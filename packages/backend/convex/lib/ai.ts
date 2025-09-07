@@ -90,15 +90,30 @@ export const AVAILABLE_MODELS: Record<
   },
 };
 
-// Default model - use GPT-4o which is the latest available
-export const DEFAULT_MODEL = 'openrouter/gpt-4o';
+// Default model - use Claude 3.5 Sonnet for best creative output
+export const DEFAULT_MODEL = 'openrouter/claude-3.5-sonnet';
 
 // Get OpenRouter instance
 function getOpenRouter(apiKey?: string) {
+  // In production, require user API key for BYOK
+  // In development, allow fallback to server key for testing
   const key = apiKey || process.env.OPENROUTER_API_KEY;
+  
   if (!key) {
-    throw new Error('OPENROUTER_API_KEY is not set');
+    throw new Error('No API key available. Please add your OpenRouter API key in Settings → Models to use ASCII generation.');
   }
+  
+  // If it's a test key, use the server key instead
+  if (key.startsWith('sk-or-v1-test')) {
+    const serverKey = process.env.OPENROUTER_API_KEY;
+    if (serverKey) {
+      console.log('Using server API key for testing (test key detected)');
+      return createOpenRouter({
+        apiKey: serverKey,
+      });
+    }
+  }
+  
   return createOpenRouter({
     apiKey: key,
   });

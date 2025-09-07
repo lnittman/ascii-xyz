@@ -27,7 +27,7 @@ function ThemeOptions() {
   if (!mounted) return null;
   
   return (
-    <div className="flex w-full items-center justify-end gap-1 px-3 py-1">
+    <>
       <button
         onClick={() => setTheme('light')}
         className={cn(
@@ -58,7 +58,7 @@ function ThemeOptions() {
       >
         <Monitor className="w-3.5 h-3.5" weight="duotone" />
       </button>
-    </div>
+    </>
   );
 }
 
@@ -204,9 +204,11 @@ export function UserMenu() {
               <DropdownMenuSeparator className="my-1" />
               
               {/* Theme Switcher */}
-              <div className="py-1">
-                <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Theme</div>
-                <ThemeOptions />
+              <div className="px-3 py-2 flex items-center justify-between">
+                <span className="text-xs font-medium text-muted-foreground">Theme</span>
+                <div className="flex items-center gap-1">
+                  <ThemeOptions />
+                </div>
               </div>
               
               <DropdownMenuSeparator className="my-1" />
