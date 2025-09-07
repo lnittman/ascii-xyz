@@ -4,7 +4,7 @@ import { generateText } from 'ai';
 import { getAsciiModel, DEFAULT_MODEL } from "../../lib/ai";
 import { internal } from "../../_generated/api";
 
-// Pure AI-driven ASCII generation
+// Pure AI-driven ASCII generation with live progress updates
 export const generate = action({
   args: {
     prompt: v.string(),
@@ -12,9 +12,17 @@ export const generate = action({
     userId: v.optional(v.string()),
     modelId: v.optional(v.string()),
   },
-  handler: async (ctx, { prompt, apiKey, userId, modelId }) => {
+  handler: async (ctx, { prompt, apiKey, userId, modelId }): Promise<any> => {
     // Use provided model or default
     const selectedModel = modelId || DEFAULT_MODEL;
+
+    // Create a generation record to track progress
+    const generationId = await ctx.runMutation(internal.functions.mutations.generations.createGeneration, {
+      userId,
+      prompt,
+      modelId: selectedModel,
+      status: 'planning',
+    });
 
     try {
       // Get user's API key from settings if not provided
@@ -95,8 +103,21 @@ Respond with ONLY valid JSON.`,
       try {
         plan = JSON.parse(planResponse.text) as GenerationPlan;
       } catch (_error) {
+        await ctx.runMutation(internal.functions.mutations.generations.updateGeneration, {
+          generationId,
+          status: 'failed',
+          error: 'Failed to create generation plan',
+        });
         throw new Error("Failed to create generation plan. Please try again.");
       }
+
+      // Update generation with plan and start generating
+      await ctx.runMutation(internal.functions.mutations.generations.updateGeneration, {
+        generationId,
+        status: 'generating',
+        plan,
+        totalFrames: plan.frameCount,
+      })
 
       // Step 2: Generate frames one by one with snowballed context
       console.log(`Generating ${plan.frameCount} frames with workflow...`);
@@ -118,6 +139,13 @@ Respond with ONLY valid JSON.`,
           });
           
           frames.push(frame);
+          
+          // Update generation with new frame
+          await ctx.runMutation(internal.functions.mutations.generations.updateGenerationFrame, {
+            generationId,
+            frame,
+            frameIndex: i,
+          });
         } catch (error) {
           console.error(`Failed to generate frame ${i + 1}:`, error);
           // If frame generation fails, try once more with a simpler prompt
@@ -147,8 +175,16 @@ Respond with ONLY valid JSON.`,
       
       console.log(`Successfully generated ${frames.length} frames`);
 
-      // Return the complete result
+      // Mark generation as completed
+      await ctx.runMutation(internal.functions.mutations.generations.updateGeneration, {
+        generationId,
+        status: 'completed',
+        completedAt: new Date().toISOString(),
+      });
+
+      // Return the complete result with generation ID
       return {
+        generationId,
         frames,
         metadata: {
           prompt,
@@ -161,6 +197,14 @@ Respond with ONLY valid JSON.`,
 
       } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Failed to generate ASCII art';
+      
+      // Update generation status to failed
+      await ctx.runMutation(internal.functions.mutations.generations.updateGeneration, {
+        generationId,
+        status: 'failed',
+        error: message,
+      });
+      
       throw new Error(message);
     }
   },

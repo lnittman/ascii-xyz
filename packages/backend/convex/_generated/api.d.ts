@@ -13,10 +13,12 @@ import type * as functions_actions_combine from "../functions/actions/combine.js
 import type * as functions_internal_users from "../functions/internal/users.js";
 import type * as functions_mutations_ascii from "../functions/mutations/ascii.js";
 import type * as functions_mutations_files from "../functions/mutations/files.js";
+import type * as functions_mutations_generations from "../functions/mutations/generations.js";
 import type * as functions_mutations_remix from "../functions/mutations/remix.js";
 import type * as functions_queries_ascii from "../functions/queries/ascii.js";
 import type * as functions_queries_collections from "../functions/queries/collections.js";
 import type * as functions_queries_files from "../functions/queries/files.js";
+import type * as functions_queries_generations from "../functions/queries/generations.js";
 import type * as functions_queries_settings from "../functions/queries/settings.js";
 import type * as functions_queries_shares from "../functions/queries/shares.js";
 import type * as functions_queries_users from "../functions/queries/users.js";
@@ -47,10 +49,12 @@ declare const fullApi: ApiFromModules<{
   "functions/internal/users": typeof functions_internal_users;
   "functions/mutations/ascii": typeof functions_mutations_ascii;
   "functions/mutations/files": typeof functions_mutations_files;
+  "functions/mutations/generations": typeof functions_mutations_generations;
   "functions/mutations/remix": typeof functions_mutations_remix;
   "functions/queries/ascii": typeof functions_queries_ascii;
   "functions/queries/collections": typeof functions_queries_collections;
   "functions/queries/files": typeof functions_queries_files;
+  "functions/queries/generations": typeof functions_queries_generations;
   "functions/queries/settings": typeof functions_queries_settings;
   "functions/queries/shares": typeof functions_queries_shares;
   "functions/queries/users": typeof functions_queries_users;

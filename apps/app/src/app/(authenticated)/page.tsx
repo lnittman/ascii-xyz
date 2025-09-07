@@ -9,9 +9,12 @@ import { saveAsciiArt } from './create/save-actions'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { useUser } from '@repo/auth/client'
 import { ModelPicker } from '@/components/model-picker'
+import { useGeneration } from '@/hooks/use-generation'
+import { Id } from '@repo/backend/convex/_generated/dataModel'
 
 interface AsciiGeneration {
   id: string
+  generationId?: Id<"artworkGenerations">
   prompt: string
   frames: string[]
   timestamp: Date
@@ -46,17 +49,28 @@ export default function GeneratePage() {
   const [generations, setGenerations] = useState<AsciiGeneration[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [activeGenerationId, setActiveGenerationId] = useState<Id<"artworkGenerations"> | null>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const isMobile = useIsMobile()
   const selectedModelId = useAtomValue(selectedModelIdAtom)
+  
+  // Subscribe to live generation updates
+  const liveGeneration = useGeneration(activeGenerationId)
 
   const handleGenerate = async () => {
     if (!prompt.trim() || isGenerating) return
     
     setIsGenerating(true)
+    setActiveGenerationId(null) // Reset active generation
+    
     try {
       const result = await generateAsciiArt(prompt, selectedModelId)
+      
+      // Set the generation ID for live updates
+      if (result.generationId) {
+        setActiveGenerationId(result.generationId as Id<"artworkGenerations">)
+      }
       
       // Auto-save to gallery
       let savedId = undefined
@@ -75,6 +89,7 @@ export default function GeneratePage() {
       
       const generation: AsciiGeneration = {
         id: crypto.randomUUID(),
+        generationId: result.generationId as Id<"artworkGenerations">,
         prompt,
         frames: result.frames,
         timestamp: new Date(),
@@ -89,6 +104,7 @@ export default function GeneratePage() {
       console.error('Failed to generate ASCII art:', error)
     } finally {
       setIsGenerating(false)
+      setActiveGenerationId(null) // Clear when done
     }
   }
 
@@ -130,6 +146,16 @@ export default function GeneratePage() {
   }
 
   const currentGeneration = generations[currentIndex] || null
+  
+  // Use live generation data if available during generation
+  const displayGeneration = liveGeneration && activeGenerationId && isGenerating ? {
+    ...currentGeneration,
+    frames: liveGeneration.frames || [],
+    status: liveGeneration.status,
+    currentFrame: liveGeneration.currentFrame,
+    totalFrames: liveGeneration.totalFrames,
+    plan: liveGeneration.plan,
+  } : currentGeneration
 
   return (
     <div className="min-h-[calc(100vh-4rem)]">
@@ -139,13 +165,71 @@ export default function GeneratePage() {
 
           {/* Main content area */}
           <div className="">
-            {isGenerating ? (
+            {isGenerating && liveGeneration ? (
+              <div className="pt-8">
+                <div className="mb-6">
+                  <p className="text-sm font-mono text-muted-foreground mb-2">
+                    PROMPT:
+                  </p>
+                  <p className="text-base font-mono">
+                    {prompt || liveGeneration.prompt}
+                  </p>
+                  
+                  {/* Progress indicator */}
+                  {liveGeneration.status === 'planning' && (
+                    <div className="mt-4 text-sm font-mono text-muted-foreground">
+                      <span className="inline-block animate-pulse">Planning animation...</span>
+                    </div>
+                  )}
+                  {liveGeneration.status === 'generating' && (
+                    <div className="mt-4">
+                      <div className="flex items-center gap-3 text-sm font-mono">
+                        <span className="text-muted-foreground">Frame</span>
+                        <span className="text-foreground">{liveGeneration.currentFrame || 0}</span>
+                        <span className="text-muted-foreground">of</span>
+                        <span className="text-foreground">{liveGeneration.totalFrames || '?'}</span>
+                      </div>
+                      <div className="mt-2 w-full bg-muted rounded-full h-1 overflow-hidden">
+                        <div 
+                          className="h-full bg-primary transition-all duration-300 ease-out"
+                          style={{ 
+                            width: `${liveGeneration.totalFrames ? (liveGeneration.currentFrame / liveGeneration.totalFrames) * 100 : 0}%` 
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="border border-border bg-muted/30 p-6 overflow-auto min-h-[200px]">
+                  {liveGeneration.frames && liveGeneration.frames.length > 0 ? (
+                    <AsciiEngine
+                      frames={liveGeneration.frames}
+                      fps={liveGeneration.plan?.fps || 12}
+                      loop={true}
+                      autoPlay={true}
+                      style={{
+                        fontSize: '12px',
+                        lineHeight: '14px',
+                        color: 'hsl(var(--foreground))',
+                        fontFamily: 'monospace',
+                      }}
+                    />
+                  ) : (
+                    <div className="text-center text-muted-foreground font-mono text-sm">
+                      <div className="text-2xl mb-4 animate-pulse">◌ ◌ ◌</div>
+                      {liveGeneration.status === 'planning' ? 'Creating generation plan...' : 'Generating frames...'}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : isGenerating ? (
               <div className="text-center pt-16">
-                <div className="text-2xl font-mono text-foreground mb-4">
+                <div className="text-2xl font-mono text-foreground mb-4 animate-pulse">
                   ◌ ◌ ◌
                 </div>
                 <p className="text-sm text-muted-foreground font-mono">
-                  generating ascii art...
+                  initializing generation...
                 </p>
               </div>
             ) : currentGeneration ? (
@@ -160,9 +244,9 @@ export default function GeneratePage() {
                 </div>
 
                 <div className="border border-border bg-muted/30 p-6 overflow-auto">
-                  {currentGeneration.frames && currentGeneration.frames.length > 0 && (
+                  {displayGeneration.frames && displayGeneration.frames.length > 0 && (
                     <AsciiEngine
-                      frames={currentGeneration.frames}
+                      frames={displayGeneration.frames}
                       fps={12}
                       loop={true}
                       autoPlay={true}

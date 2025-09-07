@@ -14,9 +14,45 @@ export default defineSchema({
     .index("by_clerk_id", ["clerkId"])
     .index("by_email", ["email"]),
 
+  // Live artwork generations - track progress frame by frame
+  artworkGenerations: defineTable({
+    userId: v.optional(v.string()), // Clerk user ID
+    prompt: v.string(),
+    status: v.union(
+      v.literal("planning"),
+      v.literal("generating"),
+      v.literal("completed"),
+      v.literal("failed")
+    ),
+    plan: v.optional(v.object({
+      interpretation: v.string(),
+      style: v.string(),
+      movement: v.any(),
+      frameCount: v.number(),
+      width: v.number(),
+      height: v.number(),
+      fps: v.number(),
+      characters: v.array(v.string()),
+      colorHints: v.optional(v.any()),
+      metadata: v.optional(v.any()),
+    })),
+    frames: v.array(v.string()), // Frames generated so far
+    currentFrame: v.number(), // Current frame index being generated
+    totalFrames: v.number(), // Total expected frames
+    error: v.optional(v.string()),
+    modelId: v.string(),
+    apiKey: v.optional(v.string()), // For tracking (not exposed)
+    createdAt: v.string(),
+    completedAt: v.optional(v.string()),
+  })
+    .index("by_user", ["userId"])
+    .index("by_status", ["status"])
+    .index("by_created", ["createdAt"]),
+
   // ASCII artworks
   artworks: defineTable({
     userId: v.string(), // Clerk user ID, not a reference to users table
+    generationId: v.optional(v.id("artworkGenerations")), // Link to generation
     prompt: v.string(),
     frames: v.array(v.string()), // Array of ASCII frames for animation
     metadata: v.object({
