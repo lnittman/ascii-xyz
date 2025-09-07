@@ -4,14 +4,19 @@ import { api } from '@repo/backend/convex/_generated/api';
 import { fetchAction } from 'convex/nextjs';
 import { auth } from '@clerk/nextjs/server';
 
-export async function generateAsciiArt(prompt: string, modelId?: string, apiKey?: string) {
+export async function generateAsciiArt(prompt: string, modelId?: string, apiKey?: string, useAgent: boolean = true) {
   try {
     // Get the current user ID (optional)
     const { userId } = await auth();
     
+    // Use agent-based generation by default for better context and thinking traces
+    const action = useAgent 
+      ? api.agent.ascii.generateWithAgent
+      : api.functions.actions.ascii.generate;
+    
     // Call the Convex action to generate ASCII art
     // This will throw an error if no API key is available
-    const result = await fetchAction(api.functions.actions.ascii.generate, {
+    const result = await fetchAction(action, {
       prompt,
       userId: userId || undefined,
       modelId: modelId || undefined, // Selected model from jotai atom
@@ -23,8 +28,8 @@ export async function generateAsciiArt(prompt: string, modelId?: string, apiKey?
     console.error('Error generating ASCII art:', error);
     
     // If it's an API key error, throw it to the UI
-    if (error.message?.includes('API key required')) {
-      throw new Error('API key required. Please add your OpenAI API key in settings.');
+    if (error.message?.includes('API key required') || error.message?.includes('OPENROUTER_API_KEY')) {
+      throw new Error('Please add your OpenRouter API key in Settings → Models to use ASCII generation.');
     }
     
     // For other errors, throw a generic message

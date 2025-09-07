@@ -39,6 +39,12 @@ export default defineSchema({
     frames: v.array(v.string()), // Frames generated so far
     currentFrame: v.number(), // Current frame index being generated
     totalFrames: v.number(), // Total expected frames
+    thinkingTraces: v.optional(v.array(v.object({
+      trace: v.string(),
+      type: v.union(v.literal("system"), v.literal("planning"), v.literal("frame")),
+      metadata: v.optional(v.any()),
+      timestamp: v.number(),
+    }))), // Agent thinking traces for UI display
     error: v.optional(v.string()),
     modelId: v.string(),
     apiKey: v.optional(v.string()), // For tracking (not exposed)

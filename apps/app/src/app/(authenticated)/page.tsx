@@ -11,6 +11,7 @@ import { useUser } from '@repo/auth/client'
 import { ModelPicker } from '@/components/model-picker'
 import { useGeneration } from '@/hooks/use-generation'
 import { Id } from '@repo/backend/convex/_generated/dataModel'
+import { ThinkingTraces, InlineThinkingTrace } from '@/components/thinking-traces'
 
 interface AsciiGeneration {
   id: string
@@ -178,7 +179,7 @@ export default function GeneratePage() {
                   {/* Progress indicator */}
                   {liveGeneration.status === 'planning' && (
                     <div className="mt-4 text-sm font-mono text-muted-foreground">
-                      <span className="inline-block animate-pulse">Planning animation...</span>
+                      <InlineThinkingTrace text="Planning animation..." />
                     </div>
                   )}
                   {liveGeneration.status === 'generating' && (
@@ -197,6 +198,13 @@ export default function GeneratePage() {
                           }}
                         />
                       </div>
+                    </div>
+                  )}
+                  
+                  {/* Thinking traces */}
+                  {liveGeneration.thinkingTraces && liveGeneration.thinkingTraces.length > 0 && (
+                    <div className="mt-4 p-3 bg-muted/30 rounded-md border border-border/50 max-h-32 overflow-y-auto">
+                      <ThinkingTraces traces={liveGeneration.thinkingTraces} />
                     </div>
                   )}
                 </div>

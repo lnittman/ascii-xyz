@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as agent_ascii from "../agent/ascii.js";
 import type * as functions_actions_ascii from "../functions/actions/ascii.js";
 import type * as functions_actions_combine from "../functions/actions/combine.js";
 import type * as functions_internal_users from "../functions/internal/users.js";
@@ -44,6 +45,7 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "agent/ascii": typeof agent_ascii;
   "functions/actions/ascii": typeof functions_actions_ascii;
   "functions/actions/combine": typeof functions_actions_combine;
   "functions/internal/users": typeof functions_internal_users;
