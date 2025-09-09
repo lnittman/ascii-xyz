@@ -4,15 +4,13 @@ import { api } from '@repo/backend/convex/_generated/api';
 import { fetchAction } from 'convex/nextjs';
 import { auth } from '@clerk/nextjs/server';
 
-export async function generateAsciiArt(prompt: string, modelId?: string, apiKey?: string, useAgent: boolean = true) {
+export async function generateAsciiArt(prompt: string, modelId?: string, apiKey?: string) {
   try {
     // Get the current user ID (optional)
     const { userId } = await auth();
     
-    // Use agent-based generation by default for better context and thinking traces
-    const action = useAgent 
-      ? api.agent.ascii.generateWithAgent
-      : api.functions.actions.ascii.generate;
+    // Always use agent-based generation for better context and thinking traces
+    const action = api.agent.ascii.generateWithAgent;
     
     // Call the Convex action to generate ASCII art
     // This will throw an error if no API key is available

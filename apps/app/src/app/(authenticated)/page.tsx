@@ -66,7 +66,8 @@ export default function GeneratePage() {
     setActiveGenerationId(null) // Reset active generation
     
     try {
-      const result = await generateAsciiArt(prompt, selectedModelId)
+      // Use agent-based generation with world-class prompting
+      const result = await generateAsciiArt(prompt, selectedModelId, undefined)
       
       // Set the generation ID for live updates
       if (result.generationId) {

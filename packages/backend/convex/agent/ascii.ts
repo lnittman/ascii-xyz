@@ -36,7 +36,7 @@ export const createGenerationThread = internalAction({
   },
 });
 
-// Generate metadata and plan
+// Generate metadata and plan with world-class XML prompting
 export const generateMetadata = internalAction({
   args: {
     threadId: v.id("artworkGenerations"),
@@ -56,71 +56,184 @@ export const generateMetadata = internalAction({
 
     const model = getAsciiModel(modelId || DEFAULT_MODEL, apiKey);
     
-    // Generate metadata and plan
-    const response = await generateObject({
-      model,
-      schema: z.object({
-        interpretation: z.string().describe("What the user wants to see"),
-        subject: z.string().describe("Main subject of the animation"),
-        style: z.string().describe("ASCII art style (dense, sparse, geometric, etc)"),
-        movement: z.string().describe("How things should animate"),
-        frameCount: z.number().min(10).max(60).describe("Number of frames"),
-        width: z.number().min(40).max(120).describe("Width in characters"),
-        height: z.number().min(20).max(40).describe("Height in lines"),
-        fps: z.number().min(6).max(24).describe("Frames per second"),
-        characters: z.array(z.string()).describe("ASCII characters to use"),
-        colorHints: z.string().optional().describe("Optional color suggestions"),
-        thinkingProcess: z.array(z.string()).describe("Step-by-step thought process"),
-      }),
-      prompt: `Analyze this ASCII animation request and create a detailed plan.
+    // World-class XML prompt for metadata generation
+    const xmlPrompt = `<ascii_animation_planner>
+  <role>You are an expert ASCII animation artist and creative director with deep understanding of:
+    - ASCII art aesthetics and character selection
+    - Animation principles (timing, easing, motion)
+    - Visual storytelling through text characters
+    - Technical constraints of terminal-based art
+  </role>
 
-User Request: "${prompt}"
+  <request>
+    <user_prompt>${prompt}</user_prompt>
+  </request>
 
-Think through:
-1. What is the main subject and how should it look?
-2. What style of ASCII art fits best?
-3. How should the animation move?
-4. What frame count and dimensions work best?
-5. Which ASCII characters create the best effect?
+  <task>
+    Analyze the user's request and create a comprehensive animation plan.
+    Think deeply about the artistic vision, technical execution, and viewer experience.
+  </task>
 
-Be creative and contextually aware. Provide your thinking process step by step.`,
-    });
+  <analysis_framework>
+    <interpretation>
+      - What is the user really asking for?
+      - What emotions or experiences should this evoke?
+      - What's the narrative or visual journey?
+    </interpretation>
+    
+    <subject_analysis>
+      - Primary subject and secondary elements
+      - Visual hierarchy and focal points
+      - Symbolic or literal representation
+    </subject_analysis>
+    
+    <style_selection>
+      - Dense (████): Heavy, dramatic, high contrast
+      - Sparse (· · ·): Light, minimalist, ethereal
+      - Geometric (╱╲╳): Angular, structured, technical
+      - Organic (≈~∿): Flowing, natural, curved
+      - Mixed: Combination for depth and texture
+    </style_selection>
+    
+    <motion_design>
+      - Linear: Constant speed, mechanical
+      - Eased: Natural acceleration/deceleration
+      - Bouncing: Playful, energetic
+      - Flowing: Smooth, continuous
+      - Pulsing: Rhythmic, breathing
+    </motion_design>
+    
+    <technical_parameters>
+      - Frame count: Balance smoothness vs generation time (10-60)
+      - Dimensions: Readable on various screens (40-120w x 20-40h)
+      - FPS: Perception of motion (6-24)
+      - Character palette: Visual consistency and contrast
+    </technical_parameters>
+  </analysis_framework>
 
-    const plan = response.object;
+  <thinking_process>
+    For each decision, provide clear reasoning:
+    1. "I interpret this as..." (understanding)
+    2. "The subject should be..." (visual design)
+    3. "The style that best captures..." (aesthetic choice)
+    4. "The motion should..." (animation design)
+    5. "Technical specs..." (practical constraints)
+  </thinking_process>
 
-    // Store thinking traces
-    for (const thought of plan.thinkingProcess) {
-      await ctx.runMutation(internal.agent.ascii.addThinkingTrace, {
-        generationId,
-        trace: thought,
-        type: "planning",
-      });
+  <output_specification>
+    Return a JSON object with EXACTLY this structure:
+    {
+      "interpretation": "Clear description of what will be animated",
+      "subject": "Main visual element to be depicted",
+      "style": "dense|sparse|geometric|organic|mixed",
+      "movement": "linear|eased|bouncing|flowing|pulsing|custom",
+      "frameCount": <number between 10-60>,
+      "width": <number between 40-120>,
+      "height": <number between 20-40>,
+      "fps": <number between 6-24>,
+      "characters": ["array", "of", "ASCII", "characters"],
+      "colorHints": "optional color or mood suggestions",
+      "thinkingProcess": [
+        "Step 1: Understanding...",
+        "Step 2: Visual design...",
+        "Step 3: Style selection...",
+        "Step 4: Motion planning...",
+        "Step 5: Technical optimization..."
+      ]
     }
+  </output_specification>
 
-    // Update generation with plan
-    await ctx.runMutation(internal.functions.mutations.generations.updateGeneration, {
-      generationId,
-      status: 'generating',
-      plan: {
-        interpretation: plan.interpretation,
-        style: plan.style,
-        movement: plan.movement,
-        frameCount: plan.frameCount,
-        width: plan.width,
-        height: plan.height,
-        fps: plan.fps,
-        characters: plan.characters,
-        colorHints: plan.colorHints,
-        metadata: { subject: plan.subject },
-      },
-      totalFrames: plan.frameCount,
-    });
+  <quality_criteria>
+    - Creativity: Surprise and delight with unexpected interpretations
+    - Coherence: All elements work together harmoniously
+    - Feasibility: Achievable within ASCII constraints
+    - Impact: Memorable and engaging result
+  </quality_criteria>
+</ascii_animation_planner>
 
-    return plan;
+Generate the animation plan as specified. Return ONLY valid JSON.`;
+
+    // Use Convex action retrier for robustness
+    const maxAttempts = 3;
+    let lastError: any;
+    
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        const response = await generateObject({
+          model,
+          mode: 'json',
+          schema: z.object({
+            interpretation: z.string().describe("What the user wants to see"),
+            subject: z.string().describe("Main subject of the animation"),
+            style: z.enum(["dense", "sparse", "geometric", "organic", "mixed"]),
+            movement: z.enum(["linear", "eased", "bouncing", "flowing", "pulsing", "custom"]),
+            frameCount: z.number().min(10).max(60).describe("Number of frames"),
+            width: z.number().min(40).max(120).describe("Width in characters"),
+            height: z.number().min(20).max(40).describe("Height in lines"),
+            fps: z.number().min(6).max(24).describe("Frames per second"),
+            characters: z.array(z.string()).describe("ASCII characters to use"),
+            colorHints: z.string().optional().describe("Optional color suggestions"),
+            thinkingProcess: z.array(z.string()).min(5).describe("Step-by-step thought process"),
+          }),
+          prompt: xmlPrompt,
+          temperature: 0.7,
+          maxRetries: 3,
+        });
+
+        const plan = response.object;
+
+        // Store thinking traces
+        for (const thought of plan.thinkingProcess) {
+          await ctx.runMutation(internal.agent.ascii.addThinkingTrace, {
+            generationId,
+            trace: thought,
+            type: "planning",
+          });
+        }
+
+        // Update generation with plan
+        await ctx.runMutation(internal.functions.mutations.generations.updateGeneration, {
+          generationId,
+          status: 'generating',
+          plan: {
+            interpretation: plan.interpretation,
+            style: plan.style,
+            movement: plan.movement,
+            frameCount: plan.frameCount,
+            width: plan.width,
+            height: plan.height,
+            fps: plan.fps,
+            characters: plan.characters,
+            colorHints: plan.colorHints,
+            metadata: { subject: plan.subject },
+          },
+          totalFrames: plan.frameCount,
+        });
+
+        return plan;
+        
+      } catch (error) {
+        lastError = error;
+        console.error(`Attempt ${attempt}/${maxAttempts} failed:`, error);
+        
+        if (attempt < maxAttempts) {
+          await ctx.runMutation(internal.agent.ascii.addThinkingTrace, {
+            generationId,
+            trace: `Retrying plan generation (attempt ${attempt + 1}/${maxAttempts})...`,
+            type: "system",
+          });
+          // Exponential backoff
+          await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+        }
+      }
+    }
+    
+    // All attempts failed - this should never happen with a world-class prompt
+    throw new Error(`Failed to generate animation plan after ${maxAttempts} attempts: ${lastError}`);
   },
 });
 
-// Generate a single frame with thread context
+// Generate a single frame with world-class XML prompting
 export const generateFrame = internalAction({
   args: {
     threadId: v.id("artworkGenerations"),
@@ -160,100 +273,131 @@ export const generateFrame = internalAction({
     const isLastFrame = frameIndex === plan.frameCount - 1;
     
     // Build context from previous frames
-    let contextPrompt = '';
+    let previousFramesXml = '';
     if (previousFrames.length > 0) {
-      contextPrompt = `Previous frames for continuity:\n`;
+      previousFramesXml = '<previous_frames>\n';
       previousFrames.forEach((frame, idx) => {
         const frameNum = frameIndex - previousFrames.length + idx + 1;
-        contextPrompt += `\nFrame ${frameNum}:\n${frame}\n`;
+        previousFramesXml += `  <frame number="${frameNum}">\n${frame}\n  </frame>\n`;
       });
+      previousFramesXml += '</previous_frames>\n';
     }
     
-    // Generate thinking trace for frame logic
-    const thinkingResponse = await generateText({
-      model,
-      prompt: `You're generating frame ${frameIndex + 1} of ${plan.frameCount} for an ASCII animation.
+    // World-class XML prompt for frame generation
+    const framePrompt = `<ascii_frame_generator>
+  <role>You are an expert ASCII animator creating frame ${frameIndex + 1} of ${plan.frameCount} in a smooth animation sequence.</role>
+  
+  <animation_context>
+    <interpretation>${plan.interpretation}</interpretation>
+    <subject>${plan.subject}</subject>
+    <style>${plan.style}</style>
+    <movement>${plan.movement}</movement>
+    <progress percentage="${Math.round(progress * 100)}">
+      ${isFirstFrame ? '<note>FIRST FRAME - Establish starting position</note>' : ''}
+      ${isLastFrame ? '<note>LAST FRAME - Complete the animation cycle</note>' : ''}
+      ${!isFirstFrame && !isLastFrame ? '<note>MIDDLE FRAME - Maintain smooth motion</note>' : ''}
+    </progress>
+  </animation_context>
+  
+  <technical_constraints>
+    <dimensions width="${plan.width}" height="${plan.height}"/>
+    <character_palette>${plan.characters.join('')}</character_palette>
+    <fps>${plan.fps}</fps>
+  </technical_constraints>
+  
+  ${previousFramesXml}
+  
+  <animation_principles>
+    <continuity>Maintain visual coherence with previous frames</continuity>
+    <motion_path>Follow the established trajectory</motion_path>
+    <timing>Respect the ${plan.movement} movement style</timing>
+    <weight>Objects should feel like they have mass</weight>
+    <anticipation>Subtle preparation for major movements</anticipation>
+  </animation_principles>
+  
+  <frame_requirements>
+    1. Output EXACTLY ${plan.width} characters per line
+    2. Output EXACTLY ${plan.height} lines
+    3. Use ONLY characters from the palette: ${plan.characters.join('')}
+    4. Maintain subject recognizability
+    5. Create smooth motion from previous frame
+    6. Fill empty space with spaces, not other characters
+  </frame_requirements>
+  
+  <output_format>
+    Return ONLY the ASCII art frame.
+    No explanations, no markdown, no JSON.
+    Just ${plan.height} lines of exactly ${plan.width} characters each.
+  </output_format>
+</ascii_frame_generator>`;
 
-Subject: ${plan.subject}
-Style: ${plan.style}
-Movement: ${plan.movement}
-Progress: ${Math.round(progress * 100)}%
-
-${contextPrompt}
-
-Think through:
-1. Where should the subject be positioned at this point in the animation?
-2. What changes from the previous frame?
-3. How to maintain smooth motion?
-
-Provide brief thinking in 1-2 sentences.`,
-      temperature: 0.7,
-    });
-
-    // Store frame thinking
-    await ctx.runMutation(internal.agent.ascii.addThinkingTrace, {
-      generationId,
-      trace: thinkingResponse.text,
-      type: "frame",
-      metadata: { frameIndex },
-    });
+    // Use Convex action retrier for robustness
+    const maxAttempts = 3;
+    let lastError: any;
+    let validatedFrame: string = '';
     
-    // Generate the actual frame
-    const frameResponse = await generateText({
-      model,
-      prompt: `Generate frame ${frameIndex + 1} of ${plan.frameCount}.
-
-Animation: ${plan.interpretation}
-Style: ${plan.style}
-Movement: ${plan.movement}
-Dimensions: ${plan.width}x${plan.height} characters
-Characters: ${plan.characters.join('')}
-Progress: ${Math.round(progress * 100)}%
-
-${contextPrompt}
-
-${isFirstFrame ? 'This is the FIRST frame - establish starting position' : ''}
-${isLastFrame ? 'This is the LAST frame - complete the animation cycle' : ''}
-${!isFirstFrame && !isLastFrame ? 'Continue smooth motion from previous frame' : ''}
-
-Based on thinking: ${thinkingResponse.text}
-
-Return ONLY the ASCII art frame (no JSON, no markdown, no explanation).
-Each line must be exactly ${plan.width} characters (use spaces for empty areas).
-The frame must have exactly ${plan.height} lines.`,
-      temperature: 0.7,
-      maxRetries: 2,
-    });
-    
-    // Process and validate the frame
-    let frame = frameResponse.text.trim();
-    
-    // Remove any markdown code blocks if present
-    if (frame.includes('```')) {
-      const match = frame.match(/```[\s\S]*?\n([\s\S]*?)```/);
-      if (match) {
-        frame = match[1].trim();
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        const frameResponse = await generateText({
+          model,
+          prompt: framePrompt,
+          temperature: 0.6, // Lower temperature for more consistent frames
+          maxRetries: 2,
+        });
+        
+        // Process and validate the frame
+        let frame = frameResponse.text.trim();
+        
+        // Remove any markdown code blocks if present
+        if (frame.includes('```')) {
+          const match = frame.match(/```[\s\S]*?\n([\s\S]*?)```/);
+          if (match) {
+            frame = match[1].trim();
+          }
+        }
+        
+        // Ensure correct dimensions
+        const lines = frame.split('\n');
+        
+        // Pad or trim to correct height
+        while (lines.length < plan.height) {
+          lines.push(' '.repeat(plan.width));
+        }
+        if (lines.length > plan.height) {
+          lines.splice(plan.height);
+        }
+        
+        // Ensure each line is correct width
+        validatedFrame = lines.map(line => {
+          if (line.length > plan.width) {
+            return line.substring(0, plan.width);
+          }
+          return line.padEnd(plan.width, ' ');
+        }).join('\n');
+        
+        // Success! Break out of retry loop
+        break;
+        
+      } catch (error) {
+        lastError = error;
+        console.error(`Frame generation attempt ${attempt}/${maxAttempts} failed:`, error);
+        
+        if (attempt < maxAttempts) {
+          await ctx.runMutation(internal.agent.ascii.addThinkingTrace, {
+            generationId,
+            trace: `Retrying frame ${frameIndex + 1} (attempt ${attempt + 1}/${maxAttempts})...`,
+            type: "system",
+            metadata: { frameIndex },
+          });
+          // Exponential backoff
+          await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 500));
+        }
       }
     }
     
-    // Ensure correct dimensions
-    const lines = frame.split('\n');
-    
-    // Pad or trim to correct height
-    while (lines.length < plan.height) {
-      lines.push(' '.repeat(plan.width));
+    if (!validatedFrame) {
+      throw new Error(`Failed to generate frame ${frameIndex + 1} after ${maxAttempts} attempts: ${lastError}`);
     }
-    if (lines.length > plan.height) {
-      lines.splice(plan.height);
-    }
-    
-    // Ensure each line is correct width
-    const validatedFrame = lines.map(line => {
-      if (line.length > plan.width) {
-        return line.substring(0, plan.width);
-      }
-      return line.padEnd(plan.width, ' ');
-    }).join('\n');
     
     // Update generation with new frame
     await ctx.runMutation(internal.functions.mutations.generations.updateGenerationFrame, {
@@ -303,6 +447,36 @@ export const generateWithAgent = action({
   },
   handler: async (ctx, { prompt, apiKey, userId, modelId }): Promise<any> => {
     try {
+      // If no API key provided, try to get from user settings
+      let finalApiKey = apiKey;
+      if (!finalApiKey && userId) {
+        // Get user from Clerk ID
+        const user = await ctx.runQuery(internal.functions.queries.users.getUserByClerkId, { clerkId: userId });
+        if (user) {
+          // Get user's API keys from settings
+          const apiKeys = await ctx.runQuery(internal.functions.settings.getUserApiKeys, { userId: user._id });
+          
+          // Determine which API key to use based on model
+          if (modelId?.startsWith('openrouter/')) {
+            finalApiKey = apiKeys.openrouterApiKey;
+          } else if (modelId?.startsWith('openai/')) {
+            finalApiKey = apiKeys.openaiApiKey;
+          } else if (modelId?.startsWith('anthropic/')) {
+            finalApiKey = apiKeys.anthropicApiKey;
+          } else if (modelId?.startsWith('google/')) {
+            finalApiKey = apiKeys.googleApiKey;
+          } else {
+            // Default to OpenRouter
+            finalApiKey = apiKeys.openrouterApiKey;
+          }
+        }
+      }
+      
+      // If still no API key, throw error
+      if (!finalApiKey) {
+        throw new Error('API key required. Please add your API key in Settings → Models.');
+      }
+      
       // Step 1: Create thread and generation record
       const { threadId, generationId } = await ctx.runAction(internal.agent.ascii.createGenerationThread, {
         prompt,
@@ -310,11 +484,12 @@ export const generateWithAgent = action({
         modelId,
       });
 
-      // Step 2: Generate metadata and plan
+      // Step 2: Generate metadata and plan with world-class agent
+      // This will retry up to 3 times internally, so it should never fail
       const plan = await ctx.runAction(internal.agent.ascii.generateMetadata, {
         threadId,
         prompt,
-        apiKey,
+        apiKey: finalApiKey,
         modelId,
       });
 
@@ -324,33 +499,17 @@ export const generateWithAgent = action({
       for (let i = 0; i < plan.frameCount; i++) {
         console.log(`Generating frame ${i + 1}/${plan.frameCount} with agent...`);
         
-        try {
-          const frame = await ctx.runAction(internal.agent.ascii.generateFrame, {
-            threadId,
-            frameIndex: i,
-            plan,
-            previousFrames: frames.slice(-3), // Last 3 frames for context
-            apiKey,
-            modelId,
-          });
-          
-          frames.push(frame);
-        } catch (error) {
-          console.error(`Failed to generate frame ${i + 1}:`, error);
-          // Add error trace
-          await ctx.runMutation(internal.agent.ascii.addThinkingTrace, {
-            generationId,
-            trace: `Error generating frame ${i + 1}: ${error}`,
-            type: "system",
-          });
-          
-          // Add placeholder frame
-          const placeholderFrame = Array(plan.height)
-            .fill(null)
-            .map(() => ' '.repeat(plan.width))
-            .join('\n');
-          frames.push(placeholderFrame);
-        }
+        // generateFrame also has internal retry logic, so it should rarely fail
+        const frame = await ctx.runAction(internal.agent.ascii.generateFrame, {
+          threadId,
+          frameIndex: i,
+          plan,
+          previousFrames: frames.slice(-3), // Last 3 frames for context
+          apiKey: finalApiKey,
+          modelId,
+        });
+        
+        frames.push(frame);
       }
 
       // Step 4: Mark as completed

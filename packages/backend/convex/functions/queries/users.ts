@@ -1,5 +1,5 @@
 import { v } from 'convex/values';
-import { query, type QueryCtx } from '../../_generated/server';
+import { query, internalQuery, type QueryCtx } from '../../_generated/server';
 
 export const current = query({
   args: {},
@@ -34,4 +34,15 @@ export async function getCurrentUserOrThrow(ctx: QueryCtx) {
   }
   return user;
 }
+
+// Internal query to get user by Clerk ID
+export const getUserByClerkId = internalQuery({
+  args: { clerkId: v.string() },
+  handler: async (ctx, { clerkId }) => {
+    return await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
+      .first();
+  },
+});
 

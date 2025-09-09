@@ -12,6 +12,7 @@ import type * as agent_ascii from "../agent/ascii.js";
 import type * as functions_actions_ascii from "../functions/actions/ascii.js";
 import type * as functions_actions_combine from "../functions/actions/combine.js";
 import type * as functions_internal_users from "../functions/internal/users.js";
+import type * as functions_models from "../functions/models.js";
 import type * as functions_mutations_ascii from "../functions/mutations/ascii.js";
 import type * as functions_mutations_files from "../functions/mutations/files.js";
 import type * as functions_mutations_generations from "../functions/mutations/generations.js";
@@ -49,6 +50,7 @@ declare const fullApi: ApiFromModules<{
   "functions/actions/ascii": typeof functions_actions_ascii;
   "functions/actions/combine": typeof functions_actions_combine;
   "functions/internal/users": typeof functions_internal_users;
+  "functions/models": typeof functions_models;
   "functions/mutations/ascii": typeof functions_mutations_ascii;
   "functions/mutations/files": typeof functions_mutations_files;
   "functions/mutations/generations": typeof functions_mutations_generations;
