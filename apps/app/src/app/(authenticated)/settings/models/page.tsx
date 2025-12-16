@@ -7,7 +7,7 @@ import { Button } from '@repo/design/components/ui/button';
 import { Input } from '@repo/design/components/ui/input';
 import { Label } from '@repo/design/components/ui/label';
 import { Switch } from '@repo/design/components/ui/switch';
-import { 
+import {
   Info,
   Key,
   Check,
@@ -22,59 +22,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@repo/backend/convex/_generated/api';
 import { toast } from 'sonner';
-
-// Available models configuration (should match backend)
-const AVAILABLE_MODELS = [
-  {
-    id: 'openrouter/claude-3.5-sonnet',
-    name: 'Claude 3.5 Sonnet',
-    provider: 'openrouter',
-    description: 'Best for creative ASCII art',
-    recommended: true,
-  },
-  {
-    id: 'openrouter/gpt-4o',
-    name: 'GPT-4o',
-    provider: 'openrouter',
-    description: 'Latest multimodal model',
-  },
-  {
-    id: 'openrouter/gpt-4-turbo',
-    name: 'GPT-4 Turbo',
-    provider: 'openrouter',
-    description: 'Fast with 128k context',
-  },
-  {
-    id: 'openrouter/claude-3-opus',
-    name: 'Claude 3 Opus',
-    provider: 'openrouter',
-    description: 'Most capable Claude',
-  },
-  {
-    id: 'openrouter/claude-3-haiku',
-    name: 'Claude 3 Haiku',
-    provider: 'openrouter',
-    description: 'Fast and efficient',
-  },
-  {
-    id: 'openrouter/gemini-pro',
-    name: 'Gemini Pro',
-    provider: 'openrouter',
-    description: 'Google\'s advanced model',
-  },
-  {
-    id: 'openrouter/llama-3.1-405b',
-    name: 'Llama 3.1 405B',
-    provider: 'openrouter',
-    description: 'Open source powerhouse',
-  },
-  {
-    id: 'openrouter/mixtral-8x22b',
-    name: 'Mixtral 8x22B',
-    provider: 'openrouter',
-    description: 'Efficient MoE model',
-  },
-];
+import { AVAILABLE_MODELS } from '@repo/backend/convex/config/models';
 
 type ProviderStatus = 'idle' | 'verifying' | 'success' | 'error';
 

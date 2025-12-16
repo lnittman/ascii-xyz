@@ -156,29 +156,3 @@ export const saveCombination = mutation({
   },
 });
 
-// Get remix history for an artwork
-export const getRemixHistory = mutation({
-  args: {
-    artworkId: v.id("artworks"),
-  },
-  handler: async (ctx, args) => {
-    // Find all remixes of this artwork
-    const remixes = await ctx.db
-      .query("remixes")
-      .filter(q => q.eq(q.field("sourceArtworkId"), args.artworkId))
-      .collect();
-
-    // Get the artwork details for each remix
-    const remixArtworks = await Promise.all(
-      remixes.map(async (remix) => {
-        const artwork = await ctx.db.get(remix.remixArtworkId);
-        return {
-          ...remix,
-          artwork,
-        };
-      })
-    );
-
-    return remixArtworks.filter(r => r.artwork !== null);
-  },
-});

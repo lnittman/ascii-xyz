@@ -2,23 +2,52 @@
 
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@repo/backend/convex/_generated/api";
-import { Id } from "@repo/backend/convex/_generated/dataModel";
+import { Id, Doc } from "@repo/backend/convex/_generated/dataModel";
+
+// Discriminated union for query states
+export type QueryState<T> =
+  | { status: "loading"; data: undefined }
+  | { status: "ready"; data: T }
+  | { status: "empty"; data: T }; // For arrays when length === 0
+
+// Helper to create query state from Convex useQuery result
+function createQueryState<T>(result: T | undefined): QueryState<T> {
+  if (result === undefined) {
+    return { status: "loading", data: undefined };
+  }
+  if (Array.isArray(result) && result.length === 0) {
+    return { status: "empty", data: result };
+  }
+  return { status: "ready", data: result };
+}
+
+// Helper to create query state for nullable single items
+function createSingleQueryState<T>(result: T | null | undefined): QueryState<T | null> {
+  if (result === undefined) {
+    return { status: "loading", data: undefined };
+  }
+  if (result === null) {
+    return { status: "empty", data: null };
+  }
+  return { status: "ready", data: result };
+}
 
 // Hook to list user's artworks
-export function useArtworks(visibility?: "public" | "private") {
+export function useArtworks(visibility?: "public" | "private"): QueryState<Doc<"artworks">[]> {
   const artworks = useQuery(api.functions.queries.ascii.list, { visibility });
-  return artworks || [];
+  return createQueryState(artworks);
 }
 
 // Hook to get a single artwork
-export function useArtwork(id: Id<"artworks">, userId?: string) {
-  return useQuery(api.functions.queries.ascii.get, { id, userId });
+export function useArtwork(id: Id<"artworks">, userId?: string): QueryState<Doc<"artworks"> | null> {
+  const artwork = useQuery(api.functions.queries.ascii.get, { id, userId });
+  return createSingleQueryState(artwork);
 }
 
 // Hook to get public gallery
-export function usePublicGallery(limit?: number) {
+export function usePublicGallery(limit?: number): QueryState<Doc<"artworks">[]> {
   const artworks = useQuery(api.functions.queries.ascii.getPublic, { limit });
-  return artworks || [];
+  return createQueryState(artworks);
 }
 
 // Hook to create artwork
@@ -37,12 +66,12 @@ export function useDeleteArtwork() {
 }
 
 // Hook to search artworks
-export function useSearchArtworks(query: string, limit?: number) {
+export function useSearchArtworks(query: string, limit?: number): QueryState<Doc<"artworks">[]> {
   const results = useQuery(
     api.functions.queries.ascii.search,
     query ? { query, limit } : "skip"
   );
-  return results || [];
+  return createQueryState(results);
 }
 
 // Example component usage:

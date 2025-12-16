@@ -20,58 +20,7 @@ import { Input } from '@repo/design/components/ui/input';
 import { cn } from '@repo/design/lib/utils';
 import { useQuery } from 'convex/react';
 import { api } from '@repo/backend/convex/_generated/api';
-
-// Available models for ASCII generation
-const AVAILABLE_MODELS = [
-  {
-    id: 'openrouter/claude-3.5-sonnet',
-    name: 'Claude 3.5 Sonnet',
-    provider: 'anthropic',
-    description: 'Best for creative ASCII art',
-  },
-  {
-    id: 'openrouter/gpt-4o',
-    name: 'GPT-4o',
-    provider: 'openai',
-    description: 'Latest multimodal model',
-  },
-  {
-    id: 'openrouter/gpt-4-turbo',
-    name: 'GPT-4 Turbo',
-    provider: 'openai',
-    description: 'Fast with 128k context',
-  },
-  {
-    id: 'openrouter/claude-3-opus',
-    name: 'Claude 3 Opus',
-    provider: 'anthropic',
-    description: 'Most capable Claude',
-  },
-  {
-    id: 'openrouter/claude-3-haiku',
-    name: 'Claude 3 Haiku',
-    provider: 'anthropic',
-    description: 'Fast and efficient',
-  },
-  {
-    id: 'openrouter/gemini-pro',
-    name: 'Gemini Pro',
-    provider: 'google',
-    description: 'Google\'s advanced model',
-  },
-  {
-    id: 'openrouter/llama-3.1-405b',
-    name: 'Llama 3.1 405B',
-    provider: 'meta',
-    description: 'Open source powerhouse',
-  },
-  {
-    id: 'openrouter/mixtral-8x22b',
-    name: 'Mixtral 8x22B',
-    provider: 'mistral',
-    description: 'Efficient MoE model',
-  },
-];
+import { AVAILABLE_MODELS, DEFAULT_MODEL_ID, type ModelConfig } from '@repo/backend/convex/config/models';
 
 interface ModelPickerProps {
   disabled?: boolean;
@@ -94,10 +43,10 @@ export function ModelPicker({
   const hasApiKey = !!settings?.openrouterApiKey;
 
   // Filter available models to only show enabled ones
-  const availableModels = useMemo(() => {
+  const availableModels = useMemo((): ModelConfig[] => {
     if (!hasApiKey || enabledModels.length === 0) {
       // If no API key or no enabled models, show default model only
-      return AVAILABLE_MODELS.filter(m => m.id === 'openrouter/claude-3.5-sonnet');
+      return AVAILABLE_MODELS.filter(m => m.id === DEFAULT_MODEL_ID);
     }
     return AVAILABLE_MODELS.filter(model => enabledModels.includes(model.id));
   }, [hasApiKey, enabledModels]);

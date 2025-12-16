@@ -72,6 +72,8 @@ export async function withTestArtwork(
     prompt: string;
     frames: string[];
     visibility: 'public' | 'private' | 'unlisted';
+    remixedFrom?: Id<'artworks'>;
+    combinedFrom?: Id<'artworks'>[];
   }> = {}
 ): Promise<Id<'artworks'>> {
   return await t.run(async (ctx) => {
@@ -86,7 +88,78 @@ export async function withTestArtwork(
         generator: 'test',
         model: 'test-model',
         createdAt: new Date().toISOString(),
+        ...(overrides.remixedFrom && { remixedFrom: overrides.remixedFrom }),
+        ...(overrides.combinedFrom && { combinedFrom: overrides.combinedFrom }),
       },
+      visibility: overrides.visibility ?? 'private',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+  });
+}
+
+export async function withTestRemix(
+  t: TestContext,
+  sourceArtworkId: Id<'artworks'>,
+  remixArtworkId: Id<'artworks'>,
+  userId: string,
+  overrides: Partial<{
+    remixType: string;
+    prompt: string;
+  }> = {}
+): Promise<Id<'remixes'>> {
+  return await t.run(async (ctx) => {
+    return await ctx.db.insert('remixes', {
+      sourceArtworkId,
+      remixArtworkId,
+      userId,
+      remixType: overrides.remixType ?? 'variation',
+      prompt: overrides.prompt ?? 'Test remix',
+      createdAt: new Date().toISOString(),
+    });
+  });
+}
+
+export async function withTestCombination(
+  t: TestContext,
+  sourceArtworkIds: [Id<'artworks'>, Id<'artworks'>],
+  combinedArtworkId: Id<'artworks'>,
+  userId: string,
+  overrides: Partial<{
+    combinationType: string;
+    blendRatio: number;
+    prompt: string;
+  }> = {}
+): Promise<Id<'combinations'>> {
+  return await t.run(async (ctx) => {
+    return await ctx.db.insert('combinations', {
+      sourceArtworkIds,
+      combinedArtworkId,
+      userId,
+      combinationType: overrides.combinationType ?? 'blend',
+      blendRatio: overrides.blendRatio,
+      prompt: overrides.prompt ?? 'Test combination',
+      createdAt: new Date().toISOString(),
+    });
+  });
+}
+
+export async function withTestCollection(
+  t: TestContext,
+  userId: Id<'users'>,
+  overrides: Partial<{
+    name: string;
+    description: string;
+    artworkIds: Id<'artworks'>[];
+    visibility: 'public' | 'private';
+  }> = {}
+): Promise<Id<'collections'>> {
+  return await t.run(async (ctx) => {
+    return await ctx.db.insert('collections', {
+      userId,
+      name: overrides.name ?? 'Test Collection',
+      description: overrides.description,
+      artworkIds: overrides.artworkIds ?? [],
       visibility: overrides.visibility ?? 'private',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

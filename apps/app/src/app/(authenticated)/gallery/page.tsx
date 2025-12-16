@@ -7,7 +7,9 @@ import Link from 'next/link';
 import { cn } from '@repo/design/lib/utils';
 import { Button } from '@repo/design/components/ui/button';
 import { Input } from '@repo/design/components/ui/input';
-import { useArtworks, usePublicGallery, useSearchArtworks } from '@/hooks/use-ascii';
+import { Skeleton } from '@repo/design/components/ui/skeleton';
+import { useArtworks, usePublicGallery, useSearchArtworks, type QueryState } from '@/hooks/use-ascii';
+import type { Doc } from '@repo/backend/convex/_generated/dataModel';
 
 // Prevent static generation for this page as it uses Convex
 export const dynamic = 'force-dynamic';
@@ -17,14 +19,18 @@ export default function AsciiGalleryPage() {
   const [view, setView] = useState<'my-art' | 'public' | 'search'>('my-art');
   const [searchFocused, setSearchFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  
-  const myArtworks = useArtworks();
-  const publicArtworks = usePublicGallery(50);
-  const searchResults = useSearchArtworks(searchQuery);
-  
-  const artworks = view === 'search' ? searchResults :
-                  view === 'public' ? publicArtworks :
-                  myArtworks;
+
+  const myArtworksState = useArtworks();
+  const publicArtworksState = usePublicGallery(50);
+  const searchResultsState = useSearchArtworks(searchQuery);
+
+  const artworksState: QueryState<Doc<"artworks">[]> = view === 'search' ? searchResultsState :
+                  view === 'public' ? publicArtworksState :
+                  myArtworksState;
+
+  const isLoading = artworksState.status === 'loading';
+  const isEmpty = artworksState.status === 'empty';
+  const artworks = artworksState.data;
 
   return (
     <div className="min-h-[calc(100vh-4rem)]">
@@ -120,9 +126,19 @@ export default function AsciiGalleryPage() {
           </div>
 
           {/* Gallery Grid */}
-          {artworks && artworks.length > 0 ? (
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="border border-border/50 rounded-md p-5 bg-card/50">
+                  <Skeleton className="h-32 w-full rounded-md mb-4" />
+                  <Skeleton className="h-4 w-3/4 mb-2" />
+                  <Skeleton className="h-3 w-1/2" />
+                </div>
+              ))}
+            </div>
+          ) : !isEmpty && artworks && artworks.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {artworks.map((artwork: any) => (
+            {artworks.map((artwork) => (
               <Link key={artwork._id} href={`/art/${artwork._id}`}>
                 <div className="group border border-border/50 rounded-md p-5 hover:border-border hover:shadow-lg transition-all duration-200 bg-card/50 backdrop-blur-sm">
                   {/* ASCII Preview */}

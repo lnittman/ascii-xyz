@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import Link from 'next/link';
 import { Button } from '@repo/design/components/ui/button';
 import { Badge } from '@repo/design/components/ui/badge';
-import { cn } from '@repo/design/lib/utils';
+import { Skeleton } from '@repo/design/components/ui/skeleton';
 
 // Prevent static generation for this page as it uses Convex
 export const dynamic = 'force-dynamic';
@@ -22,13 +22,38 @@ export default function ArtworkPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentFrame, setCurrentFrame] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   const artworkId = params?.id as Id<"artworks">;
-  const artwork = useArtwork(artworkId!, user?.id);
+  const artworkState = useArtwork(artworkId!, user?.id);
   const deleteArtwork = useDeleteArtwork();
   const updateVisibility = useUpdateArtworkVisibility();
 
-  if (!artwork) {
+  const isLoading = artworkState.status === 'loading';
+  const isEmpty = artworkState.status === 'empty';
+  const artwork = artworkState.data;
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-[calc(100vh-4rem)]">
+        <div className="max-w-5xl mx-auto px-6 py-6 space-y-4">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-8 w-8" />
+            <Skeleton className="h-8 w-64" />
+          </div>
+          <Skeleton className="h-4 w-48" />
+        </div>
+        <div className="px-6 py-10">
+          <div className="max-w-5xl mx-auto">
+            <Skeleton className="h-96 w-full rounded-md" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Not found / empty state
+  if (isEmpty || !artwork) {
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
