@@ -2,8 +2,6 @@ import withBundleAnalyzer from '@next/bundle-analyzer';
 
 import type { NextConfig } from 'next';
 
-const otelRegex = /@opentelemetry\/instrumentation/;
-
 export const config: NextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -33,28 +31,10 @@ export const config: NextConfig = {
     ];
   },
 
-  webpack(config, context) {
-    const isServer = Boolean(context?.isServer);
-    config.ignoreWarnings = [{ module: otelRegex }];
-
-    // Don't bundle Node.js modules for the browser
-    if (!isServer) {
-      config.resolve = config.resolve ?? {};
-      config.resolve.fallback = {
-        ...(config.resolve as any).fallback,
-        fs: false,
-        net: false,
-        tls: false,
-        crypto: false,
-        stream: false,
-        os: false,
-        path: false,
-        perf_hooks: false,
-      };
-    }
-
-    return config;
-  },
+  // Next.js 16: Turbopack is the default bundler
+  // Empty config acknowledges we're using Turbopack (removes deprecation error)
+  // Turbopack automatically handles server/client boundaries without manual fallbacks
+  turbopack: {},
 
   // This is required to support PostHog trailing slash API requests
   skipTrailingSlashRedirect: true,

@@ -10,6 +10,8 @@
     "lint": "ultracite lint",
     "format": "ultracite format",
     "test": "turbo test",
+    "test:coverage": "turbo test:coverage",
+    "test:coverage:ci": "turbo test:coverage:ci",
     "analyze": "turbo analyze",
     "bump-deps": "pnpx npm-check-updates --deep -u -x react-day-picker && pnpm install",
     "bump-ui": "pnpx shadcn@latest add --all --overwrite -c packages/design",
@@ -26,8 +28,8 @@
     "@types/glob": "^8.1.0",
     "@types/minimatch": "^5.1.2",
     "@types/node": "^24.3.0",
-    "@types/react": "^19.1.12",
-    "@types/react-dom": "^19.1.8",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "chokidar": "^4.0.3",
     "fs-extra": "^11.3.0",
     "glob": "^11.0.3",
@@ -36,7 +38,7 @@
     "remark": "^15.0.1",
     "remark-gfm": "^4.0.1",
     "remark-mdx": "^3.1.0",
-    "next": "15.5.2",
+    "next": "16.0.10",
     "tsx": "^4.19.4",
     "turbo": "^2.5.2",
     "typescript": "^5.9.2",
@@ -49,7 +51,7 @@
   "packageManager": "pnpm@9.10.0",
   "pnpm": {
     "overrides": {
-      "next": "15.5.2"
+      "next": "16.0.10"
     }
   },
   "workspaces": [

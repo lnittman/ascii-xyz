@@ -77,3 +77,12 @@ apps/**/*.d.ts.map
 !apps/**/env.d.ts
 
 .playwright-mcp/
+
+# Test coverage
+coverage/
+*.lcov
+
+# Playwright
+playwright-report/
+test-results/
+.playwright/

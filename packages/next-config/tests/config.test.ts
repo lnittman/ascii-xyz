@@ -11,9 +11,9 @@ describe('next config', () => {
     expect(rewrites[0].source).toBe('/ingest/static/:path*');
   });
 
-  it('sets up webpack config', () => {
-    const result = (config.webpack as any)({ plugins: [] });
-    expect(result.ignoreWarnings[0]).toHaveProperty('module');
+  it('has turbopack config for Next 16', () => {
+    // Next 16 uses Turbopack by default, webpack config is no longer needed
+    expect(config.turbopack).toEqual({});
   });
 
   it('withAnalyzer wraps provided config', () => {

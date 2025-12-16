@@ -1,0 +1,54 @@
+codecov:
+  require_ci_to_pass: yes
+
+coverage:
+  precision: 2
+  round: down
+  range: "20...80"
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+        informational: true
+      frontend:
+        flags:
+          - frontend
+        target: auto
+        threshold: 2%
+      backend:
+        flags:
+          - backend
+        target: auto
+        threshold: 2%
+    patch:
+      default:
+        target: 40%
+        threshold: 5%
+        informational: true
+
+flags:
+  frontend:
+    paths:
+      - apps/app/src/
+    carryforward: true
+  backend:
+    paths:
+      - packages/backend/convex/
+    carryforward: true
+
+comment:
+  layout: "header, diff, flags, components"
+  behavior: default
+  require_changes: false
+
+ignore:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/__tests__/**"
+  - "**/e2e/**"
+  - "**/*.d.ts"
+  - "**/node_modules/**"
+  - "**/dist/**"
+  - "**/coverage/**"
+  - "**/test-setup/**"

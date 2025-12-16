@@ -8,18 +8,18 @@
   },
   "dependencies": {
     "lodash.merge": "^4.6.2",
-    "react": "^19.1.0",
+    "react": "^19.2.3",
     "schema-dts": "^1.1.5",
     "zod": "^3.25.76"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/lodash.merge": "^4.6.9",
-    "@types/node": "22.14.1",
-    "@types/react": "19.1.12",
-    "@types/react-dom": "^19.1.2"
+    "@types/node": "24.3.0",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "^19.2.3"
   },
   "peerDependencies": {
-    "next": "^15.5.2"
+    "next": "^16.0.0"
   }
 }

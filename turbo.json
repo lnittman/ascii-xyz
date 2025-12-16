@@ -26,6 +26,12 @@
     },
     "test": {
       "outputs": []
+    },
+    "test:coverage": {
+      "outputs": ["coverage/**"]
+    },
+    "test:coverage:ci": {
+      "outputs": ["coverage/**"]
     }
   }
 }
