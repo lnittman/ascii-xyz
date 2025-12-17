@@ -2,6 +2,9 @@ import { convexTest } from 'convex-test';
 import type { Id } from '../convex/_generated/dataModel';
 import schema from '../convex/schema';
 import { modules } from '../test-setup/convex.setup';
+import { server } from '../test-setup/msw/server';
+
+server.listen({ onUnhandledRequest: 'bypass' });
 
 export type TestContext = ReturnType<typeof convexTest<typeof schema>>;
 
@@ -223,3 +226,15 @@ export async function withTestGeneration(
 }
 
 export { modules };
+
+export {
+  server,
+  handlers,
+  createOpenRouterPlanResponse,
+  createOpenRouterFrameResponse,
+  createOpenRouterErrorResponse,
+  createOpenRouterRateLimitResponse,
+  createOpenRouterAuthErrorResponse,
+  createOpenRouterStreamingResponse,
+} from '../test-setup/msw/server';
+export type { HttpHandler } from 'msw';
