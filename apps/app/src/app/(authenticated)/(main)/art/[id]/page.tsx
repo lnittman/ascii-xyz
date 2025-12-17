@@ -53,14 +53,14 @@ export default function ArtworkPage() {
       <div className="min-h-[calc(100vh-4rem)]">
         <div className="max-w-5xl mx-auto px-6 py-6 space-y-4">
           <div className="flex items-center gap-3">
-            <Skeleton className="h-8 w-8" />
-            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-7 w-7 rounded-sm" />
+            <Skeleton className="h-6 w-64 rounded-sm" />
           </div>
-          <Skeleton className="h-4 w-48" />
+          <Skeleton className="h-4 w-48 rounded-sm" />
         </div>
         <div className="px-6 py-10">
           <div className="max-w-5xl mx-auto">
-            <Skeleton className="h-96 w-full rounded-md" />
+            <Skeleton className="h-96 w-full rounded-sm" />
           </div>
         </div>
       </div>
@@ -72,12 +72,15 @@ export default function ArtworkPage() {
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-lg font-medium mb-2">Artwork not found</h2>
-          <p className="text-muted-foreground mb-4">
-            This artwork may have been deleted or you don't have permission to view it.
+          <div className="mx-auto w-10 h-10 bg-muted rounded-sm flex items-center justify-center mb-4">
+            <span className="text-muted-foreground text-lg">?</span>
+          </div>
+          <h2 className="text-sm font-medium mb-1">artwork not found</h2>
+          <p className="text-muted-foreground text-xs mb-4">
+            this artwork may have been deleted or you don't have permission to view it
           </p>
           <Link href="/gallery">
-            <Button>Back to Gallery</Button>
+            <Button size="sm" variant="outline" className="text-xs">back to gallery</Button>
           </Link>
         </div>
       </div>
@@ -160,66 +163,66 @@ export default function ArtworkPage() {
   return (
     <div className="min-h-[calc(100vh-4rem)]">
       {/* Header */}
-      <div className="max-w-5xl mx-auto px-6 py-6 space-y-4">
+      <div className="max-w-5xl mx-auto px-6 py-6 space-y-3">
         {/* Top row with back button, title, and action buttons */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
+          <div className="flex items-center gap-2.5 flex-1 min-w-0">
             {/* Back button */}
             <Link href="/">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="icon"
-                className="h-8 w-8 border border-border hover:border-primary/20 rounded-md"
+                className="h-7 w-7 border border-border/50 hover:border-border hover:bg-muted/50 rounded-sm transition-colors duration-0 cursor-default"
               >
-                <ArrowLeft size={16} weight="duotone" />
+                <ArrowLeft size={14} weight="bold" />
               </Button>
             </Link>
-            
+
             {/* Title */}
-            <h1 className="text-2xl font-medium truncate">
+            <h1 className="text-sm font-medium truncate">
               {artwork.prompt}
             </h1>
           </div>
-          
+
           {/* Right-aligned action buttons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <AddToCollection artworkId={artworkId} />
 
             <Button
               variant="ghost"
               size="icon"
               onClick={handleDownload}
-              className="h-8 w-8 hover:bg-muted/50 rounded-md"
+              className="h-7 w-7 hover:bg-muted/50 rounded-sm transition-colors duration-0 cursor-default"
             >
-              <Download size={16} weight="duotone" />
+              <Download size={14} weight="bold" />
             </Button>
 
             <Button
               variant="ghost"
               size="icon"
               onClick={() => {}}
-              className="h-8 w-8 hover:bg-muted/50 rounded-md"
+              className="h-7 w-7 hover:bg-muted/50 rounded-sm transition-colors duration-0 cursor-default"
             >
-              <Share size={16} weight="duotone" />
+              <Share size={14} weight="bold" />
             </Button>
-            
-            <Button 
-              variant="ghost" 
-              size="icon" 
+
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={handleDelete}
-              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 border border-border hover:border-destructive/20 rounded-md"
+              className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10 border border-border/50 hover:border-destructive/30 rounded-sm transition-colors duration-0 cursor-default"
             >
-              <Trash size={16} />
+              <Trash size={14} />
             </Button>
           </div>
         </div>
-        
+
         {/* Metadata row */}
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <div className="flex items-center gap-4">
-            <span>Created {format(new Date(artwork.createdAt), 'MMM d, yyyy · h:mm a')}</span>
-            <div className="flex items-center gap-1.5">
-              <Eye className="h-4 w-4" weight="duotone" />
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <div className="flex items-center gap-3">
+            <span>{format(new Date(artwork.createdAt), 'MMM d, yyyy · h:mm a')}</span>
+            <div className="flex items-center gap-1">
+              <Eye className="h-3.5 w-3.5" weight="bold" />
               <span>{artwork.views || 0}</span>
             </div>
             {artwork.visibility === 'public' && (
@@ -227,76 +230,68 @@ export default function ArtworkPage() {
             )}
             <PresenceDot roomId={artworkId} />
           </div>
-          
-          <Button 
-            variant="outline" 
-            size="sm" 
+
+          <button
             onClick={handleVisibilityToggle}
-            className="h-7 px-3 rounded-md border-border/50 hover:bg-muted/50"
+            className="px-2 py-1 text-xs rounded-sm border border-border/50 hover:border-border hover:bg-muted/50 transition-colors duration-0 cursor-default"
           >
-            <Badge variant={artwork.visibility === 'public' ? 'default' : 'secondary'} className="rounded-md">
-              {artwork.visibility}
-            </Badge>
-          </Button>
+            {artwork.visibility}
+          </button>
         </div>
       </div>
 
       {/* ASCII Display */}
-      <div className="flex-1 px-6 py-10">
+      <div className="flex-1 px-6 py-8">
         <div className="max-w-5xl mx-auto">
           {/* Animation Controls */}
           {artwork.frames.length > 1 && (
-            <div className="mb-4 flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
+            <div className="mb-3 flex items-center gap-3">
+              <div className="flex items-center gap-1">
+                <button
                   onClick={handlePlayPause}
-                  className="rounded-md hover:bg-muted/50"
+                  className="h-7 w-7 flex items-center justify-center rounded-sm hover:bg-muted/50 transition-colors duration-0 cursor-default"
                 >
-                  {isPlaying ? <Pause className="h-4 w-4" weight="fill" /> : <Play className="h-4 w-4" weight="fill" />}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
+                  {isPlaying ? <Pause className="h-3.5 w-3.5" weight="fill" /> : <Play className="h-3.5 w-3.5" weight="fill" />}
+                </button>
+                <button
                   onClick={handleReset}
-                  className="rounded-md hover:bg-muted/50"
+                  className="h-7 w-7 flex items-center justify-center rounded-sm hover:bg-muted/50 transition-colors duration-0 cursor-default"
                 >
-                  <SkipBack className="h-4 w-4" weight="fill" />
-                </Button>
+                  <SkipBack className="h-3.5 w-3.5" weight="fill" />
+                </button>
               </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span>Frame {currentFrame + 1} of {artwork.frames.length}</span>
-                <span>•</span>
-                <span>{artwork.metadata.fps || 12} FPS</span>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
+                <span>frame {currentFrame + 1}/{artwork.frames.length}</span>
+                <span>·</span>
+                <span>{artwork.metadata.fps || 12} fps</span>
               </div>
             </div>
           )}
-          
+
           {/* ASCII Art Display */}
-          <div className="bg-black rounded-md p-8 overflow-auto shadow-2xl">
+          <div className="bg-black rounded-sm p-6 overflow-auto border border-border/30">
             <pre className="text-green-400 font-mono text-sm leading-tight whitespace-pre">
               {artwork.frames[currentFrame] || 'No content available'}
             </pre>
           </div>
-          
+
           {/* Metadata */}
-          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-6 p-6 bg-card/50 backdrop-blur-sm border border-border/50 rounded-md">
+          <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-card/50 border border-border/50 rounded-sm">
             <div>
-              <div className="text-xs font-medium text-muted-foreground mb-1">Dimensions</div>
-              <div className="text-sm">{artwork.metadata.width}×{artwork.metadata.height}</div>
+              <div className="text-xs text-muted-foreground mb-0.5">dimensions</div>
+              <div className="text-xs font-mono">{artwork.metadata.width}×{artwork.metadata.height}</div>
             </div>
             <div>
-              <div className="text-xs font-medium text-muted-foreground mb-1">Model</div>
-              <div className="text-sm">{artwork.metadata.model}</div>
+              <div className="text-xs text-muted-foreground mb-0.5">model</div>
+              <div className="text-xs font-mono">{artwork.metadata.model}</div>
             </div>
             <div>
-              <div className="text-xs font-medium text-muted-foreground mb-1">Generator</div>
-              <div className="text-sm">{artwork.metadata.generator}</div>
+              <div className="text-xs text-muted-foreground mb-0.5">generator</div>
+              <div className="text-xs font-mono">{artwork.metadata.generator}</div>
             </div>
             <div>
-              <div className="text-xs font-medium text-muted-foreground mb-1">Style</div>
-              <div className="text-sm">{artwork.metadata.style || 'Default'}</div>
+              <div className="text-xs text-muted-foreground mb-0.5">style</div>
+              <div className="text-xs font-mono">{artwork.metadata.style || 'default'}</div>
             </div>
           </div>
 

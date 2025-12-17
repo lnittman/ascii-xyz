@@ -58,82 +58,85 @@ export default function CollectionsPage() {
       <div className="px-6 py-12">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
-          <div className="mb-10 flex items-center justify-between">
+          <div className="mb-8 flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-medium mb-1">Collections</h1>
-              <p className="text-sm text-muted-foreground">
-                Organize your ASCII art into curated collections
+              <h1 className="text-sm font-medium mb-0.5">collections</h1>
+              <p className="text-xs text-muted-foreground">
+                organize your ASCII art into curated collections
               </p>
             </div>
 
             <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
               <DialogTrigger asChild>
-                <Button size="sm" className="gap-2">
-                  <Plus className="h-4 w-4" />
-                  New Collection
+                <Button size="sm" className="gap-1.5 text-xs h-7 px-2.5">
+                  <Plus className="h-3.5 w-3.5" />
+                  new
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Create Collection</DialogTitle>
+                  <DialogTitle className="text-sm">create collection</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4 pt-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Name</Label>
+                    <Label htmlFor="name" className="text-xs">name</Label>
                     <Input
                       id="name"
-                      placeholder="My Favorites"
+                      placeholder="my favorites"
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
+                      className="text-sm"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="description">Description (optional)</Label>
+                    <Label htmlFor="description" className="text-xs">description (optional)</Label>
                     <Textarea
                       id="description"
-                      placeholder="A collection of..."
+                      placeholder="a collection of..."
                       value={newDescription}
                       onChange={(e) => setNewDescription(e.target.value)}
                       rows={3}
+                      className="text-sm"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Visibility</Label>
-                    <div className="flex gap-2">
+                    <Label className="text-xs">visibility</Label>
+                    <div className="flex gap-1.5">
                       <button
                         type="button"
                         onClick={() => setNewVisibility('private')}
                         className={cn(
-                          'flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md border text-sm font-medium transition-colors',
+                          'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-sm border text-xs font-medium transition-colors duration-0 cursor-default',
                           newVisibility === 'private'
-                            ? 'border-primary bg-primary/10 text-primary'
-                            : 'border-border text-muted-foreground hover:border-primary/50'
+                            ? 'border-foreground bg-foreground/5 text-foreground'
+                            : 'border-border/50 text-muted-foreground hover:border-border hover:bg-muted/50'
                         )}
                       >
-                        <Lock className="h-4 w-4" />
-                        Private
+                        <Lock className="h-3.5 w-3.5" />
+                        private
                       </button>
                       <button
                         type="button"
                         onClick={() => setNewVisibility('public')}
                         className={cn(
-                          'flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md border text-sm font-medium transition-colors',
+                          'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-sm border text-xs font-medium transition-colors duration-0 cursor-default',
                           newVisibility === 'public'
-                            ? 'border-primary bg-primary/10 text-primary'
-                            : 'border-border text-muted-foreground hover:border-primary/50'
+                            ? 'border-foreground bg-foreground/5 text-foreground'
+                            : 'border-border/50 text-muted-foreground hover:border-border hover:bg-muted/50'
                         )}
                       >
-                        <Globe className="h-4 w-4" />
-                        Public
+                        <Globe className="h-3.5 w-3.5" />
+                        public
                       </button>
                     </div>
                   </div>
                   <Button
                     onClick={handleCreate}
                     disabled={!newName.trim() || isCreating}
-                    className="w-full"
+                    size="sm"
+                    className="w-full text-xs"
                   >
-                    {isCreating ? 'Creating...' : 'Create Collection'}
+                    {isCreating ? 'creating...' : 'create collection'}
                   </Button>
                 </div>
               </DialogContent>
@@ -142,48 +145,48 @@ export default function CollectionsPage() {
 
           {/* Collections Grid */}
           {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="border border-border/50 rounded-md p-5 bg-card/50">
-                  <Skeleton className="h-5 w-1/2 mb-2" />
-                  <Skeleton className="h-4 w-3/4 mb-4" />
-                  <Skeleton className="h-3 w-1/4" />
+                <div key={i} className="border border-border/50 rounded-sm p-4 bg-card/50">
+                  <Skeleton className="h-4 w-1/2 mb-2 rounded-sm" />
+                  <Skeleton className="h-3 w-3/4 mb-3 rounded-sm" />
+                  <Skeleton className="h-3 w-1/4 rounded-sm" />
                 </div>
               ))}
             </div>
           ) : isEmpty || !collections || collections.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="mx-auto w-14 h-14 bg-muted rounded-md flex items-center justify-center mb-6">
-                <Folder className="h-6 w-6 text-muted-foreground" />
+            <div className="text-center py-16">
+              <div className="mx-auto w-10 h-10 bg-muted rounded-sm flex items-center justify-center mb-4">
+                <Folder className="h-4 w-4 text-muted-foreground" />
               </div>
-              <h3 className="text-lg font-medium mb-2">No collections yet</h3>
-              <p className="text-muted-foreground mb-4">
-                Create a collection to organize your ASCII art
+              <h3 className="text-sm font-medium mb-1">no collections yet</h3>
+              <p className="text-muted-foreground text-xs mb-4">
+                create a collection to organize your ASCII art
               </p>
-              <Button onClick={() => setIsCreateOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create Collection
+              <Button onClick={() => setIsCreateOpen(true)} size="sm" className="text-xs gap-1.5">
+                <Plus className="h-3.5 w-3.5" />
+                create collection
               </Button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {collections.map((collection) => (
                 <Link key={collection._id} href={`/collections/${collection._id}`}>
-                  <article className="group border border-border/50 rounded-md p-5 hover:border-border hover:shadow-lg transition-all duration-200 bg-card/50 backdrop-blur-sm">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <Folder className="h-4 w-4 text-muted-foreground" weight="duotone" />
-                        <h3 className="font-medium line-clamp-1">{collection.name}</h3>
+                  <article className="group border border-border/50 rounded-sm p-4 hover:border-border hover:bg-muted/30 transition-colors duration-0 bg-card/50">
+                    <div className="flex items-start justify-between mb-1.5">
+                      <div className="flex items-center gap-1.5">
+                        <Folder className="h-3.5 w-3.5 text-muted-foreground" weight="duotone" />
+                        <h3 className="text-xs font-medium line-clamp-1">{collection.name}</h3>
                       </div>
                       {collection.visibility === 'private' ? (
-                        <Lock className="h-3.5 w-3.5 text-muted-foreground" />
+                        <Lock className="h-3 w-3 text-muted-foreground" />
                       ) : (
-                        <Globe className="h-3.5 w-3.5 text-muted-foreground" />
+                        <Globe className="h-3 w-3 text-muted-foreground" />
                       )}
                     </div>
 
                     {collection.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                      <p className="text-xs text-muted-foreground line-clamp-2 mb-2">
                         {collection.description}
                       </p>
                     )}
@@ -193,11 +196,11 @@ export default function CollectionsPage() {
                       <span>{format(new Date(collection.createdAt), 'MMM d, yyyy')}</span>
                     </div>
 
-                    <div className="mt-3 pt-3 border-t border-border/30 flex items-center justify-between">
+                    <div className="mt-2.5 pt-2.5 border-t border-border/30 flex items-center justify-between">
                       <span className="text-xs text-muted-foreground">
-                        Updated {format(new Date(collection.updatedAt), 'MMM d')}
+                        updated {format(new Date(collection.updatedAt), 'MMM d')}
                       </span>
-                      <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
+                      <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground transition-colors duration-0" />
                     </div>
                   </article>
                 </Link>

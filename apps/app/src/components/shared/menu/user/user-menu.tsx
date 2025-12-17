@@ -19,44 +19,44 @@ import Link from 'next/link';
 function ThemeOptions() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  
+
   useEffect(() => {
     setMounted(true);
   }, []);
-  
+
   if (!mounted) return null;
-  
+
   return (
     <>
       <button
         onClick={() => setTheme('light')}
         className={cn(
-          "flex items-center justify-center p-1.5 rounded-md transition-none",
+          "flex items-center justify-center p-1 rounded-sm cursor-default",
           theme === 'light' ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
         )}
-        title="Light mode"
+        title="light"
       >
-        <Sun className="w-3.5 h-3.5" weight="duotone" />
+        <Sun className="w-3 h-3" weight="duotone" />
       </button>
       <button
         onClick={() => setTheme('dark')}
         className={cn(
-          "flex items-center justify-center p-1.5 rounded-md transition-none",
+          "flex items-center justify-center p-1 rounded-sm cursor-default",
           theme === 'dark' ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
         )}
-        title="Dark mode"
+        title="dark"
       >
-        <Moon className="w-3.5 h-3.5" weight="duotone" />
+        <Moon className="w-3 h-3" weight="duotone" />
       </button>
       <button
         onClick={() => setTheme('system')}
         className={cn(
-          "flex items-center justify-center p-1.5 rounded-md transition-none",
+          "flex items-center justify-center p-1 rounded-sm cursor-default",
           theme === 'system' ? "bg-accent text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
         )}
-        title="System theme"
+        title="system"
       >
-        <Monitor className="w-3.5 h-3.5" weight="duotone" />
+        <Monitor className="w-3 h-3" weight="duotone" />
       </button>
     </>
   );
@@ -95,8 +95,8 @@ export function UserMenu() {
     <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
       <DropdownMenuTrigger asChild>
         <button className={cn(
-          "h-8 w-8 bg-muted text-foreground flex items-center justify-center text-xs font-medium flex-shrink-0 border border-border hover-transition rounded-lg overflow-hidden",
-          "hover:bg-accent hover:border-foreground/20",
+          "h-7 w-7 bg-muted text-foreground flex items-center justify-center text-xs font-medium flex-shrink-0 border border-border/50 rounded-sm overflow-hidden cursor-default",
+          "hover:bg-accent hover:border-border",
           "focus:outline-none select-none",
           menuOpen ? "bg-accent/80 border-foreground/30" : ""
         )}>
@@ -166,12 +166,12 @@ export function UserMenu() {
               animate={menuOpen ? 'open' : 'closed'}
               onAnimationStart={() => setWillChange('transform, opacity, filter')}
               onAnimationComplete={() => setWillChange('auto')}
-              className={cn('w-56 rounded-md border border-border/50 bg-popover')}
+              className={cn('w-48 rounded-sm border border-border/50 bg-popover')}
         >
-              <div className="flex items-center justify-start gap-3 px-2 py-2 border-b border-border/50">
-                <div className="flex-1">
+              <div className="flex items-center justify-start gap-2 px-2 py-1.5 border-b border-border/50">
+                <div className="flex-1 min-w-0">
                   {user.fullName && (
-                    <p className="font-medium text-sm">{user.fullName}</p>
+                    <p className="font-medium text-xs truncate">{user.fullName}</p>
                   )}
                   <p className="text-xs text-muted-foreground truncate">
                     {user.emailAddresses?.[0]?.emailAddress}
@@ -179,47 +179,47 @@ export function UserMenu() {
                 </div>
               </div>
 
-              <div className="py-1">
+              <div className="py-0.5">
                 <DropdownMenuItem
                   onClick={() => router.push('/gallery')}
-                  className="mx-1 px-2 py-1.5 rounded-[8px] hover:bg-muted/30 transition-none group cursor-pointer"
+                  className="mx-0.5 px-2 py-1 rounded-sm hover:bg-muted/30 cursor-default"
                 >
                   <div className="flex items-center w-full">
-                    <Stack className="w-4 h-4 mr-2 text-muted-foreground" />
-                    <span className="flex-1 text-sm">My Gallery</span>
+                    <Stack className="w-3.5 h-3.5 mr-1.5 text-muted-foreground" />
+                    <span className="flex-1 text-xs">my gallery</span>
                   </div>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
                   onClick={() => router.push('/settings')}
-                  className="mx-1 px-2 py-1.5 rounded-[8px] hover:bg-muted/30 transition-none group cursor-pointer"
+                  className="mx-0.5 px-2 py-1 rounded-sm hover:bg-muted/30 cursor-default"
                 >
                   <div className="flex items-center w-full">
-                    <Gear className="w-4 h-4 mr-2 text-muted-foreground" />
-                    <span className="flex-1 text-sm">Settings</span>
+                    <Gear className="w-3.5 h-3.5 mr-1.5 text-muted-foreground" />
+                    <span className="flex-1 text-xs">settings</span>
                   </div>
                 </DropdownMenuItem>
               </div>
 
-              <DropdownMenuSeparator className="my-1" />
-              
+              <DropdownMenuSeparator className="my-0.5" />
+
               {/* Theme Switcher */}
-              <div className="px-3 py-2 flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground">Theme</span>
-                <div className="flex items-center gap-1">
+              <div className="px-2 py-1.5 flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">theme</span>
+                <div className="flex items-center gap-0.5">
                   <ThemeOptions />
                 </div>
               </div>
-              
-              <DropdownMenuSeparator className="my-1" />
+
+              <DropdownMenuSeparator className="my-0.5" />
 
               <DropdownMenuItem
                 onClick={handleSignOut}
-                className="mx-1 px-2 py-1.5 rounded-[8px] hover:bg-muted/30 transition-none group cursor-pointer"
+                className="mx-0.5 px-2 py-1 rounded-sm hover:bg-muted/30 cursor-default"
               >
                 <div className="flex items-center w-full">
-                  <SignOut className="w-4 h-4 mr-2 text-red-500/70" />
-                  <span className="flex-1 text-sm text-red-500/70">Sign out</span>
+                  <SignOut className="w-3.5 h-3.5 mr-1.5 text-destructive/70" />
+                  <span className="flex-1 text-xs text-destructive/70">sign out</span>
                 </div>
               </DropdownMenuItem>
         </motion.div>

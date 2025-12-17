@@ -217,14 +217,14 @@ export default function GeneratePage() {
             {/* Error state */}
             {genMachine.state.status === 'error' && (
               <div className="pt-8">
-                <div className="mb-6">
-                  <p className="text-sm font-mono text-muted-foreground mb-2">PROMPT:</p>
-                  <p className="text-base font-mono">{genMachine.state.prompt}</p>
+                <div className="mb-4">
+                  <p className="text-xs font-mono text-muted-foreground mb-1">PROMPT:</p>
+                  <p className="text-sm font-mono">{genMachine.state.prompt}</p>
                 </div>
-                <div className="border border-destructive/50 bg-destructive/10 p-6 rounded-[12px]">
+                <div className="border border-destructive/50 bg-destructive/10 p-4 rounded-sm">
                   <div className="text-center">
-                    <div className="text-2xl mb-4 text-destructive">✗</div>
-                    <p className="text-sm font-mono text-destructive mb-4">
+                    <div className="text-xl mb-3 text-destructive">✗</div>
+                    <p className="text-xs font-mono text-destructive mb-3">
                       {genMachine.state.error}
                     </p>
                     <button
@@ -234,10 +234,10 @@ export default function GeneratePage() {
                         }
                         genMachine.reset()
                       }}
-                      className="px-4 py-2 text-sm font-mono border border-border rounded-[8px] hover:bg-muted/50 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary/50 focus-visible:outline-offset-2"
+                      className="px-3 py-1.5 text-xs font-mono border border-border rounded-sm hover:bg-muted/50 transition-colors duration-0 cursor-default"
                       aria-label="Retry generation"
                     >
-                      Try Again
+                      try again
                     </button>
                   </div>
                 </div>
@@ -259,22 +259,22 @@ export default function GeneratePage() {
             {/* Planning state */}
             {genMachine.state.status === 'planning' && (
               <div className="pt-8">
-                <div className="mb-6">
-                  <p className="text-sm font-mono text-muted-foreground mb-2">PROMPT:</p>
-                  <p className="text-base font-mono">{genMachine.state.prompt}</p>
-                  <div className="mt-4 text-sm font-mono text-muted-foreground">
-                    <InlineThinkingTrace text="Planning animation..." />
+                <div className="mb-4">
+                  <p className="text-xs font-mono text-muted-foreground mb-1">PROMPT:</p>
+                  <p className="text-sm font-mono">{genMachine.state.prompt}</p>
+                  <div className="mt-3 text-xs font-mono text-muted-foreground">
+                    <InlineThinkingTrace text="planning animation..." />
                   </div>
                   {genMachine.state.thinkingTraces && genMachine.state.thinkingTraces.length > 0 && (
-                    <div className="mt-4 p-3 bg-muted/30 rounded-md border border-border/50 max-h-32 overflow-y-auto">
+                    <div className="mt-3 p-3 bg-muted/30 rounded-sm border border-border/50 max-h-32 overflow-y-auto">
                       <ThinkingTraces traces={genMachine.state.thinkingTraces} />
                     </div>
                   )}
                 </div>
-                <div className="border border-border bg-muted/30 p-6 overflow-auto min-h-[200px]">
-                  <div className="text-center text-muted-foreground font-mono text-sm">
-                    <div className="text-2xl mb-4 animate-pulse">◌ ◌ ◌</div>
-                    Creating generation plan...
+                <div className="border border-border bg-muted/30 rounded-sm p-4 overflow-auto min-h-[200px]">
+                  <div className="text-center text-muted-foreground font-mono text-xs">
+                    <div className="text-xl mb-3 animate-pulse">◌ ◌ ◌</div>
+                    creating generation plan...
                   </div>
                 </div>
               </div>
@@ -283,30 +283,30 @@ export default function GeneratePage() {
             {/* Generating state */}
             {genMachine.state.status === 'generating' && (
               <div className="pt-8">
-                <div className="mb-6">
-                  <p className="text-sm font-mono text-muted-foreground mb-2">PROMPT:</p>
-                  <p className="text-base font-mono">{genMachine.state.prompt}</p>
-                  <div className="mt-4">
-                    <div className="flex items-center gap-3 text-sm font-mono">
-                      <span className="text-muted-foreground">Frame</span>
+                <div className="mb-4">
+                  <p className="text-xs font-mono text-muted-foreground mb-1">PROMPT:</p>
+                  <p className="text-sm font-mono">{genMachine.state.prompt}</p>
+                  <div className="mt-3">
+                    <div className="flex items-center gap-2 text-xs font-mono">
+                      <span className="text-muted-foreground">frame</span>
                       <span className="text-foreground">{genMachine.state.currentFrame}</span>
-                      <span className="text-muted-foreground">of</span>
+                      <span className="text-muted-foreground">/</span>
                       <span className="text-foreground">{genMachine.state.totalFrames}</span>
                     </div>
-                    <div className="mt-2 w-full bg-muted rounded-full h-1 overflow-hidden">
+                    <div className="mt-2 w-full bg-muted rounded-sm h-1 overflow-hidden">
                       <div
-                        className="h-full bg-primary transition-all duration-300 ease-out"
+                        className="h-full bg-foreground"
                         style={{ width: `${genMachine.progress || 0}%` }}
                       />
                     </div>
                   </div>
                   {genMachine.state.thinkingTraces && genMachine.state.thinkingTraces.length > 0 && (
-                    <div className="mt-4 p-3 bg-muted/30 rounded-md border border-border/50 max-h-32 overflow-y-auto">
+                    <div className="mt-3 p-3 bg-muted/30 rounded-sm border border-border/50 max-h-32 overflow-y-auto">
                       <ThinkingTraces traces={genMachine.state.thinkingTraces} />
                     </div>
                   )}
                 </div>
-                <div className="border border-border bg-muted/30 p-6 overflow-auto min-h-[200px]">
+                <div className="border border-border bg-muted/30 rounded-sm p-4 overflow-auto min-h-[200px]">
                   {genMachine.state.frames.length > 0 ? (
                     <AsciiEngine
                       frames={genMachine.state.frames}
@@ -321,9 +321,9 @@ export default function GeneratePage() {
                       }}
                     />
                   ) : (
-                    <div className="text-center text-muted-foreground font-mono text-sm">
-                      <div className="text-2xl mb-4 animate-pulse">◌ ◌ ◌</div>
-                      Generating frames...
+                    <div className="text-center text-muted-foreground font-mono text-xs">
+                      <div className="text-xl mb-3 animate-pulse">◌ ◌ ◌</div>
+                      generating frames...
                     </div>
                   )}
                 </div>
@@ -333,11 +333,11 @@ export default function GeneratePage() {
             {/* Completed state (show most recent result) */}
             {genMachine.state.status === 'completed' && (
               <div className="pt-8">
-                <div className="mb-6">
-                  <p className="text-sm font-mono text-muted-foreground mb-2">PROMPT:</p>
-                  <p className="text-base font-mono">{genMachine.state.prompt}</p>
+                <div className="mb-4">
+                  <p className="text-xs font-mono text-muted-foreground mb-1">PROMPT:</p>
+                  <p className="text-sm font-mono">{genMachine.state.prompt}</p>
                 </div>
-                <div className="border border-border bg-muted/30 p-6 overflow-auto">
+                <div className="border border-border bg-muted/30 rounded-sm p-4 overflow-auto">
                   {genMachine.state.frames.length > 0 && (
                     <AsciiEngine
                       frames={genMachine.state.frames}
@@ -359,11 +359,11 @@ export default function GeneratePage() {
             {/* Idle state with history */}
             {genMachine.state.status === 'idle' && currentGeneration && (
               <div className="pt-8">
-                <div className="mb-6">
-                  <p className="text-sm font-mono text-muted-foreground mb-2">PROMPT:</p>
-                  <p className="text-base font-mono">{currentGeneration.prompt}</p>
+                <div className="mb-4">
+                  <p className="text-xs font-mono text-muted-foreground mb-1">PROMPT:</p>
+                  <p className="text-sm font-mono">{currentGeneration.prompt}</p>
                 </div>
-                <div className="border border-border bg-muted/30 p-6 overflow-auto">
+                <div className="border border-border bg-muted/30 rounded-sm p-4 overflow-auto">
                   {currentGeneration.frames.length > 0 && (
                     <AsciiEngine
                       frames={currentGeneration.frames}
@@ -386,7 +386,7 @@ export default function GeneratePage() {
             {genMachine.state.status === 'idle' && !currentGeneration && (
               <div className="pt-8">
                 <div className="mx-auto max-w-2xl">
-                  <div className="rounded-[12px] border border-border bg-muted/30 p-6 overflow-hidden">
+                  <div className="rounded-sm border border-border bg-muted/30 p-4 overflow-hidden">
                     <AsciiEngine
                       frames={starsFrames}
                       fps={10}
@@ -397,7 +397,7 @@ export default function GeneratePage() {
                         lineHeight: '14px',
                         color: 'hsl(var(--foreground))',
                         fontFamily: 'monospace',
-                        opacity: 0.8,
+                        opacity: 0.7,
                       }}
                     />
                   </div>
@@ -411,7 +411,7 @@ export default function GeneratePage() {
       {/* Bottom-aligned composer with full-width prompt */}
       <div className="fixed bottom-6 left-0 right-0 z-40">
         <div className="mx-auto max-w-3xl px-6">
-          <div className="space-y-3">
+          <div className="space-y-2">
             {/* Prompt Input - Full Width */}
             <div className="relative">
               <textarea
@@ -424,14 +424,14 @@ export default function GeneratePage() {
                     handleGenerate()
                   }
                 }}
-                placeholder="Describe the ASCII art you want to create..."
-                className="w-full min-h-[80px] max-h-[200px] resize-y bg-background border border-border/60 rounded-[12px] px-4 py-3 outline-none text-sm font-mono placeholder:text-muted-foreground/60 focus:border-border focus:ring-1 focus:ring-primary/20 transition-colors"
+                placeholder="describe the ASCII art you want to create..."
+                className="w-full min-h-[80px] max-h-[200px] resize-y bg-background border border-border/50 rounded-sm px-3 py-2.5 outline-none text-sm font-mono placeholder:text-muted-foreground/60 focus:border-border transition-colors duration-0"
                 disabled={isGenerating}
               />
               {prompt && (
                 <button
                   onClick={() => setPrompt('')}
-                  className="absolute right-3 top-3 w-6 h-6 flex items-center justify-center text-lg opacity-60 hover:opacity-100 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary/50 transition-opacity"
+                  className="absolute right-2.5 top-2.5 w-5 h-5 flex items-center justify-center text-sm text-muted-foreground hover:text-foreground rounded-sm cursor-default transition-colors duration-0"
                   aria-label="Clear prompt"
                 >
                   ×
@@ -440,13 +440,13 @@ export default function GeneratePage() {
             </div>
 
             {/* Controls Row */}
-            <div className="flex items-center gap-2 rounded-[12px] border border-border/60 bg-background/95 backdrop-blur-sm px-3 py-2">
+            <div className="flex items-center gap-2 rounded-sm border border-border/50 bg-background px-2.5 py-1.5">
               {/* Left side - Model picker and tools */}
-              <div className="flex items-center gap-2 flex-1">
+              <div className="flex items-center gap-1.5 flex-1">
                 <ModelPicker disabled={isGenerating} />
-                
-                <div className="h-6 w-px bg-border/50" />
-                
+
+                <div className="h-5 w-px bg-border/50" />
+
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -457,18 +457,18 @@ export default function GeneratePage() {
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isGenerating}
-                  className="flex items-center justify-center w-10 h-10 border border-border/50 rounded-[8px] hover:bg-muted/50 hover:border-border transition-colors font-mono text-sm disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary/50 focus-visible:outline-offset-2"
+                  className="flex items-center justify-center w-8 h-8 border border-border/50 rounded-sm hover:bg-muted/50 hover:border-border transition-colors duration-0 font-mono text-xs disabled:opacity-50 cursor-default"
                   title="Upload image"
                   aria-label="Upload image for ASCII conversion"
                 >
                   □
                 </button>
-                
+
                 {currentGeneration && (
                   <>
                     <button
                       onClick={copyToClipboard}
-                      className="flex items-center justify-center w-10 h-10 border border-border/50 rounded-[8px] hover:bg-muted/50 hover:border-border transition-colors font-mono text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary/50 focus-visible:outline-offset-2"
+                      className="flex items-center justify-center w-8 h-8 border border-border/50 rounded-sm hover:bg-muted/50 hover:border-border transition-colors duration-0 font-mono text-xs cursor-default"
                       title="Copy to clipboard"
                       aria-label="Copy ASCII art to clipboard"
                     >
@@ -476,7 +476,7 @@ export default function GeneratePage() {
                     </button>
                     <button
                       onClick={downloadAscii}
-                      className="flex items-center justify-center w-10 h-10 border border-border/50 rounded-[8px] hover:bg-muted/50 hover:border-border transition-colors font-mono text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary/50 focus-visible:outline-offset-2"
+                      className="flex items-center justify-center w-8 h-8 border border-border/50 rounded-sm hover:bg-muted/50 hover:border-border transition-colors duration-0 font-mono text-xs cursor-default"
                       title="Download ASCII"
                       aria-label="Download ASCII art as text file"
                     >
@@ -496,11 +496,11 @@ export default function GeneratePage() {
                 <button
                   onClick={handleGenerate}
                   disabled={!prompt.trim() || isGenerating}
-                  className="flex items-center justify-center px-4 h-10 bg-foreground text-background border border-foreground disabled:bg-transparent disabled:text-muted-foreground disabled:border-border transition-colors font-mono text-sm gap-2 rounded-[8px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
+                  className="flex items-center justify-center px-3 h-8 bg-foreground text-background border border-foreground disabled:bg-transparent disabled:text-muted-foreground disabled:border-border transition-colors duration-0 font-mono text-xs gap-1.5 rounded-sm cursor-default"
                   aria-label={isGenerating ? 'Generating ASCII art' : 'Generate ASCII art'}
                 >
                   {isGenerating ? '◌' : '▶'}
-                  {!isMobile && <span>{isGenerating ? 'GENERATING' : 'RUN'}</span>}
+                  {!isMobile && <span>{isGenerating ? 'generating' : 'run'}</span>}
                 </button>
               </div>
             </div>

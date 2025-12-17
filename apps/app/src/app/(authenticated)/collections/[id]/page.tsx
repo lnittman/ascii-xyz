@@ -113,14 +113,14 @@ export default function CollectionDetailPage() {
       <div className="min-h-[calc(100vh-4rem)]">
         <div className="px-6 py-12">
           <div className="max-w-5xl mx-auto">
-            <div className="flex items-center gap-3 mb-8">
-              <Skeleton className="h-8 w-8" />
-              <Skeleton className="h-8 w-64" />
+            <div className="flex items-center gap-3 mb-6">
+              <Skeleton className="h-7 w-7 rounded-sm" />
+              <Skeleton className="h-6 w-64 rounded-sm" />
             </div>
-            <Skeleton className="h-4 w-96 mb-8" />
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <Skeleton className="h-4 w-96 mb-6 rounded-sm" />
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {[...Array(8)].map((_, i) => (
-                <Skeleton key={i} className="aspect-square rounded-md" />
+                <Skeleton key={i} className="aspect-square rounded-sm" />
               ))}
             </div>
           </div>
@@ -134,15 +134,15 @@ export default function CollectionDetailPage() {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto w-14 h-14 bg-muted rounded-md flex items-center justify-center mb-6">
-            <Folder className="h-6 w-6 text-muted-foreground" />
+          <div className="mx-auto w-10 h-10 bg-muted rounded-sm flex items-center justify-center mb-4">
+            <Folder className="h-4 w-4 text-muted-foreground" />
           </div>
-          <h2 className="text-lg font-medium mb-2">Collection not found</h2>
-          <p className="text-muted-foreground mb-4">
-            This collection may have been deleted or you don't have permission to view it.
+          <h2 className="text-sm font-medium mb-1">collection not found</h2>
+          <p className="text-muted-foreground text-xs mb-4">
+            this collection may have been deleted or you don't have permission to view it
           </p>
           <Link href="/collections">
-            <Button>Back to Collections</Button>
+            <Button size="sm" variant="outline" className="text-xs">back to collections</Button>
           </Link>
         </div>
       </div>
@@ -156,83 +156,81 @@ export default function CollectionDetailPage() {
       <div className="px-6 py-12">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
-          <div className="mb-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2.5">
                 <Link href="/collections">
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 border border-border hover:border-primary/20 rounded-md"
+                    className="h-7 w-7 border border-border/50 hover:border-border hover:bg-muted/50 rounded-sm transition-colors duration-0 cursor-default"
                   >
-                    <ArrowLeft size={16} weight="duotone" />
+                    <ArrowLeft size={14} weight="bold" />
                   </Button>
                 </Link>
-                <div className="flex items-center gap-2">
-                  <Folder className="h-5 w-5 text-muted-foreground" weight="duotone" />
-                  <h1 className="text-2xl font-medium">{collection.name}</h1>
+                <div className="flex items-center gap-1.5">
+                  <Folder className="h-4 w-4 text-muted-foreground" weight="duotone" />
+                  <h1 className="text-sm font-medium">{collection.name}</h1>
                 </div>
                 {collection.visibility === 'private' ? (
-                  <Lock className="h-4 w-4 text-muted-foreground" />
+                  <Lock className="h-3 w-3 text-muted-foreground" />
                 ) : (
-                  <Globe className="h-4 w-4 text-muted-foreground" />
+                  <Globe className="h-3 w-3 text-muted-foreground" />
                 )}
               </div>
 
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
+              <div className="flex items-center gap-1.5">
+                <button
                   onClick={openEditDialog}
-                  className="h-8 w-8 hover:bg-muted/50 rounded-md"
+                  className="h-7 w-7 flex items-center justify-center hover:bg-muted/50 rounded-sm transition-colors duration-0 cursor-default"
                 >
-                  <Pencil size={16} weight="duotone" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
+                  <Pencil size={14} weight="bold" />
+                </button>
+                <button
                   onClick={handleDelete}
                   disabled={isDeleting}
-                  className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-md"
+                  className="h-7 w-7 flex items-center justify-center text-destructive hover:bg-destructive/10 rounded-sm transition-colors duration-0 cursor-default disabled:opacity-50"
                 >
-                  <Trash size={16} />
-                </Button>
+                  <Trash size={14} />
+                </button>
               </div>
             </div>
 
             {collection.description && (
-              <p className="text-muted-foreground mb-4">{collection.description}</p>
+              <p className="text-muted-foreground text-xs mb-3">{collection.description}</p>
             )}
 
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
               <span>{artworks.length} artworks</span>
-              <span>Created {format(new Date(collection.createdAt), 'MMM d, yyyy')}</span>
-              <span>Updated {format(new Date(collection.updatedAt), 'MMM d')}</span>
+              <span>·</span>
+              <span>{format(new Date(collection.createdAt), 'MMM d, yyyy')}</span>
+              <span>·</span>
+              <span>updated {format(new Date(collection.updatedAt), 'MMM d')}</span>
             </div>
           </div>
 
           {/* Artworks Grid */}
           {artworks.length === 0 ? (
-            <div className="text-center py-20 border border-dashed border-border/50 rounded-md">
-              <div className="mx-auto w-14 h-14 bg-muted rounded-md flex items-center justify-center mb-6">
-                <ImageIcon className="h-6 w-6 text-muted-foreground" />
+            <div className="text-center py-16 border border-dashed border-border/50 rounded-sm">
+              <div className="mx-auto w-10 h-10 bg-muted rounded-sm flex items-center justify-center mb-4">
+                <ImageIcon className="h-4 w-4 text-muted-foreground" />
               </div>
-              <h3 className="text-lg font-medium mb-2">No artworks yet</h3>
-              <p className="text-muted-foreground mb-4">
-                Add artworks to this collection from the artwork detail page
+              <h3 className="text-sm font-medium mb-1">no artworks yet</h3>
+              <p className="text-muted-foreground text-xs mb-4">
+                add artworks to this collection from the artwork detail page
               </p>
               <Link href="/">
-                <Button variant="outline">Browse Artworks</Button>
+                <Button variant="outline" size="sm" className="text-xs">browse artworks</Button>
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {artworks.map((artwork) => {
                 if (!artwork) return null;
                 return (
                   <div key={artwork._id} className="group relative">
                     <Link href={`/art/${artwork._id}`}>
-                      <article className="border border-border/50 rounded-md overflow-hidden hover:border-border hover:shadow-lg transition-all duration-200 bg-card/50 backdrop-blur-sm">
+                      <article className="border border-border/50 rounded-sm overflow-hidden hover:border-border hover:bg-muted/30 transition-colors duration-0 bg-card/50">
                         {/* ASCII Preview */}
                         <div className="aspect-square bg-black p-2 overflow-hidden">
                           <pre className="text-[6px] leading-[1.1] text-green-400 font-mono whitespace-pre overflow-hidden h-full">
@@ -241,9 +239,9 @@ export default function CollectionDetailPage() {
                         </div>
 
                         {/* Metadata */}
-                        <div className="p-3">
-                          <p className="text-sm font-medium line-clamp-1">{artwork.prompt}</p>
-                          <p className="text-xs text-muted-foreground mt-1">
+                        <div className="p-2.5">
+                          <p className="text-xs font-medium line-clamp-1">{artwork.prompt}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
                             {artwork.frames.length} frame{artwork.frames.length !== 1 ? 's' : ''}
                           </p>
                         </div>
@@ -253,10 +251,10 @@ export default function CollectionDetailPage() {
                     {/* Remove button */}
                     <button
                       onClick={() => handleRemoveArtwork(artwork._id)}
-                      className="absolute top-2 right-2 h-6 w-6 bg-black/80 hover:bg-destructive text-white rounded-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-1.5 right-1.5 h-5 w-5 bg-black/80 hover:bg-destructive text-white rounded-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-0 cursor-default"
                       title="Remove from collection"
                     >
-                      <Trash size={12} />
+                      <Trash size={10} />
                     </button>
                   </div>
                 );
@@ -291,42 +289,43 @@ export default function CollectionDetailPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Visibility</Label>
-              <div className="flex gap-2">
+              <Label className="text-xs">visibility</Label>
+              <div className="flex gap-1.5">
                 <button
                   type="button"
                   onClick={() => setEditVisibility('private')}
                   className={cn(
-                    'flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md border text-sm font-medium transition-colors',
+                    'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-sm border text-xs font-medium transition-colors duration-0 cursor-default',
                     editVisibility === 'private'
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border text-muted-foreground hover:border-primary/50'
+                      ? 'border-foreground bg-foreground/5 text-foreground'
+                      : 'border-border/50 text-muted-foreground hover:border-border hover:bg-muted/50'
                   )}
                 >
-                  <Lock className="h-4 w-4" />
-                  Private
+                  <Lock className="h-3.5 w-3.5" />
+                  private
                 </button>
                 <button
                   type="button"
                   onClick={() => setEditVisibility('public')}
                   className={cn(
-                    'flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md border text-sm font-medium transition-colors',
+                    'flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-sm border text-xs font-medium transition-colors duration-0 cursor-default',
                     editVisibility === 'public'
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border text-muted-foreground hover:border-primary/50'
+                      ? 'border-foreground bg-foreground/5 text-foreground'
+                      : 'border-border/50 text-muted-foreground hover:border-border hover:bg-muted/50'
                   )}
                 >
-                  <Globe className="h-4 w-4" />
-                  Public
+                  <Globe className="h-3.5 w-3.5" />
+                  public
                 </button>
               </div>
             </div>
             <Button
               onClick={handleUpdate}
               disabled={!editName.trim() || isUpdating}
-              className="w-full"
+              size="sm"
+              className="w-full text-xs"
             >
-              {isUpdating ? 'Saving...' : 'Save Changes'}
+              {isUpdating ? 'saving...' : 'save changes'}
             </Button>
           </div>
         </DialogContent>

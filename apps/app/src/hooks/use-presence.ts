@@ -137,9 +137,9 @@ export function usePresence(
 
   // Transform presence data to user-friendly format
   const users: PresenceUser[] = (presenceList ?? []).map((p) => ({
-    id: p.id,
-    name: p.id === userId ? userName : `User ${p.id.slice(-4)}`,
-    updated: p.updated,
+    id: p.userId,
+    name: p.userId === userId ? userName : `User ${p.userId.slice(-4)}`,
+    updated: p.lastDisconnected,
   }));
 
   return {
