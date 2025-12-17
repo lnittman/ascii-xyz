@@ -1,29 +1,30 @@
 import { v } from "convex/values";
-import { mutation, query, internalQuery, internalMutation } from "../_generated/server";
+import { mutation, query, internalQuery, internalMutation, MutationCtx } from "../_generated/server";
 import { Doc } from "../_generated/dataModel";
+import type { UserIdentity } from "convex/server";
 
 // Helper to ensure user exists
-const ensureUser = async (ctx: any, identity: any) => {
+const ensureUser = async (ctx: MutationCtx, identity: UserIdentity): Promise<Doc<"users"> | null> => {
   // Get user from database
   let user = await ctx.db
     .query("users")
-    .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", identity.subject))
+    .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
     .first();
-  
+
   if (!user) {
     // Auto-create user if they don't exist
     const userId = await ctx.db.insert("users", {
       clerkId: identity.subject,
       email: identity.email || "",
-      name: identity.name || "",
-      imageUrl: identity.pictureUrl || "",
+      name: identity.name,
+      imageUrl: identity.pictureUrl,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
-    
+
     user = await ctx.db.get(userId);
   }
-  
+
   return user;
 };
 

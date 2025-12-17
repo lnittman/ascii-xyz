@@ -1,5 +1,6 @@
 import { v } from 'convex/values';
 import { mutation } from '../../_generated/server';
+import { api } from '../../_generated/api';
 import { validateFrames } from '../../lib/ascii';
 
 // Save generated ASCII artwork
@@ -54,6 +55,11 @@ export const save = mutation({
       likes: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+    });
+
+    // Schedule embedding generation (async, non-blocking)
+    await ctx.scheduler.runAfter(0, api.embeddings.generateForArtwork, {
+      artworkId,
     });
 
     return artworkId;

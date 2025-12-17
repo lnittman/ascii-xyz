@@ -74,6 +74,8 @@ export async function withTestArtwork(
     visibility: 'public' | 'private' | 'unlisted';
     remixedFrom?: Id<'artworks'>;
     combinedFrom?: Id<'artworks'>[];
+    likes?: number;
+    views?: number;
   }> = {}
 ): Promise<Id<'artworks'>> {
   return await t.run(async (ctx) => {
@@ -92,6 +94,8 @@ export async function withTestArtwork(
         ...(overrides.combinedFrom && { combinedFrom: overrides.combinedFrom }),
       },
       visibility: overrides.visibility ?? 'private',
+      likes: overrides.likes,
+      views: overrides.views,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
@@ -163,6 +167,57 @@ export async function withTestCollection(
       visibility: overrides.visibility ?? 'private',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+    });
+  });
+}
+
+export async function withTestEmbedding(
+  t: TestContext,
+  artworkId: Id<'artworks'>,
+  overrides: Partial<{
+    embedding: number[];
+    model: string;
+  }> = {}
+): Promise<Id<'artworkEmbeddings'>> {
+  return await t.run(async (ctx) => {
+    // Default: a 1536-dimensional embedding (OpenAI text-embedding-ada-002)
+    const defaultEmbedding = Array(1536).fill(0).map(() => Math.random() * 2 - 1);
+
+    return await ctx.db.insert('artworkEmbeddings', {
+      artworkId,
+      embedding: overrides.embedding ?? defaultEmbedding,
+      model: overrides.model ?? 'text-embedding-ada-002',
+      createdAt: new Date().toISOString(),
+    });
+  });
+}
+
+export async function withTestGeneration(
+  t: TestContext,
+  overrides: Partial<{
+    userId: string;
+    prompt: string;
+    modelId: string;
+    status: 'planning' | 'generating' | 'completed' | 'failed';
+    frames: string[];
+    currentFrame: number;
+    totalFrames: number;
+    error: string;
+    apiKey: string;
+  }> = {}
+): Promise<Id<'artworkGenerations'>> {
+  return await t.run(async (ctx) => {
+    return await ctx.db.insert('artworkGenerations', {
+      userId: overrides.userId,
+      prompt: overrides.prompt ?? 'Test generation',
+      modelId: overrides.modelId ?? 'test-model',
+      status: overrides.status ?? 'planning',
+      frames: overrides.frames ?? [],
+      currentFrame: overrides.currentFrame ?? 0,
+      totalFrames: overrides.totalFrames ?? 0,
+      createdAt: new Date().toISOString(),
+      ...(overrides.error && { error: overrides.error }),
+      ...(overrides.apiKey && { apiKey: overrides.apiKey }),
     });
   });
 }

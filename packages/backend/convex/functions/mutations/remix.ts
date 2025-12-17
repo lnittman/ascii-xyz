@@ -1,5 +1,6 @@
 import { v } from 'convex/values';
 import { mutation } from '../../_generated/server';
+import { api } from '../../_generated/api';
 import { validateFrames } from '../../lib/ascii';
 
 // Save a remixed artwork with source tracking
@@ -68,6 +69,11 @@ export const saveRemix = mutation({
       remixType: args.metadata.remixType,
       prompt: args.prompt,
       createdAt: new Date().toISOString(),
+    });
+
+    // Schedule embedding generation (async, non-blocking)
+    await ctx.scheduler.runAfter(0, api.embeddings.generateForArtwork, {
+      artworkId,
     });
 
     return artworkId;
@@ -150,6 +156,11 @@ export const saveCombination = mutation({
       blendRatio: args.metadata.blendRatio,
       prompt: args.prompt,
       createdAt: new Date().toISOString(),
+    });
+
+    // Schedule embedding generation (async, non-blocking)
+    await ctx.scheduler.runAfter(0, api.embeddings.generateForArtwork, {
+      artworkId,
     });
 
     return artworkId;

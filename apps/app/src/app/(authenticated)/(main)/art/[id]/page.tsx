@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Heart, Eye, Share, Download, ArrowLeft, Play, Pause, Trash, SkipBack } from '@phosphor-icons/react';
+import { Eye, Share, Download, ArrowLeft, Play, Pause, Trash, SkipBack } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { Button } from '@repo/design/components/ui/button';
@@ -14,6 +14,11 @@ export const dynamic = 'force-dynamic';
 import { useArtwork, useDeleteArtwork, useUpdateArtworkVisibility } from '@/hooks/use-ascii';
 import { Id } from '@repo/backend/convex/_generated/dataModel';
 import { useUser } from '@clerk/nextjs';
+import { SimilarArtworks } from '@/components/artwork/similar-artworks';
+import { AddToCollection } from '@/components/artwork/add-to-collection';
+import { PresenceDot } from '@/components/presence/presence-indicator';
+import { LikeButton } from '@/components/social/like-button';
+import { useIncrementView } from '@/hooks/use-social';
 
 export default function ArtworkPage() {
   const params = useParams();
@@ -27,10 +32,20 @@ export default function ArtworkPage() {
   const artworkState = useArtwork(artworkId!, user?.id);
   const deleteArtwork = useDeleteArtwork();
   const updateVisibility = useUpdateArtworkVisibility();
+  const incrementView = useIncrementView();
+  const hasTrackedView = useRef(false);
 
   const isLoading = artworkState.status === 'loading';
   const isEmpty = artworkState.status === 'empty';
   const artwork = artworkState.data;
+
+  // Track view when artwork loads (once per page visit)
+  useEffect(() => {
+    if (artwork && artworkId && !hasTrackedView.current) {
+      hasTrackedView.current = true;
+      incrementView({ artworkId }).catch(console.error);
+    }
+  }, [artwork, artworkId, incrementView]);
 
   // Loading state
   if (isLoading) {
@@ -168,18 +183,20 @@ export default function ArtworkPage() {
           
           {/* Right-aligned action buttons */}
           <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <AddToCollection artworkId={artworkId} />
+
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={handleDownload}
               className="h-8 w-8 hover:bg-muted/50 rounded-md"
             >
               <Download size={16} weight="duotone" />
             </Button>
-            
-            <Button 
-              variant="ghost" 
-              size="icon" 
+
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => {}}
               className="h-8 w-8 hover:bg-muted/50 rounded-md"
             >
@@ -206,11 +223,9 @@ export default function ArtworkPage() {
               <span>{artwork.views || 0}</span>
             </div>
             {artwork.visibility === 'public' && (
-              <div className="flex items-center gap-1.5">
-                <Heart className="h-4 w-4" weight="duotone" />
-                <span>{artwork.likes || 0}</span>
-              </div>
+              <LikeButton artworkId={artworkId} size="sm" />
             )}
+            <PresenceDot roomId={artworkId} />
           </div>
           
           <Button 
@@ -284,6 +299,9 @@ export default function ArtworkPage() {
               <div className="text-sm">{artwork.metadata.style || 'Default'}</div>
             </div>
           </div>
+
+          {/* Similar Artworks */}
+          <SimilarArtworks artworkId={artworkId} userId={user?.id} />
         </div>
       </div>
     </div>

@@ -203,4 +203,14 @@ export default defineSchema({
   })
     .index("by_combined", ["combinedArtworkId"])
     .index("by_user", ["userId"]),
+
+  // User likes on artworks (for social features)
+  artworkLikes: defineTable({
+    artworkId: v.id("artworks"),
+    userId: v.string(), // Clerk user ID
+    createdAt: v.string(),
+  })
+    .index("by_artwork", ["artworkId"])
+    .index("by_user", ["userId"])
+    .index("by_user_artwork", ["userId", "artworkId"]),
 });

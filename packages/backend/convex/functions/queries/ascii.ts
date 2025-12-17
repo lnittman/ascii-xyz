@@ -76,7 +76,7 @@ export const getPublic = query({
   },
 });
 
-// Search artworks
+// Search artworks using Convex search index
 export const search = query({
   args: {
     query: v.string(),
@@ -84,27 +84,47 @@ export const search = query({
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const searchTerm = args.query.toLowerCase();
-    
-    let results = await ctx.db
+    // Use Convex search index for efficient full-text search
+    let searchQuery = ctx.db
       .query("artworks")
-      .filter(q => {
+      .withSearchIndex("search_prompt", (q) => {
+        let search = q.search("prompt", args.query);
+
+        // Filter by user or show public only
         if (args.userId) {
-          return q.eq(q.field("userId"), args.userId);
+          search = search.eq("userId", args.userId);
+        } else {
+          search = search.eq("visibility", "public");
         }
-        return q.eq(q.field("visibility"), "public");
-      })
-      .order("desc")
-      .take(args.limit || 20);
 
-    // Filter by search term in prompt
-    // Note: This is a simple text search. For production, consider using
-    // a proper search index or vector search
-    results = results.filter(artwork => 
-      artwork.prompt.toLowerCase().includes(searchTerm)
-    );
+        return search;
+      });
 
+    const results = await searchQuery.take(args.limit || 20);
     return results;
+  },
+});
+
+// Get multiple artworks by IDs
+export const getMany = query({
+  args: {
+    ids: v.array(v.id("artworks")),
+    userId: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const artworks = await Promise.all(
+      args.ids.map(async (id) => {
+        const artwork = await ctx.db.get(id);
+        if (!artwork) return null;
+        // Check access permissions
+        if (!canUserAccessArtwork(artwork, args.userId || null)) {
+          return null;
+        }
+        return artwork;
+      })
+    );
+    // Filter out nulls and maintain order
+    return artworks.filter((a): a is NonNullable<typeof a> => a !== null);
   },
 });
 

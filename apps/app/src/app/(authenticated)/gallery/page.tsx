@@ -77,7 +77,7 @@ export default function AsciiGalleryPage() {
               )}
               {/* Mobile search button */}
               <button
-                className="sm:hidden flex items-center gap-2 px-4 py-2 h-10 bg-muted/30 border border-border/50 hover:bg-muted/50 transition-all duration-200 rounded-md text-sm font-medium text-muted-foreground"
+                className="sm:hidden flex items-center gap-2 px-4 py-2 h-10 bg-muted/30 border border-border/50 hover:bg-muted/50 transition-all duration-200 rounded-md text-sm font-medium text-muted-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary/50"
                 onClick={() => {
                   // Could open a search modal on mobile
                   const input = prompt('Search artworks:');
@@ -86,39 +86,46 @@ export default function AsciiGalleryPage() {
                     setView('search');
                   }
                 }}
+                aria-label="Search artworks"
               >
-                <MagnifyingGlass className="w-4 h-4" />
+                <MagnifyingGlass className="w-4 h-4" aria-hidden="true" />
                 <span>Search</span>
               </button>
             </div>
             
             {/* Filter Toggle */}
-            <div className="flex items-center h-10 bg-muted/30 border border-border/60 rounded-md p-0.5 gap-0.5">
+            <div className="flex items-center h-10 bg-muted/30 border border-border/60 rounded-md p-0.5 gap-0.5" role="tablist" aria-label="Gallery view filter">
               <div className="relative h-full">
                 <button
                   onClick={() => setView('my-art')}
+                  role="tab"
+                  aria-selected={view === 'my-art'}
+                  aria-label="View my artworks"
                   className={cn(
-                    "flex items-center justify-center gap-2 h-full transition-colors duration-150 rounded-[8px] text-sm font-medium px-3.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500",
+                    "flex items-center justify-center gap-2 h-full transition-colors duration-150 rounded-[8px] text-sm font-medium px-3.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary/50",
                     view === 'my-art'
                       ? "bg-background text-foreground"
                       : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40"
                   )}
                 >
-                  <GridFour className="w-3.5 h-3.5" />
+                  <GridFour className="w-3.5 h-3.5" aria-hidden="true" />
                   <span className="hidden sm:inline">my art</span>
                 </button>
               </div>
               <div className="relative h-full">
                 <button
                   onClick={() => setView('public')}
+                  role="tab"
+                  aria-selected={view === 'public'}
+                  aria-label="View public gallery"
                   className={cn(
-                    "flex items-center justify-center gap-2 h-full transition-colors duration-150 rounded-[8px] text-sm font-medium px-3.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500",
+                    "flex items-center justify-center gap-2 h-full transition-colors duration-150 rounded-[8px] text-sm font-medium px-3.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary/50",
                     view === 'public'
                       ? "bg-background text-foreground"
                       : "text-muted-foreground/80 hover:text-foreground hover:bg-background/40"
                   )}
                 >
-                  <Globe className="w-3.5 h-3.5" />
+                  <Globe className="w-3.5 h-3.5" aria-hidden="true" />
                   <span className="hidden sm:inline">public</span>
                 </button>
               </div>
@@ -137,33 +144,33 @@ export default function AsciiGalleryPage() {
               ))}
             </div>
           ) : !isEmpty && artworks && artworks.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6" role="list" aria-label="Artworks gallery">
             {artworks.map((artwork) => (
-              <Link key={artwork._id} href={`/art/${artwork._id}`}>
-                <div className="group border border-border/50 rounded-md p-5 hover:border-border hover:shadow-lg transition-all duration-200 bg-card/50 backdrop-blur-sm">
+              <Link key={artwork._id} href={`/art/${artwork._id}`} aria-label={`View artwork: ${artwork.prompt.slice(0, 50)}${artwork.prompt.length > 50 ? '...' : ''}`}>
+                <article className="group border border-border/50 rounded-md p-5 hover:border-border hover:shadow-lg transition-all duration-200 bg-card/50 backdrop-blur-sm focus-within:ring-2 focus-within:ring-primary/50">
                   {/* ASCII Preview */}
-                  <div className="bg-black rounded-md p-3 mb-4 overflow-hidden group-hover:shadow-xl transition-shadow duration-200">
+                  <div className="bg-black rounded-md p-3 mb-4 overflow-hidden group-hover:shadow-xl transition-shadow duration-200" aria-hidden="true">
                     <pre className="text-green-400 text-xs leading-none font-mono whitespace-pre">
                       {artwork.frames[0]?.slice(0, 200) || 'No preview available'}
                     </pre>
                   </div>
-                  
+
                   {/* Artwork Info */}
                   <div className="space-y-2">
                     <h3 className="text-sm font-medium line-clamp-2">
                       {artwork.prompt}
                     </h3>
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>{format(new Date(artwork.createdAt), 'MMM d, yyyy')}</span>
+                      <time dateTime={artwork.createdAt}>{format(new Date(artwork.createdAt), 'MMM d, yyyy')}</time>
                       <div className="flex items-center gap-2">
                         {artwork.visibility === 'public' && (
-                          <div className="flex items-center gap-1">
-                            <Heart className="h-3 w-3" />
+                          <div className="flex items-center gap-1" aria-label={`${artwork.likes || 0} likes`}>
+                            <Heart className="h-3 w-3" aria-hidden="true" />
                             <span>{artwork.likes || 0}</span>
                           </div>
                         )}
-                        <div className="flex items-center gap-1">
-                          <Eye className="h-3 w-3" />
+                        <div className="flex items-center gap-1" aria-label={`${artwork.views || 0} views`}>
+                          <Eye className="h-3 w-3" aria-hidden="true" />
                           <span>{artwork.views || 0}</span>
                         </div>
                       </div>
@@ -171,7 +178,7 @@ export default function AsciiGalleryPage() {
                     <div className="flex items-center gap-2">
                       <span className={cn(
                         "inline-flex items-center px-2 py-0.5 rounded text-xs",
-                        artwork.visibility === 'public' 
+                        artwork.visibility === 'public'
                           ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
                           : "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400"
                       )}>
@@ -184,7 +191,7 @@ export default function AsciiGalleryPage() {
                       )}
                     </div>
                   </div>
-                </div>
+                </article>
               </Link>
             ))}
           </div>

@@ -6,6 +6,7 @@ import { Heart, Eye, ArrowLeft } from 'iconoir-react';
 import Link from 'next/link';
 import { Button } from '@repo/design/components/ui/button';
 import { Badge } from '@repo/design/components/ui/badge';
+import { Skeleton } from '@repo/design/components/ui/skeleton';
 import { useSharedArtwork } from '@/hooks/use-shares';
 
 // Prevent static generation for this page as it uses Convex
@@ -14,10 +15,33 @@ export const dynamic = 'force-dynamic';
 export default function SharedArtworkPage() {
   const params = useParams();
   const shareCode = params?.token as string;
-  
-  const artwork = useSharedArtwork(shareCode);
 
-  if (!artwork) {
+  const artworkState = useSharedArtwork(shareCode);
+
+  // Loading state
+  if (artworkState.status === 'loading') {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="border-b border-border bg-card">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center gap-4">
+              <Skeleton className="h-10 w-10" />
+              <div className="space-y-2">
+                <Skeleton className="h-6 w-64" />
+                <Skeleton className="h-4 w-40" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Skeleton className="h-96 w-full rounded-lg" />
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state (not found)
+  if (artworkState.status === 'empty' || !artworkState.data) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-4">
@@ -36,6 +60,7 @@ export default function SharedArtworkPage() {
     );
   }
 
+  const artwork = artworkState.data;
 
   return (
     <div className="min-h-screen bg-background">
@@ -68,7 +93,7 @@ export default function SharedArtworkPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <Badge variant="outline">
                 Shared Link
@@ -85,14 +110,14 @@ export default function SharedArtworkPage() {
             {artwork.frames[0] || 'No content available'}
           </pre>
         </div>
-        
+
         {/* Animation frames if available */}
         {artwork.frames.length > 1 && (
           <div className="mt-4 text-center text-sm text-muted-foreground">
             This artwork has {artwork.frames.length} animation frames
           </div>
         )}
-        
+
         {/* Metadata */}
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-accent/30 rounded-lg">
           <div>
