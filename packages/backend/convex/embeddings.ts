@@ -79,7 +79,28 @@ export const storeEmbedding = internalMutation({
   },
 });
 
-// Generate and store embedding for an artwork
+// Generate and store embedding for an artwork (internal, for workflows)
+export const generateForArtworkInternal = internalAction({
+  args: { artworkId: v.id('artworks') },
+  handler: async (ctx, { artworkId }): Promise<void> => {
+    // Get artwork
+    const artwork = await ctx.runQuery(internal.embeddings.getArtwork, { artworkId });
+    if (!artwork) {
+      throw new Error(`Artwork ${artworkId} not found`);
+    }
+
+    // Generate embedding using cache
+    const embedding = await embeddingsCache.fetch(ctx, { text: artwork.prompt });
+
+    // Store in database
+    await ctx.runMutation(internal.embeddings.storeEmbedding, {
+      artworkId,
+      embedding,
+    });
+  },
+});
+
+// Generate and store embedding for an artwork (public API)
 export const generateForArtwork = action({
   args: { artworkId: v.id('artworks') },
   handler: async (ctx, { artworkId }): Promise<void> => {
@@ -130,14 +151,9 @@ export const findSimilar = action({
       limit: limit + 1, // +1 to exclude self
     });
 
-    // Filter out self and map to artwork IDs
-    const similarArtworks = results
-      .filter((r) => r._id !== artworkId)
-      .slice(0, limit);
-
     // Get artwork IDs from embedding records
     const artworkResults: Array<{ _id: Id<'artworks'>; _score: number }> = [];
-    for (const result of similarArtworks) {
+    for (const result of results) {
       const embeddingRecord = await ctx.runQuery(internal.embeddings.getEmbeddingRecord, {
         embeddingId: result._id,
       });
@@ -149,7 +165,10 @@ export const findSimilar = action({
       }
     }
 
-    return artworkResults;
+    // Filter out self and limit results
+    return artworkResults
+      .filter((r) => r._id !== artworkId)
+      .slice(0, limit);
   },
 });
 

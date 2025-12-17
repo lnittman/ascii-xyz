@@ -9,11 +9,14 @@
  */
 
 import type * as agent_ascii from "../agent/ascii.js";
+import type * as config_models from "../config/models.js";
+import type * as embeddings from "../embeddings.js";
 import type * as functions_actions_ascii from "../functions/actions/ascii.js";
 import type * as functions_actions_combine from "../functions/actions/combine.js";
 import type * as functions_internal_users from "../functions/internal/users.js";
 import type * as functions_models from "../functions/models.js";
 import type * as functions_mutations_ascii from "../functions/mutations/ascii.js";
+import type * as functions_mutations_collections from "../functions/mutations/collections.js";
 import type * as functions_mutations_files from "../functions/mutations/files.js";
 import type * as functions_mutations_generations from "../functions/mutations/generations.js";
 import type * as functions_mutations_remix from "../functions/mutations/remix.js";
@@ -21,6 +24,7 @@ import type * as functions_queries_ascii from "../functions/queries/ascii.js";
 import type * as functions_queries_collections from "../functions/queries/collections.js";
 import type * as functions_queries_files from "../functions/queries/files.js";
 import type * as functions_queries_generations from "../functions/queries/generations.js";
+import type * as functions_queries_remix from "../functions/queries/remix.js";
 import type * as functions_queries_settings from "../functions/queries/settings.js";
 import type * as functions_queries_shares from "../functions/queries/shares.js";
 import type * as functions_queries_users from "../functions/queries/users.js";
@@ -30,6 +34,9 @@ import type * as http from "../http.js";
 import type * as lib_ai from "../lib/ai.js";
 import type * as lib_ascii from "../lib/ascii.js";
 import type * as lib_auth from "../lib/auth.js";
+import type * as presence from "../presence.js";
+import type * as social from "../social.js";
+import type * as workflows_backfillEmbeddings from "../workflows/backfillEmbeddings.js";
 
 import type {
   ApiFromModules,
@@ -37,21 +44,16 @@ import type {
   FunctionReference,
 } from "convex/server";
 
-/**
- * A utility for referencing Convex functions in your app's API.
- *
- * Usage:
- * ```js
- * const myFunctionReference = api.myModule.myFunction;
- * ```
- */
 declare const fullApi: ApiFromModules<{
   "agent/ascii": typeof agent_ascii;
+  "config/models": typeof config_models;
+  embeddings: typeof embeddings;
   "functions/actions/ascii": typeof functions_actions_ascii;
   "functions/actions/combine": typeof functions_actions_combine;
   "functions/internal/users": typeof functions_internal_users;
   "functions/models": typeof functions_models;
   "functions/mutations/ascii": typeof functions_mutations_ascii;
+  "functions/mutations/collections": typeof functions_mutations_collections;
   "functions/mutations/files": typeof functions_mutations_files;
   "functions/mutations/generations": typeof functions_mutations_generations;
   "functions/mutations/remix": typeof functions_mutations_remix;
@@ -59,6 +61,7 @@ declare const fullApi: ApiFromModules<{
   "functions/queries/collections": typeof functions_queries_collections;
   "functions/queries/files": typeof functions_queries_files;
   "functions/queries/generations": typeof functions_queries_generations;
+  "functions/queries/remix": typeof functions_queries_remix;
   "functions/queries/settings": typeof functions_queries_settings;
   "functions/queries/shares": typeof functions_queries_shares;
   "functions/queries/users": typeof functions_queries_users;
@@ -68,19 +71,80 @@ declare const fullApi: ApiFromModules<{
   "lib/ai": typeof lib_ai;
   "lib/ascii": typeof lib_ascii;
   "lib/auth": typeof lib_auth;
+  presence: typeof presence;
+  social: typeof social;
+  "workflows/backfillEmbeddings": typeof workflows_backfillEmbeddings;
 }>;
-declare const fullApiWithMounts: typeof fullApi;
 
+/**
+ * A utility for referencing Convex functions in your app's public API.
+ *
+ * Usage:
+ * ```js
+ * const myFunctionReference = api.myModule.myFunction;
+ * ```
+ */
 export declare const api: FilterApi<
-  typeof fullApiWithMounts,
+  typeof fullApi,
   FunctionReference<any, "public">
 >;
+
+/**
+ * A utility for referencing Convex functions in your app's internal API.
+ *
+ * Usage:
+ * ```js
+ * const myFunctionReference = internal.myModule.myFunction;
+ * ```
+ */
 export declare const internal: FilterApi<
-  typeof fullApiWithMounts,
+  typeof fullApi,
   FunctionReference<any, "internal">
 >;
 
 export declare const components: {
+  actionCache: {
+    crons: {
+      purge: FunctionReference<
+        "mutation",
+        "internal",
+        { expiresAt?: number },
+        null
+      >;
+    };
+    lib: {
+      get: FunctionReference<
+        "query",
+        "internal",
+        { args: any; name: string; ttl: number | null },
+        { kind: "hit"; value: any } | { expiredEntry?: string; kind: "miss" }
+      >;
+      put: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          args: any;
+          expiredEntry?: string;
+          name: string;
+          ttl: number | null;
+          value: any;
+        },
+        { cacheHit: boolean; deletedExpiredEntry: boolean }
+      >;
+      remove: FunctionReference<
+        "mutation",
+        "internal",
+        { args: any; name: string },
+        null
+      >;
+      removeAll: FunctionReference<
+        "mutation",
+        "internal",
+        { batchSize?: number; before?: number; name?: string },
+        null
+      >;
+    };
+  };
   agent: {
     apiKeys: {
       destroy: FunctionReference<
@@ -2681,6 +2745,574 @@ export declare const components: {
       };
     };
   };
+  aggregateLikes: {
+    btree: {
+      aggregateBetween: FunctionReference<
+        "query",
+        "internal",
+        { k1?: any; k2?: any; namespace?: any },
+        { count: number; sum: number }
+      >;
+      aggregateBetweenBatch: FunctionReference<
+        "query",
+        "internal",
+        { queries: Array<{ k1?: any; k2?: any; namespace?: any }> },
+        Array<{ count: number; sum: number }>
+      >;
+      atNegativeOffset: FunctionReference<
+        "query",
+        "internal",
+        { k1?: any; k2?: any; namespace?: any; offset: number },
+        { k: any; s: number; v: any }
+      >;
+      atOffset: FunctionReference<
+        "query",
+        "internal",
+        { k1?: any; k2?: any; namespace?: any; offset: number },
+        { k: any; s: number; v: any }
+      >;
+      atOffsetBatch: FunctionReference<
+        "query",
+        "internal",
+        {
+          queries: Array<{
+            k1?: any;
+            k2?: any;
+            namespace?: any;
+            offset: number;
+          }>;
+        },
+        Array<{ k: any; s: number; v: any }>
+      >;
+      get: FunctionReference<
+        "query",
+        "internal",
+        { key: any; namespace?: any },
+        null | { k: any; s: number; v: any }
+      >;
+      offset: FunctionReference<
+        "query",
+        "internal",
+        { k1?: any; key: any; namespace?: any },
+        number
+      >;
+      offsetUntil: FunctionReference<
+        "query",
+        "internal",
+        { k2?: any; key: any; namespace?: any },
+        number
+      >;
+      paginate: FunctionReference<
+        "query",
+        "internal",
+        {
+          cursor?: string;
+          k1?: any;
+          k2?: any;
+          limit: number;
+          namespace?: any;
+          order: "asc" | "desc";
+        },
+        {
+          cursor: string;
+          isDone: boolean;
+          page: Array<{ k: any; s: number; v: any }>;
+        }
+      >;
+      paginateNamespaces: FunctionReference<
+        "query",
+        "internal",
+        { cursor?: string; limit: number },
+        { cursor: string; isDone: boolean; page: Array<any> }
+      >;
+      validate: FunctionReference<
+        "query",
+        "internal",
+        { namespace?: any },
+        any
+      >;
+    };
+    inspect: {
+      display: FunctionReference<"query", "internal", { namespace?: any }, any>;
+      dump: FunctionReference<"query", "internal", { namespace?: any }, string>;
+      inspectNode: FunctionReference<
+        "query",
+        "internal",
+        { namespace?: any; node?: string },
+        null
+      >;
+      listTreeNodes: FunctionReference<
+        "query",
+        "internal",
+        { take?: number },
+        Array<{
+          _creationTime: number;
+          _id: string;
+          aggregate?: { count: number; sum: number };
+          items: Array<{ k: any; s: number; v: any }>;
+          subtrees: Array<string>;
+        }>
+      >;
+      listTrees: FunctionReference<
+        "query",
+        "internal",
+        { take?: number },
+        Array<{
+          _creationTime: number;
+          _id: string;
+          maxNodeSize: number;
+          namespace?: any;
+          root: string;
+        }>
+      >;
+    };
+    public: {
+      clear: FunctionReference<
+        "mutation",
+        "internal",
+        { maxNodeSize?: number; namespace?: any; rootLazy?: boolean },
+        null
+      >;
+      delete_: FunctionReference<
+        "mutation",
+        "internal",
+        { key: any; namespace?: any },
+        null
+      >;
+      deleteIfExists: FunctionReference<
+        "mutation",
+        "internal",
+        { key: any; namespace?: any },
+        any
+      >;
+      init: FunctionReference<
+        "mutation",
+        "internal",
+        { maxNodeSize?: number; namespace?: any; rootLazy?: boolean },
+        null
+      >;
+      insert: FunctionReference<
+        "mutation",
+        "internal",
+        { key: any; namespace?: any; summand?: number; value: any },
+        null
+      >;
+      makeRootLazy: FunctionReference<
+        "mutation",
+        "internal",
+        { namespace?: any },
+        null
+      >;
+      replace: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          currentKey: any;
+          namespace?: any;
+          newKey: any;
+          newNamespace?: any;
+          summand?: number;
+          value: any;
+        },
+        null
+      >;
+      replaceOrInsert: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          currentKey: any;
+          namespace?: any;
+          newKey: any;
+          newNamespace?: any;
+          summand?: number;
+          value: any;
+        },
+        any
+      >;
+    };
+  };
+  aggregateUserStats: {
+    btree: {
+      aggregateBetween: FunctionReference<
+        "query",
+        "internal",
+        { k1?: any; k2?: any; namespace?: any },
+        { count: number; sum: number }
+      >;
+      aggregateBetweenBatch: FunctionReference<
+        "query",
+        "internal",
+        { queries: Array<{ k1?: any; k2?: any; namespace?: any }> },
+        Array<{ count: number; sum: number }>
+      >;
+      atNegativeOffset: FunctionReference<
+        "query",
+        "internal",
+        { k1?: any; k2?: any; namespace?: any; offset: number },
+        { k: any; s: number; v: any }
+      >;
+      atOffset: FunctionReference<
+        "query",
+        "internal",
+        { k1?: any; k2?: any; namespace?: any; offset: number },
+        { k: any; s: number; v: any }
+      >;
+      atOffsetBatch: FunctionReference<
+        "query",
+        "internal",
+        {
+          queries: Array<{
+            k1?: any;
+            k2?: any;
+            namespace?: any;
+            offset: number;
+          }>;
+        },
+        Array<{ k: any; s: number; v: any }>
+      >;
+      get: FunctionReference<
+        "query",
+        "internal",
+        { key: any; namespace?: any },
+        null | { k: any; s: number; v: any }
+      >;
+      offset: FunctionReference<
+        "query",
+        "internal",
+        { k1?: any; key: any; namespace?: any },
+        number
+      >;
+      offsetUntil: FunctionReference<
+        "query",
+        "internal",
+        { k2?: any; key: any; namespace?: any },
+        number
+      >;
+      paginate: FunctionReference<
+        "query",
+        "internal",
+        {
+          cursor?: string;
+          k1?: any;
+          k2?: any;
+          limit: number;
+          namespace?: any;
+          order: "asc" | "desc";
+        },
+        {
+          cursor: string;
+          isDone: boolean;
+          page: Array<{ k: any; s: number; v: any }>;
+        }
+      >;
+      paginateNamespaces: FunctionReference<
+        "query",
+        "internal",
+        { cursor?: string; limit: number },
+        { cursor: string; isDone: boolean; page: Array<any> }
+      >;
+      validate: FunctionReference<
+        "query",
+        "internal",
+        { namespace?: any },
+        any
+      >;
+    };
+    inspect: {
+      display: FunctionReference<"query", "internal", { namespace?: any }, any>;
+      dump: FunctionReference<"query", "internal", { namespace?: any }, string>;
+      inspectNode: FunctionReference<
+        "query",
+        "internal",
+        { namespace?: any; node?: string },
+        null
+      >;
+      listTreeNodes: FunctionReference<
+        "query",
+        "internal",
+        { take?: number },
+        Array<{
+          _creationTime: number;
+          _id: string;
+          aggregate?: { count: number; sum: number };
+          items: Array<{ k: any; s: number; v: any }>;
+          subtrees: Array<string>;
+        }>
+      >;
+      listTrees: FunctionReference<
+        "query",
+        "internal",
+        { take?: number },
+        Array<{
+          _creationTime: number;
+          _id: string;
+          maxNodeSize: number;
+          namespace?: any;
+          root: string;
+        }>
+      >;
+    };
+    public: {
+      clear: FunctionReference<
+        "mutation",
+        "internal",
+        { maxNodeSize?: number; namespace?: any; rootLazy?: boolean },
+        null
+      >;
+      delete_: FunctionReference<
+        "mutation",
+        "internal",
+        { key: any; namespace?: any },
+        null
+      >;
+      deleteIfExists: FunctionReference<
+        "mutation",
+        "internal",
+        { key: any; namespace?: any },
+        any
+      >;
+      init: FunctionReference<
+        "mutation",
+        "internal",
+        { maxNodeSize?: number; namespace?: any; rootLazy?: boolean },
+        null
+      >;
+      insert: FunctionReference<
+        "mutation",
+        "internal",
+        { key: any; namespace?: any; summand?: number; value: any },
+        null
+      >;
+      makeRootLazy: FunctionReference<
+        "mutation",
+        "internal",
+        { namespace?: any },
+        null
+      >;
+      replace: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          currentKey: any;
+          namespace?: any;
+          newKey: any;
+          newNamespace?: any;
+          summand?: number;
+          value: any;
+        },
+        null
+      >;
+      replaceOrInsert: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          currentKey: any;
+          namespace?: any;
+          newKey: any;
+          newNamespace?: any;
+          summand?: number;
+          value: any;
+        },
+        any
+      >;
+    };
+  };
+  presence: {
+    public: {
+      disconnect: FunctionReference<
+        "mutation",
+        "internal",
+        { sessionToken: string },
+        null
+      >;
+      heartbeat: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          interval?: number;
+          roomId: string;
+          sessionId: string;
+          userId: string;
+        },
+        { roomToken: string; sessionToken: string }
+      >;
+      list: FunctionReference<
+        "query",
+        "internal",
+        { limit?: number; roomToken: string },
+        Array<{
+          data?: any;
+          lastDisconnected: number;
+          online: boolean;
+          userId: string;
+        }>
+      >;
+      listRoom: FunctionReference<
+        "query",
+        "internal",
+        { limit?: number; onlineOnly?: boolean; roomId: string },
+        Array<{ lastDisconnected: number; online: boolean; userId: string }>
+      >;
+      listUser: FunctionReference<
+        "query",
+        "internal",
+        { limit?: number; onlineOnly?: boolean; userId: string },
+        Array<{ lastDisconnected: number; online: boolean; roomId: string }>
+      >;
+      removeRoom: FunctionReference<
+        "mutation",
+        "internal",
+        { roomId: string },
+        null
+      >;
+      removeRoomUser: FunctionReference<
+        "mutation",
+        "internal",
+        { roomId: string; userId: string },
+        null
+      >;
+      updateRoomUser: FunctionReference<
+        "mutation",
+        "internal",
+        { data?: any; roomId: string; userId: string },
+        null
+      >;
+    };
+  };
+  rateLimiter: {
+    lib: {
+      checkRateLimit: FunctionReference<
+        "query",
+        "internal",
+        {
+          config:
+            | {
+                capacity?: number;
+                kind: "token bucket";
+                maxReserved?: number;
+                period: number;
+                rate: number;
+                shards?: number;
+                start?: null;
+              }
+            | {
+                capacity?: number;
+                kind: "fixed window";
+                maxReserved?: number;
+                period: number;
+                rate: number;
+                shards?: number;
+                start?: number;
+              };
+          count?: number;
+          key?: string;
+          name: string;
+          reserve?: boolean;
+          throws?: boolean;
+        },
+        { ok: true; retryAfter?: number } | { ok: false; retryAfter: number }
+      >;
+      clearAll: FunctionReference<
+        "mutation",
+        "internal",
+        { before?: number },
+        null
+      >;
+      getServerTime: FunctionReference<"mutation", "internal", {}, number>;
+      getValue: FunctionReference<
+        "query",
+        "internal",
+        {
+          config:
+            | {
+                capacity?: number;
+                kind: "token bucket";
+                maxReserved?: number;
+                period: number;
+                rate: number;
+                shards?: number;
+                start?: null;
+              }
+            | {
+                capacity?: number;
+                kind: "fixed window";
+                maxReserved?: number;
+                period: number;
+                rate: number;
+                shards?: number;
+                start?: number;
+              };
+          key?: string;
+          name: string;
+          sampleShards?: number;
+        },
+        {
+          config:
+            | {
+                capacity?: number;
+                kind: "token bucket";
+                maxReserved?: number;
+                period: number;
+                rate: number;
+                shards?: number;
+                start?: null;
+              }
+            | {
+                capacity?: number;
+                kind: "fixed window";
+                maxReserved?: number;
+                period: number;
+                rate: number;
+                shards?: number;
+                start?: number;
+              };
+          shard: number;
+          ts: number;
+          value: number;
+        }
+      >;
+      rateLimit: FunctionReference<
+        "mutation",
+        "internal",
+        {
+          config:
+            | {
+                capacity?: number;
+                kind: "token bucket";
+                maxReserved?: number;
+                period: number;
+                rate: number;
+                shards?: number;
+                start?: null;
+              }
+            | {
+                capacity?: number;
+                kind: "fixed window";
+                maxReserved?: number;
+                period: number;
+                rate: number;
+                shards?: number;
+                start?: number;
+              };
+          count?: number;
+          key?: string;
+          name: string;
+          reserve?: boolean;
+          throws?: boolean;
+        },
+        { ok: true; retryAfter?: number } | { ok: false; retryAfter: number }
+      >;
+      resetRateLimit: FunctionReference<
+        "mutation",
+        "internal",
+        { key?: string; name: string },
+        null
+      >;
+    };
+    time: {
+      getServerTime: FunctionReference<"mutation", "internal", {}, number>;
+    };
+  };
   workflow: {
     journal: {
       load: FunctionReference<
@@ -2873,140 +3505,6 @@ export declare const components: {
           };
         }
       >;
-    };
-  };
-  rateLimiter: {
-    lib: {
-      checkRateLimit: FunctionReference<
-        "query",
-        "internal",
-        {
-          config:
-            | {
-                capacity?: number;
-                kind: "token bucket";
-                maxReserved?: number;
-                period: number;
-                rate: number;
-                shards?: number;
-                start?: null;
-              }
-            | {
-                capacity?: number;
-                kind: "fixed window";
-                maxReserved?: number;
-                period: number;
-                rate: number;
-                shards?: number;
-                start?: number;
-              };
-          count?: number;
-          key?: string;
-          name: string;
-          reserve?: boolean;
-          throws?: boolean;
-        },
-        { ok: true; retryAfter?: number } | { ok: false; retryAfter: number }
-      >;
-      clearAll: FunctionReference<
-        "mutation",
-        "internal",
-        { before?: number },
-        null
-      >;
-      getServerTime: FunctionReference<"mutation", "internal", {}, number>;
-      getValue: FunctionReference<
-        "query",
-        "internal",
-        {
-          config:
-            | {
-                capacity?: number;
-                kind: "token bucket";
-                maxReserved?: number;
-                period: number;
-                rate: number;
-                shards?: number;
-                start?: null;
-              }
-            | {
-                capacity?: number;
-                kind: "fixed window";
-                maxReserved?: number;
-                period: number;
-                rate: number;
-                shards?: number;
-                start?: number;
-              };
-          key?: string;
-          name: string;
-          sampleShards?: number;
-        },
-        {
-          config:
-            | {
-                capacity?: number;
-                kind: "token bucket";
-                maxReserved?: number;
-                period: number;
-                rate: number;
-                shards?: number;
-                start?: null;
-              }
-            | {
-                capacity?: number;
-                kind: "fixed window";
-                maxReserved?: number;
-                period: number;
-                rate: number;
-                shards?: number;
-                start?: number;
-              };
-          shard: number;
-          ts: number;
-          value: number;
-        }
-      >;
-      rateLimit: FunctionReference<
-        "mutation",
-        "internal",
-        {
-          config:
-            | {
-                capacity?: number;
-                kind: "token bucket";
-                maxReserved?: number;
-                period: number;
-                rate: number;
-                shards?: number;
-                start?: null;
-              }
-            | {
-                capacity?: number;
-                kind: "fixed window";
-                maxReserved?: number;
-                period: number;
-                rate: number;
-                shards?: number;
-                start?: number;
-              };
-          count?: number;
-          key?: string;
-          name: string;
-          reserve?: boolean;
-          throws?: boolean;
-        },
-        { ok: true; retryAfter?: number } | { ok: false; retryAfter: number }
-      >;
-      resetRateLimit: FunctionReference<
-        "mutation",
-        "internal",
-        { key?: string; name: string },
-        null
-      >;
-    };
-    time: {
-      getServerTime: FunctionReference<"mutation", "internal", {}, number>;
     };
   };
 };

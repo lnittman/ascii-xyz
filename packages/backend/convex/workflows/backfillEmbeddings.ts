@@ -1,6 +1,6 @@
 import { v } from 'convex/values';
 import { WorkflowManager } from '@convex-dev/workflow';
-import { components, internal, api } from '../_generated/api';
+import { components, internal } from '../_generated/api';
 import { internalMutation, internalQuery } from '../_generated/server';
 import { Id } from '../_generated/dataModel';
 
@@ -82,7 +82,12 @@ export const backfillEmbeddingsWorkflow = workflow.define({
       batchNumber++;
 
       // Get next batch of artworks needing embeddings
-      const result = await step.runQuery(
+      const result: {
+        artworkIds: Id<'artworks'>[];
+        cursor: string | null;
+        isDone: boolean;
+        totalInBatch: number;
+      } = await step.runQuery(
         internal.workflows.backfillEmbeddings.getArtworksNeedingEmbeddings,
         { cursor, limit: batchSize }
       );
@@ -92,7 +97,7 @@ export const backfillEmbeddingsWorkflow = workflow.define({
       // Generate embeddings for each artwork in this batch
       for (const artworkId of result.artworkIds) {
         try {
-          await step.runAction(api.embeddings.generateForArtwork, {
+          await step.runAction(internal.embeddings.generateForArtworkInternal, {
             artworkId,
           });
           totalEmbedded++;
@@ -138,8 +143,8 @@ export const startBackfill = internalMutation({
   args: {
     batchSize: v.optional(v.number()),
   },
-  handler: async (ctx, args) => {
-    const workflowId = await workflow.start(
+  handler: async (ctx, args): Promise<string> => {
+    const workflowId: string = await workflow.start(
       ctx,
       internal.workflows.backfillEmbeddings.backfillEmbeddingsWorkflow,
       { batchSize: args.batchSize }
