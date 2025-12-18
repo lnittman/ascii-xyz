@@ -7,28 +7,31 @@ import { Button } from '@repo/design/components/ui/button';
 import { Input } from '@repo/design/components/ui/input';
 import { Label } from '@repo/design/components/ui/label';
 import { Switch } from '@repo/design/components/ui/switch';
+import { Skeleton } from '@repo/design/components/ui/skeleton';
 import {
   Info,
   Key,
-  Check,
-  X,
   CaretRight,
   Eye,
   EyeSlash,
   CircleNotch
 } from '@phosphor-icons/react';
 import { cn } from '@repo/design/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@repo/backend/convex/_generated/api';
 import { toast } from 'sonner';
-import { AVAILABLE_MODELS } from '@repo/backend/convex/config/models';
+import { useModels } from '@/hooks/models';
 
 type ProviderStatus = 'idle' | 'verifying' | 'success' | 'error';
 
 export default function ModelsSettingsPage() {
   const [selectedModelId, setSelectedModelId] = useAtom(selectedModelIdAtom);
-  
+
+  // Fetch models from Convex
+  const modelsState = useModels({ includeDisabled: true });
+  const models = modelsState.status === 'loading' ? [] : modelsState.data ?? [];
+  const isLoadingModels = modelsState.status === 'loading';
+
   // Fetch user settings
   const settings = useQuery(api.functions.settings.get);
   const updateSettings = useMutation(api.functions.settings.update);
@@ -218,67 +221,82 @@ export default function ModelsSettingsPage() {
         )}
 
         <div className="space-y-2">
-          {AVAILABLE_MODELS.map((model) => {
-            const isEnabled = enabledModels.includes(model.id);
-            const isDefault = selectedModelId === model.id || (!selectedModelId && model.recommended);
-            
-            return (
-              <div
-                key={model.id}
-                className={cn(
-                  'flex items-center justify-between rounded-md border p-4',
-                  'transition-all duration-200',
-                  isDefault
-                    ? 'border-foreground bg-muted/50'
-                    : 'border-border/50 hover:border-border',
-                  !hasApiKey && 'opacity-50 pointer-events-none'
-                )}
-              >
+          {isLoadingModels ? (
+            // Loading skeleton
+            [...Array(4)].map((_, i) => (
+              <div key={i} className="rounded-md border border-border/50 p-4">
                 <div className="flex items-start gap-4">
-                  {/* Enable/Disable Switch */}
-                  <div className="pt-0.5">
-                    <Switch
-                      checked={isEnabled}
-                      onCheckedChange={(checked) => handleToggleModel(model.id, checked)}
-                      disabled={!hasApiKey}
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-sm font-medium">
-                        {model.name}
-                      </span>
-                      {model.recommended && (
-                        <span className="rounded-sm bg-green-500/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-green-600 dark:text-green-400">
-                          RECOMMENDED
-                        </span>
-                      )}
-                      {isDefault && (
-                        <span className="rounded-sm bg-foreground/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider">
-                          DEFAULT
-                        </span>
-                      )}
-                    </div>
-                    <p className="mt-1 font-mono text-xs text-muted-foreground">
-                      {model.description}
-                    </p>
+                  <Skeleton className="h-5 w-9 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-48" />
                   </div>
                 </div>
-
-                {isEnabled && !isDefault && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleSelectDefaultModel(model.id)}
-                    className="font-mono text-[10px] uppercase tracking-wider"
-                  >
-                    SET DEFAULT
-                  </Button>
-                )}
               </div>
-            );
-          })}
+            ))
+          ) : (
+            models.map((model) => {
+              const isEnabled = enabledModels.includes(model.modelId);
+              const isDefault = selectedModelId === model.modelId || (!selectedModelId && model.isDefault);
+
+              return (
+                <div
+                  key={model._id}
+                  className={cn(
+                    'flex items-center justify-between rounded-md border p-4',
+                    'transition-all duration-200',
+                    isDefault
+                      ? 'border-foreground bg-muted/50'
+                      : 'border-border/50 hover:border-border',
+                    !hasApiKey && 'opacity-50 pointer-events-none'
+                  )}
+                >
+                  <div className="flex items-start gap-4">
+                    {/* Enable/Disable Switch */}
+                    <div className="pt-0.5">
+                      <Switch
+                        checked={isEnabled}
+                        onCheckedChange={(checked) => handleToggleModel(model.modelId, checked)}
+                        disabled={!hasApiKey}
+                      />
+                    </div>
+
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-sm font-medium">
+                          {model.name}
+                        </span>
+                        {model.isDefault && (
+                          <span className="rounded-sm bg-green-500/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-green-600 dark:text-green-400">
+                            RECOMMENDED
+                          </span>
+                        )}
+                        {isDefault && (
+                          <span className="rounded-sm bg-foreground/10 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider">
+                            DEFAULT
+                          </span>
+                        )}
+                      </div>
+                      <p className="mt-1 font-mono text-xs text-muted-foreground">
+                        {model.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  {isEnabled && !isDefault && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleSelectDefaultModel(model.modelId)}
+                      className="font-mono text-[10px] uppercase tracking-wider"
+                    >
+                      SET DEFAULT
+                    </Button>
+                  )}
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 

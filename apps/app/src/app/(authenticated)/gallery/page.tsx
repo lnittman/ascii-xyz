@@ -49,6 +49,7 @@ export default function AsciiGalleryPage() {
               <Input
                 placeholder="search artworks..."
                 ref={inputRef}
+                data-search-input
                 className="pl-9 pr-10 w-full h-10 bg-muted/30 border-border/50 focus:bg-background focus:border-border transition-colors duration-0 rounded-sm"
                 value={searchQuery}
                 onChange={(e) => {
@@ -92,6 +93,7 @@ export default function AsciiGalleryPage() {
                 role="tab"
                 aria-selected={view === 'my-art'}
                 aria-label="View my artworks"
+                data-filter-my-art
                 className={cn(
                   "flex cursor-default items-center justify-center gap-2 py-2 px-3 text-xs font-medium transition-colors duration-0",
                   view === 'my-art'
@@ -107,6 +109,7 @@ export default function AsciiGalleryPage() {
                 role="tab"
                 aria-selected={view === 'trending'}
                 aria-label="View trending artworks"
+                data-filter-trending
                 className={cn(
                   "flex cursor-default items-center justify-center gap-2 py-2 px-3 text-xs font-medium transition-colors duration-0",
                   view === 'trending'
@@ -122,6 +125,7 @@ export default function AsciiGalleryPage() {
                 role="tab"
                 aria-selected={view === 'featured'}
                 aria-label="View featured artworks"
+                data-filter-featured
                 className={cn(
                   "flex cursor-default items-center justify-center gap-2 py-2 px-3 text-xs font-medium transition-colors duration-0",
                   view === 'featured'
@@ -137,6 +141,7 @@ export default function AsciiGalleryPage() {
                 role="tab"
                 aria-selected={view === 'public'}
                 aria-label="View public gallery"
+                data-filter-public
                 className={cn(
                   "flex cursor-default items-center justify-center gap-2 py-2 px-3 text-xs font-medium transition-colors duration-0",
                   view === 'public'

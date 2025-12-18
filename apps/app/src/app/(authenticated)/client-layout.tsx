@@ -7,6 +7,7 @@ import { cn } from '@repo/design/lib/utils';
 import { NavigationHeader } from '@/components/shared/layout/navigation-header';
 import { PageGradientOverlay } from '@/components/shared/layout/page-gradient-overlay';
 import { MobileUserMenuOverlay } from '@/components/shared/menu/user/mobile-user-menu-overlay';
+import { GlobalShortcutsProvider } from '@/components/layout/GlobalShortcutsProvider';
 import { mobileUserMenuOpenAtom } from '@/atoms/menus';
 
 interface ClientLayoutProps {
@@ -34,20 +35,22 @@ export function ClientLayout({ children }: ClientLayoutProps) {
   }, [mobileMenuOpen]);
 
   return (
-    <div className="min-h-screen bg-background antialiased">
-      {/* Sticky navigation header */}
-      <NavigationHeader />
-      
-      {/* Page edge gradient overlays */}
-      <PageGradientOverlay />
-      
-      {/* Main content */}
-      <main className="flex-1">
-        {children}
-      </main>
+    <GlobalShortcutsProvider>
+      <div className="min-h-screen bg-background antialiased">
+        {/* Sticky navigation header */}
+        <NavigationHeader />
 
-      {/* Mobile Menu Overlay */}
-      <MobileUserMenuOverlay />
-    </div>
+        {/* Page edge gradient overlays */}
+        <PageGradientOverlay />
+
+        {/* Main content */}
+        <main className="flex-1">
+          {children}
+        </main>
+
+        {/* Mobile Menu Overlay */}
+        <MobileUserMenuOverlay />
+      </div>
+    </GlobalShortcutsProvider>
   );
 }
