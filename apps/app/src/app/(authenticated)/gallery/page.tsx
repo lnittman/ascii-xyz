@@ -167,8 +167,8 @@ export default function AsciiGalleryPage() {
               <Link key={artwork._id} href={`/art/${artwork._id}`} aria-label={`View artwork: ${artwork.prompt.slice(0, 50)}${artwork.prompt.length > 50 ? '...' : ''}`}>
                 <article className="group border border-border/50 rounded-sm p-4 hover:border-border hover:bg-muted/30 transition-colors duration-0 bg-card/50 focus-within:ring-2 focus-within:ring-primary/50">
                   {/* ASCII Preview */}
-                  <div className="bg-black rounded-sm p-3 mb-3 overflow-hidden" aria-hidden="true">
-                    <pre className="text-green-400 text-xs leading-none font-mono whitespace-pre">
+                  <div className="bg-ascii-display rounded-sm p-3 mb-3 overflow-hidden" aria-hidden="true">
+                    <pre className="text-ascii text-xs leading-none font-mono whitespace-pre">
                       {artwork.frames[0]?.slice(0, 200) || 'No preview available'}
                     </pre>
                   </div>

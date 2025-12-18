@@ -25,8 +25,8 @@ function ArtworkCard({ item }: { item: SimilarArtwork }) {
       className="group block bg-card/50 border border-border/50 rounded-md overflow-hidden hover:border-primary/30 transition-colors"
     >
       {/* ASCII Preview */}
-      <div className="bg-black p-3 overflow-hidden">
-        <pre className="text-green-400/80 font-mono text-[8px] leading-tight whitespace-pre overflow-hidden h-16 group-hover:text-green-400 transition-colors">
+      <div className="bg-ascii-display p-3 overflow-hidden">
+        <pre className="text-ascii/80 font-mono text-[8px] leading-tight whitespace-pre overflow-hidden h-16 group-hover:text-ascii transition-colors">
           {preview}
         </pre>
       </div>

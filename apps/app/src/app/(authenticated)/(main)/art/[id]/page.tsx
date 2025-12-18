@@ -254,8 +254,8 @@ export default function ArtworkPage() {
           )}
 
           {/* ASCII Art Display */}
-          <div className="bg-black rounded-sm p-6 overflow-auto border border-border/30">
-            <pre className="text-green-400 font-mono text-sm leading-tight whitespace-pre">
+          <div className="bg-ascii-display rounded-sm p-6 overflow-auto border border-border/30">
+            <pre className="text-ascii font-mono text-sm leading-tight whitespace-pre">
               {artwork.frames[currentFrame] || 'No content available'}
             </pre>
           </div>

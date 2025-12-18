@@ -232,8 +232,8 @@ export default function CollectionDetailPage() {
                     <Link href={`/art/${artwork._id}`}>
                       <article className="border border-border/50 rounded-sm overflow-hidden hover:border-border hover:bg-muted/30 transition-colors duration-0 bg-card/50">
                         {/* ASCII Preview */}
-                        <div className="aspect-square bg-black p-2 overflow-hidden">
-                          <pre className="text-[6px] leading-[1.1] text-green-400 font-mono whitespace-pre overflow-hidden h-full">
+                        <div className="aspect-square bg-ascii-display p-2 overflow-hidden">
+                          <pre className="text-[6px] leading-[1.1] text-ascii font-mono whitespace-pre overflow-hidden h-full">
                             {artwork.frames[0]?.slice(0, 500) || ''}
                           </pre>
                         </div>

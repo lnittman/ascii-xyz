@@ -314,7 +314,7 @@ test.describe('Artwork Detail Page', () => {
         await page.waitForLoadState('networkidle');
 
         // Check for the ASCII display area
-        const asciiDisplay = page.locator('.bg-black pre');
+        const asciiDisplay = page.locator('.bg-ascii-display pre');
         const notFound = page.locator('text=Artwork not found');
 
         const hasDisplay = await asciiDisplay.count() > 0;

@@ -105,8 +105,8 @@ export default function SharedArtworkPage() {
 
       {/* ASCII Display */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-black rounded-lg p-6 overflow-auto">
-          <pre className="text-green-400 font-mono text-sm leading-tight whitespace-pre">
+        <div className="bg-ascii-display rounded-lg p-6 overflow-auto">
+          <pre className="text-ascii font-mono text-sm leading-tight whitespace-pre">
             {artwork.frames[0] || 'No content available'}
           </pre>
         </div>
