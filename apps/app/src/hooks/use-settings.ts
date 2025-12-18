@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useAction } from "convex/react";
 import { api } from "@repo/backend/convex/_generated/api";
 import { QueryState } from "./use-ascii";
 
@@ -58,7 +58,7 @@ export function useUserSettings(): UseUserSettingsReturn {
   const settings = useQuery(api.functions.settings.get);
   const updateSettingsMutation = useMutation(api.functions.settings.update);
   const toggleModelMutation = useMutation(api.functions.settings.toggleModel);
-  const verifyApiKeyMutation = useMutation(api.functions.settings.verifyApiKey);
+  const verifyApiKeyAction = useAction(api.functions.settings.verifyApiKey);
 
   const settingsState = createSettingsQueryState(settings);
 
@@ -71,7 +71,7 @@ export function useUserSettings(): UseUserSettingsReturn {
   };
 
   const verifyApiKey = async (provider: string, apiKey: string) => {
-    return await verifyApiKeyMutation({ provider, apiKey });
+    return await verifyApiKeyAction({ provider, apiKey });
   };
 
   return {
