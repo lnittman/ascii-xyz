@@ -17,7 +17,7 @@ import {
   CircleNotch
 } from '@phosphor-icons/react';
 import { cn } from '@repo/design/lib/utils';
-import { useQuery, useMutation } from 'convex/react';
+import { useQuery, useMutation, useAction } from 'convex/react';
 import { api } from '@repo/backend/convex/_generated/api';
 import { toast } from 'sonner';
 import { useModels } from '@/hooks/models';
@@ -36,7 +36,7 @@ export default function ModelsSettingsPage() {
   const settings = useQuery(api.functions.settings.get);
   const updateSettings = useMutation(api.functions.settings.update);
   const toggleModel = useMutation(api.functions.settings.toggleModel);
-  const verifyApiKey = useMutation(api.functions.settings.verifyApiKey);
+  const verifyApiKey = useAction(api.functions.settings.verifyApiKey);
   
   // Local state for API keys (before saving)
   const [openrouterKey, setOpenrouterKey] = useState('');
@@ -75,9 +75,18 @@ export default function ModelsSettingsPage() {
       
       setOpenrouterStatus('success');
       toast.success('API key saved successfully');
-    } catch (error) {
+    } catch (error: unknown) {
       setOpenrouterStatus('error');
-      toast.error('Failed to verify API key');
+      // Handle ConvexError (data property) and regular Error (message property)
+      let message = 'Failed to verify API key';
+      if (error && typeof error === 'object') {
+        if ('data' in error && typeof error.data === 'string') {
+          message = error.data;
+        } else if ('message' in error && typeof error.message === 'string') {
+          message = error.message;
+        }
+      }
+      toast.error(message);
     }
   };
 

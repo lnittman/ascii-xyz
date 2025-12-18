@@ -6,6 +6,8 @@ export {
   createOpenRouterRateLimitResponse,
   createOpenRouterAuthErrorResponse,
   createOpenRouterStreamingResponse,
+  createOpenRouterKeyResponse,
+  createOpenRouterInvalidKeyResponse,
 } from './openrouter';
 
 import { openrouterHandlers } from './openrouter';

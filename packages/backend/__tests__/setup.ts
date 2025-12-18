@@ -240,5 +240,7 @@ export {
   createOpenRouterRateLimitResponse,
   createOpenRouterAuthErrorResponse,
   createOpenRouterStreamingResponse,
+  createOpenRouterKeyResponse,
+  createOpenRouterInvalidKeyResponse,
 } from '../test-setup/msw/server';
 export type { HttpHandler } from 'msw';

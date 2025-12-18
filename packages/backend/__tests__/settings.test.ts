@@ -2,7 +2,14 @@ import { convexTest } from 'convex-test';
 import { describe, expect, it } from 'vitest';
 import { api } from '../convex/_generated/api';
 import schema from '../convex/schema';
-import { modules, withTestUser, createTestContext } from './setup';
+import {
+  modules,
+  withTestUser,
+  createTestContext,
+  server,
+  createOpenRouterKeyResponse,
+  createOpenRouterInvalidKeyResponse,
+} from './setup';
 
 describe('Settings Functions', () => {
   describe('get', () => {
@@ -209,6 +216,91 @@ describe('Settings Functions', () => {
 
       expect(result?.openai).toEqual(['gpt-4']);
       expect(result?.anthropic).toEqual(['claude-3']);
+    });
+  });
+
+  describe('verifyApiKey', () => {
+    it('throws for unauthenticated user', async () => {
+      const t = createTestContext();
+
+      await expect(
+        t.action(api.functions.settings.verifyApiKey, {
+          provider: 'openrouter',
+          apiKey: 'sk-or-v1-test',
+        })
+      ).rejects.toThrow('Not authenticated');
+    });
+
+    it('throws for empty API key', async () => {
+      const t = createTestContext();
+      const { clerkId } = await withTestUser(t);
+
+      await expect(
+        t.withIdentity({ subject: clerkId }).action(api.functions.settings.verifyApiKey, {
+          provider: 'openrouter',
+          apiKey: '',
+        })
+      ).rejects.toThrow('API key cannot be empty');
+    });
+
+    it('throws for unsupported provider', async () => {
+      const t = createTestContext();
+      const { clerkId } = await withTestUser(t);
+
+      await expect(
+        t.withIdentity({ subject: clerkId }).action(api.functions.settings.verifyApiKey, {
+          provider: 'unsupported',
+          apiKey: 'sk-test-key',
+        })
+      ).rejects.toThrow('Unsupported provider');
+    });
+
+    it('verifies valid OpenRouter API key', async () => {
+      const t = createTestContext();
+      const { clerkId } = await withTestUser(t);
+
+      // MSW handler already returns valid response for non-invalid keys
+      const result = await t
+        .withIdentity({ subject: clerkId })
+        .action(api.functions.settings.verifyApiKey, {
+          provider: 'openrouter',
+          apiKey: 'sk-or-v1-valid-test-key',
+        });
+
+      expect(result).toEqual({
+        valid: true,
+        message: 'API key verified successfully',
+      });
+    });
+
+    it('rejects invalid OpenRouter API key', async () => {
+      const t = createTestContext();
+      const { clerkId } = await withTestUser(t);
+
+      // MSW handler returns 401 for 'invalid-key' or 'sk-or-v1-invalid'
+      await expect(
+        t.withIdentity({ subject: clerkId }).action(api.functions.settings.verifyApiKey, {
+          provider: 'openrouter',
+          apiKey: 'sk-or-v1-invalid',
+        })
+      ).rejects.toThrow('Invalid API key');
+    });
+
+    it('handles network errors gracefully', async () => {
+      const t = createTestContext();
+      const { clerkId } = await withTestUser(t);
+
+      // Use a handler that returns a network error
+      server.use(
+        createOpenRouterInvalidKeyResponse()
+      );
+
+      await expect(
+        t.withIdentity({ subject: clerkId }).action(api.functions.settings.verifyApiKey, {
+          provider: 'openrouter',
+          apiKey: 'sk-or-v1-should-fail',
+        })
+      ).rejects.toThrow('Invalid API key');
     });
   });
 });

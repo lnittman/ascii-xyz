@@ -26,5 +26,7 @@ export {
   createOpenRouterRateLimitResponse,
   createOpenRouterAuthErrorResponse,
   createOpenRouterStreamingResponse,
+  createOpenRouterKeyResponse,
+  createOpenRouterInvalidKeyResponse,
 } from './handlers';
 export type { HttpHandler } from 'msw';

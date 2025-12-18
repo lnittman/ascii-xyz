@@ -1,5 +1,5 @@
-import { v } from "convex/values";
-import { mutation, query, internalQuery, internalMutation, MutationCtx } from "../_generated/server";
+import { v, ConvexError } from "convex/values";
+import { action, mutation, query, internalQuery, internalMutation, MutationCtx } from "../_generated/server";
 import { Doc } from "../_generated/dataModel";
 import type { UserIdentity } from "convex/server";
 
@@ -234,27 +234,68 @@ export const getEnabledModels = query({
   },
 });
 
-// Verify API key (placeholder - actual verification would call provider API)
-export const verifyApiKey = mutation({
+// Verify API key by making real API call to provider
+export const verifyApiKey = action({
   args: {
     provider: v.string(),
     apiKey: v.string(),
   },
   handler: async (ctx, { provider, apiKey }) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
-
-    // For now, just check if key is non-empty
-    // In production, you'd want to make a test API call to verify
-    if (!apiKey || apiKey.trim().length === 0) {
-      throw new Error("Invalid API key");
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
     }
 
-    // TODO: Make actual API call to verify key
-    // For OpenRouter: GET https://openrouter.ai/api/v1/auth/key
-    // For OpenAI: GET https://api.openai.com/v1/models
-    // etc.
+    // Validate input
+    if (!apiKey || apiKey.trim().length === 0) {
+      throw new ConvexError("API key cannot be empty");
+    }
 
-    return { valid: true, message: "API key verified successfully" };
+    // Verify based on provider
+    switch (provider) {
+      case "openrouter":
+        return await verifyOpenRouterKey(apiKey);
+      default:
+        throw new ConvexError(`Unsupported provider: ${provider}`);
+    }
   },
 });
+
+// Verify OpenRouter API key
+async function verifyOpenRouterKey(apiKey: string): Promise<{ valid: boolean; message: string }> {
+  let response: Response;
+
+  try {
+    response = await fetch("https://openrouter.ai/api/v1/key", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+      },
+    });
+  } catch (fetchError) {
+    throw new ConvexError(`Network error: ${fetchError instanceof Error ? fetchError.message : 'Failed to connect to OpenRouter'}`);
+  }
+
+  // Parse body once
+  let data: unknown;
+  try {
+    data = await response.json();
+  } catch {
+    throw new ConvexError(`Failed to parse OpenRouter response (${response.status})`);
+  }
+
+  // Handle error responses
+  if (!response.ok) {
+    const errorData = data as { error?: { message?: string } };
+    const errorMessage = errorData.error?.message || `API error (${response.status})`;
+    throw new ConvexError(errorMessage);
+  }
+
+  // Verify success response has expected structure
+  const successData = data as { data?: unknown };
+  if (!successData.data) {
+    throw new ConvexError("Unexpected response format from OpenRouter");
+  }
+
+  return { valid: true, message: "API key verified successfully" };
+}

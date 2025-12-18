@@ -63,7 +63,58 @@ const defaultFrameResponse = {
   },
 };
 
+// Default mock response for OpenRouter key verification
+const defaultKeyResponse = {
+  data: {
+    label: 'Test Key',
+    limit: 100,
+    usage: 10,
+    usage_daily: 5,
+    usage_weekly: 20,
+    usage_monthly: 50,
+    byok_usage: 0,
+    byok_usage_daily: 0,
+    byok_usage_weekly: 0,
+    byok_usage_monthly: 0,
+    is_free_tier: false,
+    is_provisioning_key: false,
+    limit_remaining: 90,
+    limit_reset: null,
+    include_byok_in_limit: false,
+    rate_limit: {
+      requests: 100,
+      interval: '1m',
+      note: 'Standard rate limit',
+    },
+  },
+};
+
 export const openrouterHandlers = [
+  // OpenRouter key verification endpoint
+  http.get('https://openrouter.ai/api/v1/key', async ({ request }) => {
+    const authHeader = request.headers.get('Authorization');
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return HttpResponse.json(
+        { error: { message: 'Authorization header required', type: 'authentication_error' } },
+        { status: 401 }
+      );
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+
+    // Simulate invalid key
+    if (token === 'invalid-key' || token === 'sk-or-v1-invalid') {
+      return HttpResponse.json(
+        { error: { message: 'Invalid API key', type: 'authentication_error', code: 'invalid_api_key' } },
+        { status: 401 }
+      );
+    }
+
+    // Valid key response
+    return HttpResponse.json(defaultKeyResponse);
+  }),
+
   // OpenRouter chat completions endpoint
   http.post('https://openrouter.ai/api/v1/chat/completions', async ({ request }) => {
     const body = await request.json() as { messages?: Array<{ content: string }> };
@@ -153,6 +204,31 @@ export function createOpenRouterRateLimitResponse() {
 // Helper to create invalid API key response
 export function createOpenRouterAuthErrorResponse() {
   return http.post('https://openrouter.ai/api/v1/chat/completions', () => {
+    return HttpResponse.json(
+      {
+        error: {
+          message: 'Invalid API key',
+          type: 'authentication_error',
+          code: 'invalid_api_key',
+        },
+      },
+      { status: 401 }
+    );
+  });
+}
+
+// Helper to create valid key verification response
+export function createOpenRouterKeyResponse(overrides: Partial<typeof defaultKeyResponse['data']> = {}) {
+  return http.get('https://openrouter.ai/api/v1/key', () => {
+    return HttpResponse.json({
+      data: { ...defaultKeyResponse.data, ...overrides },
+    });
+  });
+}
+
+// Helper to create invalid key response
+export function createOpenRouterInvalidKeyResponse() {
+  return http.get('https://openrouter.ai/api/v1/key', () => {
     return HttpResponse.json(
       {
         error: {
