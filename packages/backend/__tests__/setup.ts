@@ -201,12 +201,14 @@ export async function withTestGeneration(
     userId: string;
     prompt: string;
     modelId: string;
-    status: 'planning' | 'generating' | 'completed' | 'failed';
+    status: 'pending' | 'planning' | 'generating' | 'completed' | 'failed';
     frames: string[];
     currentFrame: number;
     totalFrames: number;
     error: string;
     apiKey: string;
+    presetId: Id<'presets'>;
+    retriedFrom: Id<'artworkGenerations'>;
   }> = {}
 ): Promise<Id<'artworkGenerations'>> {
   return await t.run(async (ctx) => {
@@ -221,6 +223,8 @@ export async function withTestGeneration(
       createdAt: new Date().toISOString(),
       ...(overrides.error && { error: overrides.error }),
       ...(overrides.apiKey && { apiKey: overrides.apiKey }),
+      ...(overrides.presetId && { presetId: overrides.presetId }),
+      ...(overrides.retriedFrom && { retriedFrom: overrides.retriedFrom }),
     });
   });
 }

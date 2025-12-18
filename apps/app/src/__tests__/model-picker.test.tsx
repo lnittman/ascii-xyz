@@ -2,28 +2,41 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { mockUseQuery, mockUseAtom } from './setup';
 
-// Mock the models config
-vi.mock('@repo/backend/convex/config/models', () => ({
-  AVAILABLE_MODELS: [
-    {
-      id: 'openrouter/claude-3.5-sonnet',
-      name: 'Claude 3.5 Sonnet',
-      provider: 'anthropic',
-      description: 'Best for creative ASCII art',
-      recommended: true,
-    },
-    {
-      id: 'openrouter/gpt-4o',
-      name: 'GPT-4o',
-      provider: 'openai',
-      description: 'Latest multimodal model',
-    },
-  ],
-  DEFAULT_MODEL_ID: 'openrouter/claude-3.5-sonnet',
+// Mock the use-ascii hooks
+const mockUseModels = vi.fn();
+const mockUseDefaultModel = vi.fn();
+
+vi.mock('@/hooks/use-ascii', () => ({
+  useModels: () => mockUseModels(),
+  useDefaultModel: () => mockUseDefaultModel(),
 }));
 
 // Import after mocking
 import { ModelPicker } from '@/components/model-picker';
+
+// Test model data
+const testModels = [
+  {
+    _id: 'model1' as any,
+    modelId: 'openrouter/claude-3.5-sonnet',
+    name: 'Claude 3.5 Sonnet',
+    provider: 'anthropic',
+    description: 'Best for creative ASCII art',
+    isDefault: true,
+    isEnabled: true,
+    sortOrder: 0,
+  },
+  {
+    _id: 'model2' as any,
+    modelId: 'openrouter/gpt-4o',
+    name: 'GPT-4o',
+    provider: 'openai',
+    description: 'Latest multimodal model',
+    isDefault: false,
+    isEnabled: true,
+    sortOrder: 1,
+  },
+];
 
 describe('ModelPicker', () => {
   const mockSetSelectedModelId = vi.fn();
@@ -31,6 +44,9 @@ describe('ModelPicker', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseAtom.mockReturnValue(['openrouter/claude-3.5-sonnet', mockSetSelectedModelId]);
+    // Default: models loaded
+    mockUseModels.mockReturnValue({ status: 'ready', data: testModels });
+    mockUseDefaultModel.mockReturnValue({ status: 'ready', data: testModels[0] });
   });
 
   describe('with no API key configured', () => {
@@ -82,6 +98,22 @@ describe('ModelPicker', () => {
 
       // Should fall back to first available model
       expect(screen.getByRole('button')).toHaveTextContent('Claude 3.5 Sonnet');
+    });
+  });
+
+  describe('loading state', () => {
+    it('shows empty button while loading', () => {
+      mockUseModels.mockReturnValue({ status: 'loading', data: undefined });
+      mockUseDefaultModel.mockReturnValue({ status: 'loading', data: undefined });
+      mockUseQuery.mockReturnValue({
+        openrouterApiKey: 'sk-or-v1-test',
+        enabledModels: { openrouter: ['openrouter/claude-3.5-sonnet'] },
+      });
+
+      render(<ModelPicker />);
+
+      // Button should exist but may show "select model" placeholder
+      expect(screen.getByRole('button')).toBeInTheDocument();
     });
   });
 

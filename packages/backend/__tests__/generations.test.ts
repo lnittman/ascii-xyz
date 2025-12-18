@@ -328,3 +328,162 @@ describe('Generation Progress Flow', () => {
     expect(gen?.totalFrames).toBe(10);
   });
 });
+
+describe('retryGeneration mutation', () => {
+  it('creates a new generation from a failed one', async () => {
+    const t = createTestContext();
+    const { clerkId } = await withTestUser(t);
+
+    const originalId = await withTestGeneration(t, {
+      userId: clerkId,
+      prompt: 'A dancing robot',
+      modelId: 'claude-3.5-sonnet',
+      status: 'failed',
+      error: 'Rate limited',
+    });
+
+    const newGenerationId = await t.mutation(api.functions.mutations.generations.retryGeneration, {
+      generationId: originalId,
+    });
+
+    expect(newGenerationId).toBeDefined();
+
+    // Verify new generation has same prompt and model
+    const newGen = await t.run(async (ctx) => ctx.db.get(newGenerationId));
+    expect(newGen).toBeDefined();
+    expect(newGen!.prompt).toBe('A dancing robot');
+    expect(newGen!.modelId).toBe('claude-3.5-sonnet');
+    expect(newGen!.status).toBe('pending');
+    expect(newGen!.userId).toBe(clerkId);
+    // Should have a fresh start
+    expect(newGen!.frames).toEqual([]);
+    expect(newGen!.currentFrame).toBe(0);
+    expect(newGen!.error).toBeUndefined();
+  });
+
+  it('links retry to original generation', async () => {
+    const t = createTestContext();
+    const { clerkId } = await withTestUser(t);
+
+    const originalId = await withTestGeneration(t, {
+      userId: clerkId,
+      prompt: 'Test prompt',
+      status: 'failed',
+    });
+
+    const newGenerationId = await t.mutation(api.functions.mutations.generations.retryGeneration, {
+      generationId: originalId,
+    });
+
+    const newGen = await t.run(async (ctx) => ctx.db.get(newGenerationId));
+    expect(newGen!.retriedFrom).toBe(originalId);
+  });
+
+  it('allows retry of completed generation', async () => {
+    const t = createTestContext();
+    const { clerkId } = await withTestUser(t);
+
+    const originalId = await withTestGeneration(t, {
+      userId: clerkId,
+      prompt: 'Completed art',
+      modelId: 'gpt-4',
+      status: 'completed',
+      frames: ['frame1', 'frame2'],
+    });
+
+    const newGenerationId = await t.mutation(api.functions.mutations.generations.retryGeneration, {
+      generationId: originalId,
+    });
+
+    const newGen = await t.run(async (ctx) => ctx.db.get(newGenerationId));
+    expect(newGen!.prompt).toBe('Completed art');
+    expect(newGen!.modelId).toBe('gpt-4');
+    expect(newGen!.status).toBe('pending');
+    expect(newGen!.frames).toEqual([]);
+  });
+
+  it('allows override of model', async () => {
+    const t = createTestContext();
+    const { clerkId } = await withTestUser(t);
+
+    const originalId = await withTestGeneration(t, {
+      userId: clerkId,
+      prompt: 'Test',
+      modelId: 'old-model',
+      status: 'failed',
+    });
+
+    const newGenerationId = await t.mutation(api.functions.mutations.generations.retryGeneration, {
+      generationId: originalId,
+      overrides: { modelId: 'new-model' },
+    });
+
+    const newGen = await t.run(async (ctx) => ctx.db.get(newGenerationId));
+    expect(newGen!.modelId).toBe('new-model');
+  });
+
+  it('allows override of prompt', async () => {
+    const t = createTestContext();
+    const { clerkId } = await withTestUser(t);
+
+    const originalId = await withTestGeneration(t, {
+      userId: clerkId,
+      prompt: 'Original prompt',
+      status: 'failed',
+    });
+
+    const newGenerationId = await t.mutation(api.functions.mutations.generations.retryGeneration, {
+      generationId: originalId,
+      overrides: { prompt: 'Modified prompt' },
+    });
+
+    const newGen = await t.run(async (ctx) => ctx.db.get(newGenerationId));
+    expect(newGen!.prompt).toBe('Modified prompt');
+  });
+
+  it('throws for non-existent generation', async () => {
+    const t = createTestContext();
+
+    // Create and delete to get valid ID format
+    const genId = await withTestGeneration(t, { prompt: 'temp' });
+    await t.run(async (ctx) => {
+      await ctx.db.delete(genId);
+    });
+
+    await expect(
+      t.mutation(api.functions.mutations.generations.retryGeneration, {
+        generationId: genId,
+      })
+    ).rejects.toThrow('Generation not found');
+  });
+
+  it('throws for in-progress generation', async () => {
+    const t = createTestContext();
+
+    const genId = await withTestGeneration(t, {
+      prompt: 'In progress',
+      status: 'generating',
+    });
+
+    await expect(
+      t.mutation(api.functions.mutations.generations.retryGeneration, {
+        generationId: genId,
+      })
+    ).rejects.toThrow('Cannot retry an active generation');
+  });
+
+  it('throws for planning generation', async () => {
+    const t = createTestContext();
+
+    const genId = await withTestGeneration(t, {
+      prompt: 'Planning',
+      status: 'planning',
+    });
+
+    await expect(
+      t.mutation(api.functions.mutations.generations.retryGeneration, {
+        generationId: genId,
+      })
+    ).rejects.toThrow('Cannot retry an active generation');
+  });
+});

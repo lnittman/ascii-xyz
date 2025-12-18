@@ -13,6 +13,10 @@ vi.mock('@repo/backend/convex/_generated/api', () => ({
           getPublic: 'mock.getPublic',
           search: 'mock.search',
         },
+        users: {
+          getPublicProfile: 'mock.getPublicProfile',
+          getByClerkId: 'mock.getByClerkId',
+        },
       },
       mutations: {
         ascii: {
@@ -27,7 +31,7 @@ vi.mock('@repo/backend/convex/_generated/api', () => ({
 }));
 
 // Import hooks after mocking
-import { useArtworks, useArtwork, usePublicGallery, useSearchArtworks } from '@/hooks/use-ascii';
+import { useArtworks, useArtwork, usePublicGallery, useSearchArtworks, usePublicProfile, useUserByClerkId } from '@/hooks/use-ascii';
 
 describe('use-ascii hooks', () => {
   beforeEach(() => {
@@ -222,5 +226,119 @@ describe('QueryState type', () => {
     expect(checkStatus({ status: 'loading' })).toBe('is loading');
     expect(checkStatus({ status: 'ready' })).toBe('has data');
     expect(checkStatus({ status: 'empty' })).toBe('no data');
+  });
+});
+
+describe('usePublicProfile', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockUseQuery.mockReturnValue(undefined);
+  });
+
+  it('returns loading state when query result is undefined', () => {
+    mockUseQuery.mockReturnValue(undefined);
+
+    const { result } = renderHook(() => usePublicProfile('clerk-123'));
+
+    expect(result.current.status).toBe('loading');
+    expect(result.current.data).toBeUndefined();
+  });
+
+  it('returns empty state when user not found', () => {
+    mockUseQuery.mockReturnValue(null);
+
+    const { result } = renderHook(() => usePublicProfile('non-existent'));
+
+    expect(result.current.status).toBe('empty');
+    expect(result.current.data).toBeNull();
+  });
+
+  it('returns ready state with profile data', () => {
+    const mockProfile = {
+      _id: 'user-1',
+      clerkId: 'clerk-123',
+      email: 'artist@example.com',
+      name: 'Test Artist',
+      stats: {
+        totalArtworks: 10,
+        publicArtworks: 5,
+        totalLikes: 100,
+        totalViews: 500,
+      },
+      artworks: [{ _id: 'art-1', prompt: 'My Art' }],
+    };
+    mockUseQuery.mockReturnValue(mockProfile);
+
+    const { result } = renderHook(() => usePublicProfile('clerk-123'));
+
+    expect(result.current.status).toBe('ready');
+    expect(result.current.data).toEqual(mockProfile);
+    expect(result.current.data?.name).toBe('Test Artist');
+  });
+
+  it('skips query when clerkId is undefined', () => {
+    mockUseQuery.mockReturnValue(undefined);
+
+    renderHook(() => usePublicProfile(undefined));
+
+    expect(mockUseQuery).toHaveBeenCalledWith('mock.getPublicProfile', 'skip');
+  });
+
+  it('passes limit parameter to query', () => {
+    mockUseQuery.mockReturnValue(null);
+
+    renderHook(() => usePublicProfile('clerk-123', 5));
+
+    expect(mockUseQuery).toHaveBeenCalledWith('mock.getPublicProfile', {
+      clerkId: 'clerk-123',
+      limit: 5,
+    });
+  });
+});
+
+describe('useUserByClerkId', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockUseQuery.mockReturnValue(undefined);
+  });
+
+  it('returns loading state when query result is undefined', () => {
+    mockUseQuery.mockReturnValue(undefined);
+
+    const { result } = renderHook(() => useUserByClerkId('clerk-123'));
+
+    expect(result.current.status).toBe('loading');
+  });
+
+  it('returns empty state when user not found', () => {
+    mockUseQuery.mockReturnValue(null);
+
+    const { result } = renderHook(() => useUserByClerkId('non-existent'));
+
+    expect(result.current.status).toBe('empty');
+    expect(result.current.data).toBeNull();
+  });
+
+  it('returns ready state with user data', () => {
+    const mockUser = {
+      _id: 'user-1',
+      clerkId: 'clerk-123',
+      email: 'user@example.com',
+      name: 'Test User',
+    };
+    mockUseQuery.mockReturnValue(mockUser);
+
+    const { result } = renderHook(() => useUserByClerkId('clerk-123'));
+
+    expect(result.current.status).toBe('ready');
+    expect(result.current.data).toEqual(mockUser);
+  });
+
+  it('skips query when clerkId is undefined', () => {
+    mockUseQuery.mockReturnValue(undefined);
+
+    renderHook(() => useUserByClerkId(undefined));
+
+    expect(mockUseQuery).toHaveBeenCalledWith('mock.getByClerkId', 'skip');
   });
 });

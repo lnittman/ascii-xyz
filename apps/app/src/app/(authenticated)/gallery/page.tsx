@@ -1,6 +1,6 @@
 'use client';
 
-import { Heart, Eye, Plus, MagnifyingGlass, GridFour, Globe, X } from '@phosphor-icons/react';
+import { Heart, Eye, Plus, MagnifyingGlass, GridFour, Globe, X, TrendUp, Star } from '@phosphor-icons/react';
 import { useRef, useState } from 'react';
 import { format } from 'date-fns';
 import Link from 'next/link';
@@ -9,6 +9,7 @@ import { Button } from '@repo/design/components/ui/button';
 import { Input } from '@repo/design/components/ui/input';
 import { Skeleton } from '@repo/design/components/ui/skeleton';
 import { useArtworks, usePublicGallery, useSearchArtworks, type QueryState } from '@/hooks/use-ascii';
+import { useTrending, useFeatured } from '@/hooks/use-social';
 import type { Doc } from '@repo/backend/convex/_generated/dataModel';
 
 // Prevent static generation for this page as it uses Convex
@@ -16,16 +17,21 @@ export const dynamic = 'force-dynamic';
 
 export default function AsciiGalleryPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [view, setView] = useState<'my-art' | 'public' | 'search'>('my-art');
+  const [view, setView] = useState<'my-art' | 'public' | 'trending' | 'featured' | 'search'>('my-art');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const myArtworksState = useArtworks();
   const publicArtworksState = usePublicGallery(50);
   const searchResultsState = useSearchArtworks(searchQuery);
+  const trendingState = useTrending(20);
+  const featuredState = useFeatured(20);
 
-  const artworksState: QueryState<Doc<"artworks">[]> = view === 'search' ? searchResultsState :
-                  view === 'public' ? publicArtworksState :
-                  myArtworksState;
+  const artworksState: QueryState<Doc<"artworks">[]> =
+    view === 'search' ? searchResultsState :
+    view === 'public' ? publicArtworksState :
+    view === 'trending' ? trendingState as QueryState<Doc<"artworks">[]> :
+    view === 'featured' ? featuredState as QueryState<Doc<"artworks">[]> :
+    myArtworksState;
 
   const isLoading = artworksState.status === 'loading';
   const isEmpty = artworksState.status === 'empty';
@@ -95,6 +101,36 @@ export default function AsciiGalleryPage() {
               >
                 <GridFour className="w-3.5 h-3.5" weight={view === 'my-art' ? 'duotone' : 'regular'} aria-hidden="true" />
                 <span className="hidden sm:inline">my art</span>
+              </button>
+              <button
+                onClick={() => setView('trending')}
+                role="tab"
+                aria-selected={view === 'trending'}
+                aria-label="View trending artworks"
+                className={cn(
+                  "flex cursor-default items-center justify-center gap-2 py-2 px-3 text-xs font-medium transition-colors duration-0",
+                  view === 'trending'
+                    ? "bg-background text-foreground"
+                    : "bg-muted/30 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                )}
+              >
+                <TrendUp className="w-3.5 h-3.5" weight={view === 'trending' ? 'duotone' : 'regular'} aria-hidden="true" />
+                <span className="hidden sm:inline">trending</span>
+              </button>
+              <button
+                onClick={() => setView('featured')}
+                role="tab"
+                aria-selected={view === 'featured'}
+                aria-label="View featured artworks"
+                className={cn(
+                  "flex cursor-default items-center justify-center gap-2 py-2 px-3 text-xs font-medium transition-colors duration-0",
+                  view === 'featured'
+                    ? "bg-background text-foreground"
+                    : "bg-muted/30 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                )}
+              >
+                <Star className="w-3.5 h-3.5" weight={view === 'featured' ? 'duotone' : 'regular'} aria-hidden="true" />
+                <span className="hidden sm:inline">featured</span>
               </button>
               <button
                 onClick={() => setView('public')}
@@ -181,19 +217,25 @@ export default function AsciiGalleryPage() {
           <div className="flex h-full flex-col items-center justify-center py-16 text-center">
             <div className="mx-auto w-12 h-12 bg-muted rounded-sm flex items-center justify-center mb-4">
               {view === 'search' ? <MagnifyingGlass className="h-5 w-5 text-muted-foreground" weight="duotone" /> :
+               view === 'trending' ? <TrendUp className="h-5 w-5 text-muted-foreground" weight="duotone" /> :
+               view === 'featured' ? <Star className="h-5 w-5 text-muted-foreground" weight="duotone" /> :
                <Heart className="h-5 w-5 text-muted-foreground" weight="duotone" />}
             </div>
             <h3 className="text-sm font-medium mb-1">
               {view === 'search' ? `no results for "${searchQuery}"` :
+               view === 'trending' ? 'nothing trending yet' :
+               view === 'featured' ? 'no featured artwork yet' :
                view === 'public' ? 'no public artwork yet' :
                'create your first ASCII art'}
             </h3>
             <p className="text-muted-foreground text-xs mb-4">
               {view === 'search' ? 'try a different search term' :
+               view === 'trending' ? 'check back later for popular creations' :
+               view === 'featured' ? 'curated picks coming soon' :
                view === 'public' ? 'check back later for community creations' :
                'generate beautiful ASCII art from text prompts'}
             </p>
-            {view !== 'search' && (
+            {view === 'my-art' && (
               <Link href="/">
                 <Button size="sm" className="gap-1.5">
                   <Plus className="h-3.5 w-3.5" />

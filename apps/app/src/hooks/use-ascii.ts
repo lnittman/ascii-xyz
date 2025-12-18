@@ -198,3 +198,153 @@ export function useSemanticSearch(
 
   return { ...state, search };
 }
+
+// ============================================
+// Model Configuration Hooks
+// ============================================
+
+// Hook to list available models
+export function useModels(options?: {
+  provider?: string;
+  includeDisabled?: boolean;
+}): QueryState<Doc<"models">[]> {
+  const models = useQuery(api.functions.queries.models.list, options ?? {});
+  return createQueryState(models);
+}
+
+// Hook to get default model
+export function useDefaultModel(): QueryState<Doc<"models"> | null> {
+  const model = useQuery(api.functions.queries.models.getDefault, {});
+  return createSingleQueryState(model);
+}
+
+// Hook to get model by ID
+export function useModelById(modelId: string | undefined): QueryState<Doc<"models"> | null> {
+  const model = useQuery(
+    api.functions.queries.models.getById,
+    modelId ? { modelId } : "skip"
+  );
+  return createSingleQueryState(model);
+}
+
+// Hook to get models grouped by provider
+export function useModelsByProvider(options?: {
+  includeDisabled?: boolean;
+}): QueryState<Record<string, Doc<"models">[]>> {
+  const grouped = useQuery(api.functions.queries.models.byProvider, options ?? {});
+  if (grouped === undefined) {
+    return { status: "loading", data: undefined };
+  }
+  if (Object.keys(grouped).length === 0) {
+    return { status: "empty", data: grouped };
+  }
+  return { status: "ready", data: grouped };
+}
+
+// Hook for model management mutations
+export function useModelManagement() {
+  const seedModels = useMutation(api.functions.mutations.models.seed);
+  const setEnabled = useMutation(api.functions.mutations.models.setEnabled);
+  const setDefault = useMutation(api.functions.mutations.models.setDefault);
+  const updateSortOrder = useMutation(api.functions.mutations.models.updateSortOrder);
+  const addCustom = useMutation(api.functions.mutations.models.addCustom);
+
+  return {
+    seedModels,
+    setEnabled,
+    setDefault,
+    updateSortOrder,
+    addCustom,
+  };
+}
+
+// ============================================
+// Preset Hooks
+// ============================================
+
+// Hook to list system presets
+export function useSystemPresets(): QueryState<Doc<"presets">[]> {
+  const presets = useQuery(api.functions.queries.presets.listSystemPresets, {});
+  return createQueryState(presets);
+}
+
+// Hook to list user presets
+export function useUserPresets(userId: Id<"users"> | undefined): QueryState<Doc<"presets">[]> {
+  const presets = useQuery(
+    api.functions.queries.presets.listUserPresets,
+    userId ? { userId } : "skip"
+  );
+  return createQueryState(presets);
+}
+
+// Hook to list all presets (system + user)
+export function useAllPresets(userId: Id<"users"> | undefined): QueryState<Doc<"presets">[]> {
+  const presets = useQuery(
+    api.functions.queries.presets.listAllPresets,
+    userId ? { userId } : "skip"
+  );
+  return createQueryState(presets);
+}
+
+// Hook to get a specific preset
+export function usePreset(presetId: Id<"presets"> | undefined): QueryState<Doc<"presets"> | null> {
+  const preset = useQuery(
+    api.functions.queries.presets.getPreset,
+    presetId ? { presetId } : "skip"
+  );
+  return createSingleQueryState(preset);
+}
+
+// Hook for preset management mutations
+export function usePresetManagement() {
+  const createPreset = useMutation(api.functions.mutations.presets.createUserPreset);
+  const updatePreset = useMutation(api.functions.mutations.presets.updateUserPreset);
+  const deletePreset = useMutation(api.functions.mutations.presets.deleteUserPreset);
+  const seedSystemPresets = useMutation(api.functions.mutations.presets.seedSystemPresets);
+
+  return {
+    createPreset,
+    updatePreset,
+    deletePreset,
+    seedSystemPresets,
+  };
+}
+
+// ============================================
+// Public Profile Hooks
+// ============================================
+
+// Type for public profile data
+export interface PublicProfile {
+  _id: Id<"users">;
+  clerkId: string;
+  email: string;
+  name?: string;
+  imageUrl?: string;
+  createdAt: string;
+  stats: {
+    totalArtworks: number;
+    publicArtworks: number;
+    totalLikes: number;
+    totalViews: number;
+  };
+  artworks: Doc<"artworks">[];
+}
+
+// Hook to get a user's public profile
+export function usePublicProfile(clerkId: string | undefined, limit?: number): QueryState<PublicProfile | null> {
+  const profile = useQuery(
+    api.functions.queries.users.getPublicProfile,
+    clerkId ? { clerkId, limit } : "skip"
+  );
+  return createSingleQueryState(profile as PublicProfile | null | undefined);
+}
+
+// Hook to get user by clerk ID (simpler version without stats/artworks)
+export function useUserByClerkId(clerkId: string | undefined): QueryState<Doc<"users"> | null> {
+  const user = useQuery(
+    api.functions.queries.users.getByClerkId,
+    clerkId ? { clerkId } : "skip"
+  );
+  return createSingleQueryState(user);
+}

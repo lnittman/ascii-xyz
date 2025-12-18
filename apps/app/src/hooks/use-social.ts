@@ -95,6 +95,21 @@ export function useTrending(limit: number = 10): QueryState<Artwork[]> {
   return createQueryState(result);
 }
 
+/**
+ * Hook to get featured artworks
+ */
+export function useFeatured(limit: number = 10): QueryState<Artwork[]> {
+  const result = useQuery(api.social.getFeatured, { limit });
+  return createQueryState(result);
+}
+
+/**
+ * Hook to set featured status on an artwork (admin action)
+ */
+export function useSetFeatured() {
+  return useMutation(api.social.setFeatured);
+}
+
 // ==================== USER STATS ====================
 
 export interface UserStats {

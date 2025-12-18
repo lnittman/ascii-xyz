@@ -1,4 +1,4 @@
-import { internalMutation } from "../../_generated/server";
+import { internalMutation, mutation } from "../../_generated/server";
 import { v } from "convex/values";
 
 // Internal mutations for managing generation records
@@ -64,13 +64,52 @@ export const updateGenerationFrame = internalMutation({
   handler: async (ctx, { generationId, frame, frameIndex }) => {
     const generation = await ctx.db.get(generationId);
     if (!generation) return;
-    
+
     const frames = [...generation.frames];
     frames[frameIndex] = frame;
-    
+
     await ctx.db.patch(generationId, {
       frames,
       currentFrame: frameIndex + 1,
     });
+  },
+});
+
+// Retry a failed or completed generation
+export const retryGeneration = mutation({
+  args: {
+    generationId: v.id("artworkGenerations"),
+    overrides: v.optional(v.object({
+      prompt: v.optional(v.string()),
+      modelId: v.optional(v.string()),
+    })),
+  },
+  handler: async (ctx, { generationId, overrides }) => {
+    const original = await ctx.db.get(generationId);
+
+    if (!original) {
+      throw new Error("Generation not found");
+    }
+
+    // Can only retry completed or failed generations
+    if (original.status === "planning" || original.status === "generating") {
+      throw new Error("Cannot retry an active generation");
+    }
+
+    // Create new generation with same settings
+    const newGenerationId = await ctx.db.insert("artworkGenerations", {
+      userId: original.userId,
+      prompt: overrides?.prompt ?? original.prompt,
+      modelId: overrides?.modelId ?? original.modelId,
+      status: "pending",
+      frames: [],
+      currentFrame: 0,
+      totalFrames: 0,
+      retriedFrom: generationId,
+      presetId: original.presetId,
+      createdAt: new Date().toISOString(),
+    });
+
+    return newGenerationId;
   },
 });

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Eye, Share, Download, ArrowLeft, Play, Pause, Trash, SkipBack } from '@phosphor-icons/react';
+import { Eye, Share, ArrowLeft, Play, Pause, Trash, SkipBack, User } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { Button } from '@repo/design/components/ui/button';
@@ -16,6 +16,7 @@ import { Id } from '@repo/backend/convex/_generated/dataModel';
 import { useUser } from '@clerk/nextjs';
 import { SimilarArtworks } from '@/components/artwork/similar-artworks';
 import { AddToCollection } from '@/components/artwork/add-to-collection';
+import { ArtworkExportMenu } from '@/components/artwork/artwork-export-menu';
 import { PresenceDot } from '@/components/presence/presence-indicator';
 import { LikeButton } from '@/components/social/like-button';
 import { useIncrementView } from '@/hooks/use-social';
@@ -106,24 +107,6 @@ export default function ArtworkPage() {
     });
   };
 
-  const handleDownload = () => {
-    const content = JSON.stringify({
-      prompt: artwork.prompt,
-      frames: artwork.frames,
-      metadata: artwork.metadata
-    }, null, 2);
-    
-    const blob = new Blob([content], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `ascii-art-${artwork._id}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
   // Handle animation playback
   useEffect(() => {
     if (!artwork || artwork.frames.length <= 1) return;
@@ -188,14 +171,7 @@ export default function ArtworkPage() {
           <div className="flex items-center gap-1.5">
             <AddToCollection artworkId={artworkId} />
 
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleDownload}
-              className="h-7 w-7 hover:bg-muted/50 rounded-sm transition-colors duration-0 cursor-default"
-            >
-              <Download size={14} weight="bold" />
-            </Button>
+            <ArtworkExportMenu artwork={artwork} />
 
             <Button
               variant="ghost"
@@ -221,6 +197,15 @@ export default function ArtworkPage() {
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-3">
             <span>{format(new Date(artwork.createdAt), 'MMM d, yyyy · h:mm a')}</span>
+            {artwork.visibility === 'public' && (
+              <Link
+                href={`/u/${artwork.userId}`}
+                className="flex items-center gap-1 hover:text-foreground transition-colors duration-0"
+              >
+                <User className="h-3.5 w-3.5" weight="bold" />
+                <span>artist</span>
+              </Link>
+            )}
             <div className="flex items-center gap-1">
               <Eye className="h-3.5 w-3.5" weight="bold" />
               <span>{artwork.views || 0}</span>

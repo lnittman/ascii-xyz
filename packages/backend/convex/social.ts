@@ -224,6 +224,56 @@ export const getUserStats = query({
   },
 });
 
+// ==================== FEATURED ====================
+
+// Get featured artworks (public only)
+export const getFeatured = query({
+  args: {
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const limit = args.limit ?? 10;
+
+    // Use the featured index for efficient querying
+    const artworks = await ctx.db
+      .query("artworks")
+      .withIndex("by_featured", (q) => q.eq("featured", true))
+      .order("desc")
+      .take(100); // Get more to filter
+
+    // Filter to only public artworks
+    const publicFeatured = artworks
+      .filter((a) => a.visibility === "public")
+      .slice(0, limit);
+
+    return publicFeatured;
+  },
+});
+
+// Set featured status on an artwork (admin action)
+export const setFeatured = mutation({
+  args: {
+    artworkId: v.id("artworks"),
+    featured: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    const artwork = await ctx.db.get(args.artworkId);
+    if (!artwork) throw new Error("Artwork not found");
+
+    // Prevent featuring private artworks
+    if (args.featured && artwork.visibility === "private") {
+      throw new Error("Cannot feature private artworks");
+    }
+
+    await ctx.db.patch(args.artworkId, {
+      featured: args.featured,
+      updatedAt: new Date().toISOString(),
+    });
+
+    return { featured: args.featured };
+  },
+});
+
 // ==================== AGGREGATE SYNC ====================
 // Note: Aggregate sync functions are not yet implemented.
 // When scaling is needed, use the aggregate components configured in convex.config.ts

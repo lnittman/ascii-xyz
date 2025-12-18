@@ -19,6 +19,7 @@ export default defineSchema({
     userId: v.optional(v.string()), // Clerk user ID
     prompt: v.string(),
     status: v.union(
+      v.literal("pending"), // Queued but not started (for retries)
       v.literal("planning"),
       v.literal("generating"),
       v.literal("completed"),
@@ -48,6 +49,8 @@ export default defineSchema({
     error: v.optional(v.string()),
     modelId: v.string(),
     apiKey: v.optional(v.string()), // For tracking (not exposed)
+    retriedFrom: v.optional(v.id("artworkGenerations")), // Link to original generation for retries
+    presetId: v.optional(v.id("presets")), // Preset used for this generation
     createdAt: v.string(),
     completedAt: v.optional(v.string()),
   })
@@ -213,4 +216,44 @@ export default defineSchema({
     .index("by_artwork", ["artworkId"])
     .index("by_user", ["userId"])
     .index("by_user_artwork", ["userId", "artworkId"]),
+
+  // AI models configuration (replaces hardcoded AVAILABLE_MODELS)
+  models: defineTable({
+    modelId: v.string(), // e.g., "openrouter/claude-3.5-sonnet"
+    name: v.string(), // Display name
+    provider: v.string(), // "anthropic", "openai", "google", "meta", "mistral"
+    description: v.string(),
+    contextWindow: v.optional(v.number()),
+    isDefault: v.boolean(),
+    isEnabled: v.boolean(),
+    sortOrder: v.number(),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  })
+    .index("by_model_id", ["modelId"])
+    .index("by_provider", ["provider"])
+    .index("by_enabled", ["isEnabled", "sortOrder"])
+    .index("by_default", ["isDefault"]),
+
+  // Generation presets (system + user-created)
+  presets: defineTable({
+    name: v.string(),
+    description: v.optional(v.string()),
+    type: v.union(v.literal("system"), v.literal("user")),
+    userId: v.optional(v.id("users")), // Only for user presets
+    settings: v.object({
+      style: v.string(),
+      width: v.number(),
+      height: v.number(),
+      fps: v.number(),
+      modelId: v.optional(v.string()),
+    }),
+    promptTemplate: v.optional(v.string()), // e.g., "Create {{subject}} in retro style"
+    isEnabled: v.boolean(),
+    sortOrder: v.number(),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  })
+    .index("by_type", ["type", "isEnabled", "sortOrder"])
+    .index("by_user", ["userId", "sortOrder"]),
 });

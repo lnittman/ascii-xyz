@@ -20,7 +20,30 @@ import { Input } from '@repo/design/components/ui/input';
 import { cn } from '@repo/design/lib/utils';
 import { useQuery } from 'convex/react';
 import { api } from '@repo/backend/convex/_generated/api';
-import { AVAILABLE_MODELS, DEFAULT_MODEL_ID, type ModelConfig } from '@repo/backend/convex/config/models';
+import { useModels, useDefaultModel } from '@/hooks/use-ascii';
+import type { Doc } from '@repo/backend/convex/_generated/dataModel';
+
+// Adapter type for backward compatibility
+interface ModelConfig {
+  id: string;
+  name: string;
+  provider: string;
+  description: string;
+  contextWindow?: number;
+  recommended?: boolean;
+}
+
+// Convert Convex model to ModelConfig format
+function toModelConfig(model: Doc<'models'>): ModelConfig {
+  return {
+    id: model.modelId,
+    name: model.name,
+    provider: model.provider,
+    description: model.description,
+    contextWindow: model.contextWindow,
+    recommended: model.isDefault,
+  };
+}
 
 interface ModelPickerProps {
   disabled?: boolean;
@@ -39,17 +62,39 @@ export function ModelPicker({
 
   // Fetch user settings to get enabled models
   const settings = useQuery(api.functions.settings.get);
-  const enabledModels = settings?.enabledModels?.openrouter || [];
+  const enabledModelIds = settings?.enabledModels?.openrouter || [];
   const hasApiKey = !!settings?.openrouterApiKey;
 
-  // Filter available models to only show enabled ones
+  // Fetch models from Convex
+  const modelsState = useModels();
+  const defaultModelState = useDefaultModel();
+
+  // Get available models from Convex, filtered by user settings
   const availableModels = useMemo((): ModelConfig[] => {
-    if (!hasApiKey || enabledModels.length === 0) {
-      // If no API key or no enabled models, show default model only
-      return AVAILABLE_MODELS.filter(m => m.id === DEFAULT_MODEL_ID);
+    // Still loading
+    if (modelsState.status === 'loading') {
+      return [];
     }
-    return AVAILABLE_MODELS.filter(model => enabledModels.includes(model.id));
-  }, [hasApiKey, enabledModels]);
+
+    const allModels = modelsState.data ?? [];
+    const defaultModel = defaultModelState.status === 'ready' ? defaultModelState.data : null;
+    const defaultModelId = defaultModel?.modelId;
+
+    if (!hasApiKey || enabledModelIds.length === 0) {
+      // If no API key or no enabled models, show default model only
+      if (defaultModel) {
+        return [toModelConfig(defaultModel)];
+      }
+      // Fallback to first model if no default
+      const first = allModels[0];
+      return first ? [toModelConfig(first)] : [];
+    }
+
+    // Filter to user-enabled models
+    return allModels
+      .filter(model => enabledModelIds.includes(model.modelId))
+      .map(toModelConfig);
+  }, [modelsState, defaultModelState, hasApiKey, enabledModelIds]);
 
   const selectedModel = availableModels.find(
     (model) => model.id === globalSelectedModelId

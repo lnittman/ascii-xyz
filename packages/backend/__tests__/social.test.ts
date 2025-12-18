@@ -301,4 +301,222 @@ describe('Social Features', () => {
       expect(result?.totalViews).toBe(150);
     });
   });
+
+  describe('getFeatured', () => {
+    it('returns empty array when no featured artworks', async () => {
+      const t = createTestContext();
+
+      const result = await t.query(api.social.getFeatured, {});
+
+      expect(result).toEqual([]);
+    });
+
+    it('returns featured public artworks', async () => {
+      const t = createTestContext();
+      const { clerkId } = await withTestUser(t);
+
+      // Create a featured artwork
+      await t.run(async (ctx) => {
+        await ctx.db.insert('artworks', {
+          userId: clerkId,
+          prompt: 'Featured art',
+          frames: ['frame1'],
+          metadata: {
+            width: 80,
+            height: 24,
+            fps: 1,
+            generator: 'test',
+            model: 'test-model',
+            createdAt: new Date().toISOString(),
+          },
+          visibility: 'public',
+          featured: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+      });
+
+      const result = await t.query(api.social.getFeatured, {});
+
+      expect(result.length).toBe(1);
+      expect(result[0].prompt).toBe('Featured art');
+    });
+
+    it('excludes private featured artworks', async () => {
+      const t = createTestContext();
+      const { clerkId } = await withTestUser(t);
+
+      // Create a featured but private artwork
+      await t.run(async (ctx) => {
+        await ctx.db.insert('artworks', {
+          userId: clerkId,
+          prompt: 'Private featured',
+          frames: ['frame1'],
+          metadata: {
+            width: 80,
+            height: 24,
+            fps: 1,
+            generator: 'test',
+            model: 'test-model',
+            createdAt: new Date().toISOString(),
+          },
+          visibility: 'private',
+          featured: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+      });
+
+      const result = await t.query(api.social.getFeatured, {});
+
+      expect(result).toEqual([]);
+    });
+
+    it('respects limit parameter', async () => {
+      const t = createTestContext();
+      const { clerkId } = await withTestUser(t);
+
+      // Create multiple featured artworks
+      for (let i = 0; i < 5; i++) {
+        await t.run(async (ctx) => {
+          await ctx.db.insert('artworks', {
+            userId: clerkId,
+            prompt: `Featured art ${i}`,
+            frames: ['frame1'],
+            metadata: {
+              width: 80,
+              height: 24,
+              fps: 1,
+              generator: 'test',
+              model: 'test-model',
+              createdAt: new Date().toISOString(),
+            },
+            visibility: 'public',
+            featured: true,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        });
+      }
+
+      const result = await t.query(api.social.getFeatured, { limit: 3 });
+
+      expect(result.length).toBe(3);
+    });
+
+    it('returns artworks sorted by creation date descending', async () => {
+      const t = createTestContext();
+      const { clerkId } = await withTestUser(t);
+
+      // Create featured artworks with different dates
+      const dates = ['2024-01-01', '2024-01-03', '2024-01-02'];
+      for (const date of dates) {
+        await t.run(async (ctx) => {
+          await ctx.db.insert('artworks', {
+            userId: clerkId,
+            prompt: `Art from ${date}`,
+            frames: ['frame1'],
+            metadata: {
+              width: 80,
+              height: 24,
+              fps: 1,
+              generator: 'test',
+              model: 'test-model',
+              createdAt: `${date}T00:00:00Z`,
+            },
+            visibility: 'public',
+            featured: true,
+            createdAt: `${date}T00:00:00Z`,
+            updatedAt: `${date}T00:00:00Z`,
+          });
+        });
+      }
+
+      const result = await t.query(api.social.getFeatured, {});
+
+      // Should be sorted by most recent first (by _creationTime)
+      expect(result.length).toBe(3);
+    });
+  });
+
+  describe('setFeatured', () => {
+    it('marks artwork as featured', async () => {
+      const t = createTestContext();
+      const { clerkId } = await withTestUser(t);
+      const artworkId = await withTestArtwork(t, clerkId, {
+        prompt: 'Test art',
+        visibility: 'public',
+      });
+
+      await t.mutation(api.social.setFeatured, {
+        artworkId,
+        featured: true,
+      });
+
+      // Verify artwork is now featured
+      const artwork = await t.run(async (ctx) => ctx.db.get(artworkId));
+      expect(artwork?.featured).toBe(true);
+    });
+
+    it('unfeatures artwork', async () => {
+      const t = createTestContext();
+      const { clerkId } = await withTestUser(t);
+
+      // Create a featured artwork
+      const artworkId = await t.run(async (ctx) => {
+        return await ctx.db.insert('artworks', {
+          userId: clerkId,
+          prompt: 'Featured art',
+          frames: ['frame1'],
+          metadata: {
+            width: 80,
+            height: 24,
+            fps: 1,
+            generator: 'test',
+            model: 'test-model',
+            createdAt: new Date().toISOString(),
+          },
+          visibility: 'public',
+          featured: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+      });
+
+      await t.mutation(api.social.setFeatured, {
+        artworkId,
+        featured: false,
+      });
+
+      // Verify artwork is no longer featured
+      const artwork = await t.run(async (ctx) => ctx.db.get(artworkId));
+      expect(artwork?.featured).toBe(false);
+    });
+
+    it('throws for non-existent artwork', async () => {
+      const t = createTestContext();
+      const { clerkId } = await withTestUser(t);
+
+      // Create an artwork to get a valid ID format, then delete it
+      const artworkId = await withTestArtwork(t, clerkId, { prompt: 'Test' });
+      await t.run(async (ctx) => ctx.db.delete(artworkId));
+
+      await expect(
+        t.mutation(api.social.setFeatured, { artworkId, featured: true })
+      ).rejects.toThrow('Artwork not found');
+    });
+
+    it('prevents featuring private artworks', async () => {
+      const t = createTestContext();
+      const { clerkId } = await withTestUser(t);
+      const artworkId = await withTestArtwork(t, clerkId, {
+        prompt: 'Private art',
+        visibility: 'private',
+      });
+
+      await expect(
+        t.mutation(api.social.setFeatured, { artworkId, featured: true })
+      ).rejects.toThrow('Cannot feature private artworks');
+    });
+  });
 });
